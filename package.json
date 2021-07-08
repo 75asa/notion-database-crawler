@@ -1,0 +1,35 @@
+{
+  "name": "notion-nippo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node index.ts",
+    "dev:watch": "nodemon --watch './index.ts' --exec 'ts-node' ./index.ts --trace-warnings"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/75asa/notion-nippo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/75asa/notion-nippo/issues"
+  },
+  "homepage": "https://github.com/75asa/notion-nippo#readme",
+  "devDependencies": {
+    "@notionhq/client": "^0.2.1",
+    "@slack/bolt": "^3.4.1",
+    "@types/node": "^16.0.0",
+    "dayjs": "^1.10.6",
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.9",
+    "prisma": "2.26.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@prisma/client": "2.26.0"
+  }
+}

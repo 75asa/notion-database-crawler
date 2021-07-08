@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongodb"]
+}
+
+model Cluster {
+  id                String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  lastFetchedAt     String
+  firstIntegratedAt String
+  database          Database @relation(fields: [databaseId], references: [id])
+  databaseId        String @db.ObjectId
+}
+
+model Database {
+  id           String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  notionId     String    @unique
+  createdAt    String
+  lastEditedAt String
+  pages        Page[]
+  size         Int
+  Cluster      Cluster[]
+}
+
+model Page {
+  id         String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  Database   Database? @relation(fields: [databaseId], references: [id])
+  databaseId String?   @db.ObjectId
+  createdAt  String
+  url        String
+}
+
+//   book       Book?   @relation(fields: [bookId], references: [id])
+//   bookId     Int?

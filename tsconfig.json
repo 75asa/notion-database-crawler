@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+      "lib": ["es2020", "DOM"],
+      "outDir": "./lib",
+      "sourceMap": true,
+      "strict": true,
+      "esModuleInterop": true
+    },
+    "include": ["src/*"]
+  }
