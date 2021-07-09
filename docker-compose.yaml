@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    container_name: "postgres-notion-nippo"
+    restart: always
+    environment:
+      POSTGRES_USER: notion #optional
+      POSTGRES_PASSWORD: nippo #required
+      TZ: "Asia/Tokyo"
+    ports:
+        - 5432:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data

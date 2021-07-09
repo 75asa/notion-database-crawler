@@ -8,26 +8,27 @@ import {
 } from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { config } from "dotenv";
-import * as dayjs from "dayjs";
-import { PrismaClient } from "@prisma/client";
+import dayjs from "dayjs";
+import { Database, PrismaClient, Cluster } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-interface Cluster {
-  lastFetchedAt: string;
+// NOTE: DTO ?
+interface ClusterDTO {
+  lastFetchedAt: string; // UTC ISO8601
   integratedAt: string;
-  database: Database;
+  database: DatabaseDTO;
 }
 
-interface Database {
+interface DatabaseDTO {
   notionId: string;
   createdAt: string;
   lastEditedAt: string;
-  pages: Page[];
+  pages: PageDTO[];
   size: number;
 }
 
-interface Page {
+interface PageDTO {
   notionId: string;
   createdAt: string;
   name?: string;
@@ -38,32 +39,32 @@ config();
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
 
-const findChangesAndNotify = async (storedDatabases: Database[]) => {
-  console.log("Looking for changes in Notion database 👻");
-  // Get the tasks currently in the database
-  const allDatabases = await getAllDatabase();
-  const currentDatabases = await Promise.all(
-    allDatabases.map(async database => {
-      return getAllPagesFromDatabase(database.notionId);
-    })
-  );
-  // console.dir(storedDatabases);
-  // console.dir(currentDatabases);
-  for (let storedDatabase of storedDatabases) {
-    for (let currentDatabase of currentDatabases) {
-      if (storedDatabase.databaseId !== currentDatabase.databaseId) continue;
-      for (let stored of storedDatabase.contents) {
-        for (let current of currentDatabase.contents) {
-          if (stored.id === current.id) continue;
-          // TODO: store
-          // console.log("new item added !!", { current });
-        }
-      }
-    }
-  }
-  // Run this method every 5 seconds (5000 milliseconds)
-  // setTimeout(main, 10000);
-};
+// const findChangesAndNotify = async (storedDatabases: DatabaseDTO[]) => {
+//   console.log("Looking for changes in Notion database 👻");
+//   // Get the tasks currently in the database
+//   const allDatabases = await getAllDatabase();
+//   const currentDatabases = await Promise.all(
+//     allDatabases.map(async database => {
+//       return getAllPagesFromDatabase(database.notionId);
+//     })
+//   );
+//   // console.dir(storedDatabases);
+//   // console.dir(currentDatabases);
+//   for (let storedDatabase of storedDatabases) {
+//     for (let currentDatabase of currentDatabases) {
+//       if (storedDatabase.databaseId !== currentDatabase.databaseId) continue;
+//       for (let stored of storedDatabase.contents) {
+//         for (let current of currentDatabase.contents) {
+//           if (stored.id === current.id) continue;
+//           // TODO: store
+//           // console.log("new item added !!", { current });
+//         }
+//       }
+//     }
+//   }
+//   // Run this method every 5 seconds (5000 milliseconds)
+//   // setTimeout(main, 10000);
+// };
 
 const main = async () => {
   await prisma.$connect();
@@ -80,26 +81,56 @@ const main = async () => {
           },
         },
       });
-      const { lastFetchedAt, firstIntegratedAt } = storedCluster;
-      console.log({ storedCluster });
+      // 前回同期した時間で Notion Page をフィルタ
+      // -> 前回同期したものがない時は
+      let lastFetchedAt = dayjs().format()
+      // TODO: 初回同期した時間はどう使う？
+      let firstIntegratedAt = dayjs().format()
+      let isFirstTime = true;
+      if (storedCluster) {
+        // TODO: 型情報みる
+        lastFetchedAt = storedCluster.lastFetchedAt.toISOString();
+        firstIntegratedAt = storedCluster.firstIntegratedAt.toISOString();
+        isFirstTime = false;
+      }
       const pages = await getAllPagesFromDatabase(
         database.notionId,
-        lastFetchedAt || new Date().toISOString()
+        lastFetchedAt
       );
 
       // FIXME: database.pages が any になる
       database.pages = pages;
       database.size = pages.length;
-      database.lastFetchedAt = lastFetchedAt;
-      return database as Database;
+
+      // DB に保存してない場合
+      if (isFirstTime) {
+        // 初期登録
+        // TODO: 大量にある Page をどうするか検討
+        const result = await prisma.cluster.create({
+          data: {
+            lastFetchedAt,
+            firstIntegratedAt,
+            database: {
+              create: {
+                notionId: database.notionId,
+                createdAt: database.createdAt,
+                lastEditedAt: database.lastEditedAt,
+                size: database.size,
+              }
+            }
+          }
+        })
+      }
+      return database;
     })
   );
   // TODO: Mongo に保存？
   // NOTE: Mongo から取得した contents と current Notion Database を比較
-  findChangesAndNotify(contents).catch(console.error);
+  // findChangesAndNotify(contents).catch(console.error);
 };
 
-const getAllDatabase = async () => {
+// integration が取得可能な database を取得
+const getAllDatabase = async (): Promise<DatabaseDTO[]> => {
   const searched = await notion.search({
     filter: { value: "database", property: "object" },
   });
@@ -110,15 +141,15 @@ const getAllDatabase = async () => {
       lastEditedAt: data.last_edited_time,
       pages: [],
       size: 0,
-    } as Database;
+    };
   });
 };
 
 const getAllPagesFromDatabase = async (
   databaseId: string,
-  lastFetchedAt?: string
+  lastFetchedAt: string | Date
 ) => {
-  let allPages: Page[] = [];
+  let allPages: PageDTO[] = [];
 
   const getPages = async (cursor?: string | null) => {
     const requestPayload: RequestParameters = {
@@ -127,16 +158,24 @@ const getAllPagesFromDatabase = async (
       body: {
         // 前回同期した時間以降にフィルター、時間がない場合は現在時刻
         filter: {
-          property: "created_time",
-          on_or_after: lastFetchedAt,
+          property: "createdAt",
+          created_time: {
+            on_or_after: lastFetchedAt,
+            // on_or_after: "2021-07-08T06:31:00.000Z", // NOTE: for test
+          },
         },
       },
     };
     if (cursor) requestPayload.body = { start_cursor: cursor };
     // While there are more pages left in the query, get pages from the database.
-    const pages = (await notion.request(
-      requestPayload
-    )) as DatabasesQueryResponse;
+    let pages = null;
+    try {
+      pages = (await notion.request(requestPayload)) as DatabasesQueryResponse;
+      // pages as DatabasesQueryResponse;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
 
     for (const page of pages.results) {
       if (page.archived) continue;
@@ -144,12 +183,10 @@ const getAllPagesFromDatabase = async (
       let name = "";
       if (isTitlePropertyValue(propName)) {
         name = propName.title.reduce((acc, cur) => {
-          console.log({ cur });
           if (!("plain_text" in cur)) return acc;
           return (acc += ` ${cur.plain_text}`);
         }, "");
       }
-      // console.dir(name, { depth: null });
 
       allPages.push({
         name,
@@ -164,7 +201,7 @@ const getAllPagesFromDatabase = async (
     }
   };
   await getPages();
-  // console.info({ databases });
+  console.log({ allPages });
   return allPages;
 };
 

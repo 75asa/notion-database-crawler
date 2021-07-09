@@ -1,10 +1,23 @@
 {
-    "compilerOptions": {
-      "lib": ["es2020", "DOM"],
-      "outDir": "./lib",
-      "sourceMap": true,
-      "strict": true,
-      "esModuleInterop": true
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["es6", "dom"],
+    "esModuleInterop": true,
+    "rootDir": "./src",
+    "outDir": "./out",
+    "sourceMap": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"],
+      "@/*": ["./src/*"]
     },
-    "include": ["src/*"]
-  }
+    "types": ["@types/node"]
+  },
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"],
+  "include": ["src/**/*"]
+}

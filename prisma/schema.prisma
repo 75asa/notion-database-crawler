@@ -2,40 +2,40 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["mongodb"]
+  provider = "prisma-client-js"
+  // previewFeatures = ["mongodb"]
 }
 
 model Cluster {
-  id                String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
-  lastFetchedAt     String
-  firstIntegratedAt String
-  database          Database @relation(fields: [databaseId], references: [id])
-  databaseId        String @db.ObjectId
+  id                String    @id @default(uuid())
+  lastFetchedAt     DateTime  @db.Timestamptz
+  // firstIntegratedAt DateTime @db.Date
+  firstIntegratedAt DateTime @db.Timetz()
+  // TODO: ISO8601 型を目指す
+  database          Database? @relation(fields: [databaseId], references: [id])
+  databaseId        String?
 }
 
 model Database {
-  id           String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
-  notionId     String    @unique
-  createdAt    String
-  lastEditedAt String
+  id           String   @id @default(uuid())
+  notionId     String   @unique
+  createdAt    DateTime
+  lastEditedAt DateTime
   pages        Page[]
   size         Int
-  Cluster      Cluster[]
+  cluster      Cluster?
 }
 
 model Page {
-  id         String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  id         String    @id @default(uuid())
   Database   Database? @relation(fields: [databaseId], references: [id])
-  databaseId String?   @db.ObjectId
-  createdAt  String
+  databaseId String?
+  notionId   String    @unique
+  createdAt  DateTime
   url        String
 }
-
-//   book       Book?   @relation(fields: [bookId], references: [id])
-//   bookId     Int?

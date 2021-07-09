@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node index.ts",
-    "dev:watch": "nodemon --watch './index.ts' --exec 'ts-node' ./index.ts --trace-warnings"
+    "ts-node": "ts-node",
+    "dev": "ts-node src/index.ts",
+    "dev:watch": "ts-node-dev --respawn src/index.ts",
+    "start": "node out/index",
+    "lint": "eslint --ext .js,.ts --ignore-path .gitignore ."
   },
   "repository": {
     "type": "git",
@@ -22,11 +25,15 @@
     "@notionhq/client": "^0.2.1",
     "@slack/bolt": "^3.4.1",
     "@types/node": "^16.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
     "dayjs": "^1.10.6",
     "dotenv": "^10.0.0",
-    "nodemon": "^2.0.9",
+    "eslint": "^7.30.0",
+    "prettier": "^2.3.2",
     "prisma": "2.26.0",
     "ts-node": "^10.0.0",
+    "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5"
   },
   "dependencies": {

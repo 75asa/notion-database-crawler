@@ -1,3 +1,7 @@
 node_modules
 .env
 yarn-error.log
+db
+data
+dist
+out
