@@ -11,31 +11,33 @@ generator client {
   // previewFeatures = ["mongodb"]
 }
 
-model Cluster {
-  id                String    @id @default(uuid())
-  lastFetchedAt     DateTime  @db.Timestamptz
-  // firstIntegratedAt DateTime @db.Date
-  firstIntegratedAt DateTime @db.Timetz()
-  // TODO: ISO8601 型を目指す
-  database          Database? @relation(fields: [databaseId], references: [id])
-  databaseId        String?
-}
+// model Cluster {
+//   id                String   @id @default(uuid())
+//   lastFetchedAt     DateTime @db.Timestamptz
+//   // firstIntegratedAt DateTime @db.Date
+//   firstIntegratedAt DateTime @db.Timetz
+//   // TODO: ISO8601 型を目指す
+//   database          Database @relation(fields: [databaseId], references: [id])
+//   databaseId        String
+// }
 
 model Database {
-  id           String   @id @default(uuid())
-  notionId     String   @unique
-  createdAt    DateTime
-  lastEditedAt DateTime
-  pages        Page[]
-  size         Int
-  cluster      Cluster?
+  id                String   @id @default(uuid())
+  notionId          String   @unique
+  createdAt         DateTime
+  lastEditedAt      DateTime
+  lastFetchedAt     DateTime @db.Timestamptz
+  firstIntegratedAt DateTime @db.Timetz
+  pages             Page[]
+  size              Int      @default(0)
+  // cluster           Cluster
 }
 
 model Page {
-  id         String    @id @default(uuid())
-  Database   Database? @relation(fields: [databaseId], references: [id])
-  databaseId String?
-  notionId   String    @unique
+  id         String   @id @default(uuid())
+  Database   Database @relation(fields: [databaseId], references: [id])
+  databaseId String
+  notionId   String   @unique
   createdAt  DateTime
   url        String
 }

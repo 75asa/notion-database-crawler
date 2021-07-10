@@ -1,0 +1,11 @@
+# NOTION_DATABASE_ID=b5fda7f3f4a14414902cccb27c17a7cc
+NOTION_KEY=secret_XXXXX
+
+# This text is inserted by `prisma init`:
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#using-environment-variables
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQL Server and SQLite.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL="postgresql://USER:PASS@HOST:PORT/DB_NAME"
