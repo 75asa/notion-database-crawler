@@ -60,7 +60,7 @@ const main = async () => {
       databaseDTO.size = pagesDTO.length;
 
       // Database に Page [] があり、 DB に保存してない場合
-      if (isFirstTime && databaseDTO.size) {
+      if (isFirstTime) {
         // 初期登録
         // TODO: 大量にある Page をどうするか検討
         const databaseCreatedResult = await prisma.database.create({
@@ -73,36 +73,41 @@ const main = async () => {
             size: databaseDTO.size,
           },
         });
-        const pageCreateInputValues = databaseDTO.pages.map(page => {
-          return {
-            databaseId: databaseCreatedResult.id,
-            notionId: page.notionId,
-            createdAt: page.createdAt,
-            url: page.url,
-          };
-        });
-        try {
-          await prisma.page.createMany({
-            data: pageCreateInputValues,
+        if (databaseDTO.size) {
+          const pageCreateInputValues = databaseDTO.pages.map(page => {
+            return {
+              databaseId: databaseCreatedResult.id,
+              notionId: page.notionId,
+              createdAt: page.createdAt,
+              url: page.url,
+            };
           });
-        } catch (e) {
-          console.error({ e });
-          throw e;
+          try {
+            await prisma.page.createMany({
+              data: pageCreateInputValues,
+            });
+          } catch (e) {
+            console.error({ e });
+            throw e;
+          }
         }
       } else if (hadStoredDatabase !== null) {
+        // database に紐づいたページを取得
         const hadStoredPage = await prisma.page.findMany({
           where: {
             databaseId: hadStoredDatabase.id,
           },
         });
         // 2回目以降なので差分を比較
+        // FIXME: resolve type: never
         const unstoredPages = databaseDTO.pages.reduce((acc, cur) => {
           const hadStored = hadStoredPage.some(storedPage => {
             storedPage.notionId === cur.notionId;
           });
           // DB に未保存の Page だけ
           if (hadStored) return acc;
-          cur!.databaseId = hadStoredDatabase.id;
+          cur.databaseId = hadStoredDatabase.id;
+          acc.push(cur);
           return acc;
         }, []);
         try {
