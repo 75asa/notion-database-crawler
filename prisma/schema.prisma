@@ -8,33 +8,22 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  // previewFeatures = ["mongodb"]
 }
-
-// model Cluster {
-//   id                String   @id @default(uuid())
-//   lastFetchedAt     DateTime @db.Timestamptz
-//   // firstIntegratedAt DateTime @db.Date
-//   firstIntegratedAt DateTime @db.Timetz
-//   // TODO: ISO8601 型を目指す
-//   database          Database @relation(fields: [databaseId], references: [id])
-//   databaseId        String
-// }
 
 model Database {
   id                String   @id @default(uuid())
   notionId          String   @unique
   createdAt         DateTime
   lastEditedAt      DateTime
-  lastFetchedAt     DateTime @db.Timestamptz
-  firstIntegratedAt DateTime @db.Timetz
+  lastFetchedAt     DateTime
+  firstIntegratedAt DateTime
   pages             Page[]
   size              Int      @default(0)
-  // cluster           Cluster
 }
 
 model Page {
   id         String   @id @default(uuid())
+  name       String?
   Database   Database @relation(fields: [databaseId], references: [id])
   databaseId String
   notionId   String   @unique
