@@ -2185,6 +2185,11 @@
   dependencies:
     "is-number" "^7.0.0"
 
+"toad-scheduler@^1.4.0":
+  "integrity" "sha512-jmkEQAqelTS5e/30VuYriZmdG7r0d6WKF2aOdkyH4L4MoqIF88fT4arHpVuzQz8LoW61uQmTrVMHRmQKKLZKcw=="
+  "resolved" "https://registry.npmjs.org/toad-scheduler/-/toad-scheduler-1.4.0.tgz"
+  "version" "1.4.0"
+
 "toidentifier@1.0.0":
   "integrity" "sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw=="
   "resolved" "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.0.tgz"

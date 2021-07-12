@@ -13,6 +13,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { PrismaClient } from "@prisma/client";
 import { DatabaseDTO, PageDTO } from "./types";
+import { AsyncTask, SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
 
 dayjs.extend(timezone);
 dayjs.extend(utc);
@@ -29,6 +30,7 @@ if (config) {
 const notion = new Client({ auth: process.env.NOTION_KEY });
 
 const main = async () => {
+  console.log("main:start");
   await prisma.$connect();
   // integration が取得可能な database (from Notion)
   const allNotionDatabases = await getAllDatabase();
@@ -100,7 +102,6 @@ const main = async () => {
               data: pageCreateInputValues,
             });
           } catch (e) {
-            console.error({ e });
             throw e;
           }
         }
@@ -138,7 +139,6 @@ const main = async () => {
               console.log(`新しいページは ${value.url}`);
             }
           } catch (e) {
-            console.error({ e });
             throw e;
           }
         }
@@ -151,6 +151,7 @@ const main = async () => {
       return result;
     })
   );
+  console.log("main:end");
 };
 
 // integration が取得可能な database を取得
@@ -194,7 +195,6 @@ const getAllPagesFromNotionDatabase = async (
     try {
       pages = (await notion.request(requestPayload)) as DatabasesQueryResponse;
     } catch (e) {
-      console.error(e);
       throw e;
     }
 
@@ -225,7 +225,6 @@ const getAllPagesFromNotionDatabase = async (
     }
   };
   await getPages();
-  console.log({ allPages });
   return allPages;
 };
 
@@ -235,17 +234,28 @@ export const isTitlePropertyValue = (
   return (propValue as TitlePropertyValue).type === "title";
 };
 
+export const parseISO8601 = (date: Date) => {
+  return dayjs(date).format();
+};
+
+
 // TODO: cron で1分ごと繰り返し？
-main();
+const scheduler = new ToadScheduler();
+const task = new AsyncTask(
+  "run main",
+  () => {
+    return main();
+  },
+  (err: Error) => {
+    throw err;
+  }
+);
+const job = new SimpleIntervalJob({ minutes: 1 }, task);
+
+scheduler.addSimpleIntervalJob(job);
 
 export const parseDate = (isoString: string) => {
   return dayjs(isoString).toDate();
   // return dayjs(isoString).tz('Asia/Tokyo').toDate();
 };
 
-export const parseISO8601 = (date: Date) => {
-  return dayjs(date).format();
-};
-
-// Run this method every 5 seconds (5000 milliseconds)
-setTimeout(main, 10000);
