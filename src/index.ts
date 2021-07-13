@@ -14,6 +14,8 @@ import utc from "dayjs/plugin/utc";
 import { PrismaClient } from "@prisma/client";
 import { DatabaseDTO, PageDTO } from "./types";
 import { AsyncTask, SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
+import { KnownBlock, WebClient } from "@slack/web-api";
+import { sendMessage } from "./slack";
 
 dayjs.extend(timezone);
 dayjs.extend(utc);
@@ -35,7 +37,7 @@ const main = async () => {
   // integration が取得可能な database (from Notion)
   const allNotionDatabases = await getAllDatabase();
   // database に紐づいてる Page (from Notion)
-  const contents = await Promise.all(
+  await Promise.all(
     allNotionDatabases.map(async databaseDTO => {
       const result: { id: string; lastFetchedAt: Date } = {
         id: "",
@@ -134,9 +136,20 @@ const main = async () => {
             await prisma.page.createMany({
               data: pageCreateInputValues,
             });
+            const slackClient = new WebClient(process.env.SLACK_BOT_TOKEN!);
             // Slack 通知
             for (const value of pageCreateInputValues) {
-              console.log(`新しいページは ${value.url}`);
+              const msg = `新しいページが投稿されました ${value.url}`;
+              const blocks: KnownBlock[] = [
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: msg,
+                  },
+                },
+              ];
+              sendMessage(msg, slackClient, blocks);
             }
           } catch (e) {
             throw e;
@@ -181,10 +194,10 @@ const getAllPagesFromNotionDatabase = async (
       path: `databases/${databaseId}/query`,
       method: "post",
       body: {
-        // 前回同期した時間以降にフィルター、時間がない場合は現在時刻
         filter: {
           property: "createdAt",
           created_time: {
+            // 前回同期した時間以降にフィルター
             on_or_after: parseISO8601(lastFetchedAt),
           },
         },
@@ -238,8 +251,10 @@ export const parseISO8601 = (date: Date) => {
   return dayjs(date).format();
 };
 
+export const parseDate = (isoString: string) => {
+  return dayjs(isoString).toDate();
+};
 
-// TODO: cron で1分ごと繰り返し？
 const scheduler = new ToadScheduler();
 const task = new AsyncTask(
   "run main",
@@ -253,9 +268,3 @@ const task = new AsyncTask(
 const job = new SimpleIntervalJob({ minutes: 1 }, task);
 
 scheduler.addSimpleIntervalJob(job);
-
-export const parseDate = (isoString: string) => {
-  return dayjs(isoString).toDate();
-  // return dayjs(isoString).tz('Asia/Tokyo').toDate();
-};
-

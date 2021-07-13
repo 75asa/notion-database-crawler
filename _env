@@ -9,3 +9,5 @@ NOTION_KEY=secret_XXXXX
 # See the documentation for all the connection string options: https://pris.ly/d/connection-strings
 
 DATABASE_URL="postgresql://USER:PASS@HOST:PORT/DB_NAME"
+SLACK_BOT_TOKEN=
+CHANNEL_NAME=t_nipppo

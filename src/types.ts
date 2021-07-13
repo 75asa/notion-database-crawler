@@ -13,6 +13,7 @@ export interface PageDTO {
   id?: string;
   databaseId?: string;
   createdAt: Date;
+  // lastEditedBy: 
   name?: string;
   url: string;
 }

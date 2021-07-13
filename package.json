@@ -25,7 +25,6 @@
   "homepage": "https://github.com/75asa/notion-nippo#readme",
   "devDependencies": {
     "@notionhq/client": "^0.2.1",
-    "@slack/bolt": "^3.4.1",
     "@types/node": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
@@ -40,6 +39,7 @@
   },
   "dependencies": {
     "@prisma/client": "2.26.0",
+    "@slack/web-api": "^6.2.4",
     "toad-scheduler": "^1.4.0"
   }
 }
