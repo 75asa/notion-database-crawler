@@ -1,6 +1,5 @@
 export interface DatabaseDTO {
-  id?: string;
-  notionId: string;
+  id: string;
   createdAt: Date;
   lastEditedAt: Date;
   lastFetchedAt?: Date;
@@ -9,11 +8,17 @@ export interface DatabaseDTO {
 }
 
 export interface PageDTO {
-  notionId: string;
-  id?: string;
+  id: string;
+  name?: string;
   databaseId?: string;
   createdAt: Date;
-  // lastEditedBy: 
-  name?: string;
+  lastEditedBy: UserDTO;
   url: string;
+}
+
+export interface UserDTO {
+  id: string;
+  name?: string;
+  avatarURL?: string;
+  email: string;
 }

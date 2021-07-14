@@ -2,23 +2,14 @@
 // npm install @notionhq/client
 import { Client } from "@notionhq/client";
 import { DatabasesQueryResponse } from "@notionhq/client/build/src/api-endpoints";
-import {
-  PropertyValue,
-  TitlePropertyValue,
-} from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import dotenv from "dotenv";
-import dayjs from "dayjs";
-import timezone from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
 import { PrismaClient } from "@prisma/client";
 import { DatabaseDTO, PageDTO } from "./types";
 import { AsyncTask, SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
 import { KnownBlock, WebClient } from "@slack/web-api";
 import { sendMessage } from "./slack";
-
-dayjs.extend(timezone);
-dayjs.extend(utc);
+import { isTitlePropertyValue, parseDate, parseISO8601 } from "./utils";
 
 const prisma = new PrismaClient();
 const config = dotenv.config().parsed;
@@ -45,7 +36,7 @@ const main = async () => {
       };
       const hadStoredDatabase = await prisma.database.findFirst({
         where: {
-          notionId: databaseDTO.notionId,
+          id: databaseDTO.id,
         },
         include: {
           pages: {},
@@ -68,7 +59,7 @@ const main = async () => {
         result.id = hadStoredDatabase.id;
       }
       const pagesDTO = await getAllPagesFromNotionDatabase(
-        databaseDTO.notionId,
+        databaseDTO.id,
         lastFetchedAt
       );
 
@@ -81,9 +72,9 @@ const main = async () => {
         // TODO: 大量にある Page をどうするか検討
         const databaseCreatedResult = await prisma.database.create({
           data: {
+            id: databaseDTO.id,
             lastFetchedAt,
             firstIntegratedAt,
-            notionId: databaseDTO.notionId,
             createdAt: databaseDTO.createdAt,
             lastEditedAt: databaseDTO.lastEditedAt,
             size: databaseDTO.size,
@@ -93,8 +84,8 @@ const main = async () => {
         if (databaseDTO.size) {
           const pageCreateInputValues = databaseDTO.pages.map(page => {
             return {
+              id: page.id,
               databaseId: databaseCreatedResult.id,
-              notionId: page.notionId,
               createdAt: page.createdAt,
               url: page.url,
             };
@@ -114,13 +105,13 @@ const main = async () => {
         const pageCreateInputValues = databaseDTO.pages
           .map(page => {
             const hadStored = hadStoredPages.some(storedPage => {
-              return storedPage.notionId === page.notionId;
+              return storedPage.id === page.id;
             });
             if (hadStored) return;
             page.databaseId = hadStoredDatabase.id;
             return {
+              id: page.id,
               databaseId: page.databaseId,
-              notionId: page.notionId,
               createdAt: page.createdAt,
               url: page.url,
               name: page?.name || "",
@@ -174,9 +165,9 @@ const getAllDatabase = async (): Promise<DatabaseDTO[]> => {
   });
   return searched.results.map(data => {
     return {
-      notionId: data.id,
-      createdAt: dayjs(data.created_time).toDate(),
-      lastEditedAt: dayjs(data.last_edited_time).toDate(),
+      id: data.id,
+      createdAt: parseDate(data.created_time),
+      lastEditedAt: parseDate(data.last_edited_time),
       pages: [],
       size: 0,
     };
@@ -216,6 +207,7 @@ const getAllPagesFromNotionDatabase = async (
       if (page.archived) continue;
       const propName = page.properties.Name;
       let name = "";
+      let lastEditedBy = 
       // タイトル含むか
       // TODO: TitleRichPropertyValue も考慮
       if (isTitlePropertyValue(propName)) {
@@ -226,9 +218,10 @@ const getAllPagesFromNotionDatabase = async (
       }
 
       allPages.push({
+        id: page.id,
         name,
-        notionId: page.id,
         createdAt: parseDate(page.created_time),
+        lastEditedBy: page.
         url: page.url,
       });
     }
@@ -239,20 +232,6 @@ const getAllPagesFromNotionDatabase = async (
   };
   await getPages();
   return allPages;
-};
-
-export const isTitlePropertyValue = (
-  propValue: PropertyValue
-): propValue is TitlePropertyValue => {
-  return (propValue as TitlePropertyValue).type === "title";
-};
-
-export const parseISO8601 = (date: Date) => {
-  return dayjs(date).format();
-};
-
-export const parseDate = (isoString: string) => {
-  return dayjs(isoString).toDate();
 };
 
 const scheduler = new ToadScheduler();
