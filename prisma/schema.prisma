@@ -23,11 +23,12 @@ model Database {
 model Page {
   id           String   @unique
   name         String?
-  Database     Database @relation(fields: [id], references: [id])
   createdAt    DateTime
-  lastEditedBy User     @relation(fields: [userId], references: [id])
   url          String
-  userId       String
+  Database     Database @relation(fields: [databaseId], references: [id])
+  databaseId   String
+  LastEditedBy User?    @relation(fields: [userId], references: [id])
+  userId       String?
 }
 
 model User {

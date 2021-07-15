@@ -10,9 +10,9 @@ export interface DatabaseDTO {
 export interface PageDTO {
   id: string;
   name?: string;
-  databaseId?: string;
+  databaseId: string;
   createdAt: Date;
-  lastEditedBy: UserDTO;
+  lastEditedBy?: UserDTO;
   url: string;
 }
 

@@ -1,15 +1,11 @@
 // Find the official Notion API client @ https://github.com/makenotion/notion-sdk-js/
 // npm install @notionhq/client
-import { Client } from "@notionhq/client";
-import { DatabasesQueryResponse } from "@notionhq/client/build/src/api-endpoints";
-import { RequestParameters } from "@notionhq/client/build/src/Client";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
-import { DatabaseDTO, PageDTO } from "./types";
+import { Prisma, PrismaClient, User } from "@prisma/client";
 import { AsyncTask, SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
 import { KnownBlock, WebClient } from "@slack/web-api";
-import { sendMessage } from "./slack";
-import { isTitlePropertyValue, parseDate, parseISO8601 } from "./utils";
+import { Slack } from "./slack";
+import { Notion } from "./notion";
 
 const prisma = new PrismaClient();
 const config = dotenv.config().parsed;
@@ -20,15 +16,16 @@ if (config) {
   }
 }
 
-const notion = new Client({ auth: process.env.NOTION_KEY });
-
 const main = async () => {
   console.log("main:start");
   await prisma.$connect();
+  const notionKey = process.env!.NOTION_KEY;
+  if (!notionKey) throw "Notion API Key not found";
+  const notion = new Notion(notionKey);
   // integration が取得可能な database (from Notion)
-  const allNotionDatabases = await getAllDatabase();
+  const allNotionDatabases = await notion.getAllDatabase();
   // database に紐づいてる Page (from Notion)
-  await Promise.all(
+  const allStoredDatabases = await Promise.all(
     allNotionDatabases.map(async databaseDTO => {
       const result: { id: string; lastFetchedAt: Date } = {
         id: "",
@@ -39,7 +36,11 @@ const main = async () => {
           id: databaseDTO.id,
         },
         include: {
-          pages: {},
+          pages: {
+            include: {
+              LastEditedBy: true,
+            },
+          },
         },
       });
       // 前回同期した時間で Notion Page をフィルタ
@@ -58,7 +59,7 @@ const main = async () => {
         isFirstTime = false;
         result.id = hadStoredDatabase.id;
       }
-      const pagesDTO = await getAllPagesFromNotionDatabase(
+      const pagesDTO = await notion.getAllPagesFromNotionDatabase(
         databaseDTO.id,
         lastFetchedAt
       );
@@ -68,9 +69,9 @@ const main = async () => {
 
       // Database に Page [] があり、 DB に保存してない場合
       if (isFirstTime) {
+        result.id = databaseDTO.id;
         // 初期登録
-        // TODO: 大量にある Page をどうするか検討
-        const databaseCreatedResult = await prisma.database.create({
+        await prisma.database.create({
           data: {
             id: databaseDTO.id,
             lastFetchedAt,
@@ -80,27 +81,64 @@ const main = async () => {
             size: databaseDTO.size,
           },
         });
-        result.id = databaseCreatedResult.id;
         if (databaseDTO.size) {
-          const pageCreateInputValues = databaseDTO.pages.map(page => {
-            return {
-              id: page.id,
-              databaseId: databaseCreatedResult.id,
-              createdAt: page.createdAt,
-              url: page.url,
-            };
-          });
-          try {
-            await prisma.page.createMany({
-              data: pageCreateInputValues,
-            });
-          } catch (e) {
-            throw e;
+          for (const page of databaseDTO.pages) {
+            if (page.lastEditedBy) {
+              prisma.page.create({
+                data: {
+                  id: page.id,
+                  name: page.name,
+                  createdAt: page.createdAt,
+                  url: page.url,
+                  Database: {
+                    connect: {
+                      id: page.databaseId,
+                    },
+                  },
+                  LastEditedBy: {
+                    connectOrCreate: {
+                      where: {
+                        id: page.id,
+                      },
+                      create: {
+                        id: page.lastEditedBy.id,
+                        name: page.lastEditedBy.name!,
+                        avatarURL: page.lastEditedBy.avatarURL!,
+                        email: page.lastEditedBy.email!,
+                      },
+                    },
+                  },
+                },
+                include: {
+                  Database: true,
+                  LastEditedBy: true,
+                },
+              });
+            } else {
+              prisma.page.create({
+                data: {
+                  id: page.id,
+                  name: page.name,
+                  createdAt: page.createdAt,
+                  url: page.url,
+                  Database: {
+                    connect: {
+                      id: page.databaseId,
+                    },
+                  },
+                },
+                include: {
+                  Database: true,
+                },
+              });
+            }
           }
         }
       } else if (hadStoredDatabase !== null) {
         // database に紐づいたページを取得
         const hadStoredPages = hadStoredDatabase.pages;
+
+        const userMap = new Map<string, User>();
         // 2回目以降なので差分を比較
         const pageCreateInputValues = databaseDTO.pages
           .map(page => {
@@ -108,26 +146,54 @@ const main = async () => {
               return storedPage.id === page.id;
             });
             if (hadStored) return;
-            page.databaseId = hadStoredDatabase.id;
-            return {
+            const result: Prisma.PageCreateManyInput = {
               id: page.id,
+              name: page?.name || "",
               databaseId: page.databaseId,
               createdAt: page.createdAt,
               url: page.url,
-              name: page?.name || "",
             };
+            if (page.lastEditedBy) {
+              try {
+                prisma.user.upsert({
+                  where: {
+                    id: page.lastEditedBy.id,
+                  },
+                  update: {
+                    name: page.lastEditedBy.name,
+                    avatarURL: page.lastEditedBy.avatarURL,
+                    email: page.lastEditedBy.email,
+                  },
+                  create: {
+                    id: page.lastEditedBy.id,
+                    name: page.lastEditedBy.name!,
+                    avatarURL: page.lastEditedBy.avatarURL!,
+                    email: page.lastEditedBy.email,
+                  },
+                });
+                result.userId = page.lastEditedBy.id;
+                userMap.set(page.lastEditedBy.id, {
+                  id: page.lastEditedBy.id,
+                  name: page.lastEditedBy.name!,
+                  avatarURL: page.lastEditedBy.avatarURL!,
+                  email: page.lastEditedBy.email,
+                });
+              } catch (err) {
+                throw err;
+              }
+            }
+            return result;
           })
-          .filter(
-            (item): item is Exclude<typeof item, undefined> =>
-              item !== undefined
-          );
+          .filter((item): item is Exclude<typeof item, undefined> => {
+            return item !== undefined;
+          });
 
         if (pageCreateInputValues.length) {
           try {
             await prisma.page.createMany({
               data: pageCreateInputValues,
             });
-            const slackClient = new WebClient(process.env.SLACK_BOT_TOKEN!);
+            const slackClient = new Slack(;
             // Slack 通知
             for (const value of pageCreateInputValues) {
               const msg = `新しいページが投稿されました ${value.url}`;
@@ -140,7 +206,11 @@ const main = async () => {
                   },
                 },
               ];
-              sendMessage(msg, slackClient, blocks);
+              if (value.userId) {
+                const user = userMap.get(value.userId);
+                // TODO: user
+              }
+              // sendMessage(msg, slackClient, blocks);
             }
           } catch (e) {
             throw e;
@@ -149,89 +219,14 @@ const main = async () => {
         // Database 更新
         await prisma.database.update({
           where: { id: result.id },
-          data: { lastFetchedAt: result.lastFetchedAt },
+          data: { lastFetchedAt: result.lastFetchedAt, size: databaseDTO.size },
         });
       }
       return result;
     })
   );
+  await prisma.database.updateMany({ where: {}, data: {} });
   console.log("main:end");
-};
-
-// integration が取得可能な database を取得
-const getAllDatabase = async (): Promise<DatabaseDTO[]> => {
-  const searched = await notion.search({
-    filter: { value: "database", property: "object" },
-  });
-  return searched.results.map(data => {
-    return {
-      id: data.id,
-      createdAt: parseDate(data.created_time),
-      lastEditedAt: parseDate(data.last_edited_time),
-      pages: [],
-      size: 0,
-    };
-  });
-};
-
-const getAllPagesFromNotionDatabase = async (
-  databaseId: string,
-  lastFetchedAt: Date
-) => {
-  let allPages: PageDTO[] = [];
-
-  const getPages = async (cursor?: string | null) => {
-    const requestPayload: RequestParameters = {
-      path: `databases/${databaseId}/query`,
-      method: "post",
-      body: {
-        filter: {
-          property: "createdAt",
-          created_time: {
-            // 前回同期した時間以降にフィルター
-            on_or_after: parseISO8601(lastFetchedAt),
-          },
-        },
-      },
-    };
-    if (cursor) requestPayload.body = { start_cursor: cursor };
-    let pages = null;
-    try {
-      pages = (await notion.request(requestPayload)) as DatabasesQueryResponse;
-    } catch (e) {
-      throw e;
-    }
-
-    for (const page of pages.results) {
-      // TODO: 削除ページどうするか検討
-      if (page.archived) continue;
-      const propName = page.properties.Name;
-      let name = "";
-      let lastEditedBy = 
-      // タイトル含むか
-      // TODO: TitleRichPropertyValue も考慮
-      if (isTitlePropertyValue(propName)) {
-        name = propName.title.reduce((acc, cur) => {
-          if (!("plain_text" in cur)) return acc;
-          return (acc += ` ${cur.plain_text}`);
-        }, "");
-      }
-
-      allPages.push({
-        id: page.id,
-        name,
-        createdAt: parseDate(page.created_time),
-        lastEditedBy: page.
-        url: page.url,
-      });
-    }
-    if (pages.has_more) {
-      const next_cursor = pages.next_cursor;
-      await getPages(next_cursor);
-    }
-  };
-  await getPages();
-  return allPages;
 };
 
 const scheduler = new ToadScheduler();
