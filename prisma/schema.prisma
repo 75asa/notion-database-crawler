@@ -11,8 +11,7 @@ generator client {
 }
 
 model Database {
-  id                String   @id @default(uuid())
-  notionId          String   @unique
+  id                String   @unique
   createdAt         DateTime
   lastEditedAt      DateTime
   lastFetchedAt     DateTime
@@ -22,11 +21,20 @@ model Database {
 }
 
 model Page {
-  id         String   @id @default(uuid())
-  name       String?
-  Database   Database @relation(fields: [databaseId], references: [id])
-  databaseId String
-  notionId   String   @unique
-  createdAt  DateTime
-  url        String
+  id           String   @unique
+  name         String?
+  createdAt    DateTime
+  url          String
+  Database     Database @relation(fields: [databaseId], references: [id])
+  databaseId   String
+  LastEditedBy User?    @relation(fields: [userId], references: [id])
+  userId       String?
+}
+
+model User {
+  id        String @unique
+  name      String
+  avatarURL String
+  email     String
+  Page      Page[]
 }

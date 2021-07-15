@@ -9,7 +9,7 @@
       "preLaunchTask": "Compile TypeScript",
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
-      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     }
   ]
 }
