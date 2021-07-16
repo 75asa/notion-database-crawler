@@ -12,6 +12,7 @@ generator client {
 
 model Database {
   id                String   @unique
+  name              String?
   createdAt         DateTime
   lastEditedAt      DateTime
   lastFetchedAt     DateTime
@@ -32,9 +33,9 @@ model Page {
 }
 
 model User {
-  id        String @unique
+  id        String  @unique
   name      String
   avatarURL String
-  email     String
+  email     String?
   Page      Page[]
 }

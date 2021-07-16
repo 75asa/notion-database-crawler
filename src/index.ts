@@ -2,8 +2,12 @@
 // npm install @notionhq/client
 import dotenv from "dotenv";
 import { Prisma, PrismaClient, User } from "@prisma/client";
-import { AsyncTask, SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
-import { KnownBlock, WebClient } from "@slack/web-api";
+import {
+  AsyncTask,
+  SimpleIntervalJob,
+  SimpleIntervalSchedule,
+  ToadScheduler,
+} from "toad-scheduler";
 import { Slack } from "./slack";
 import { Notion } from "./notion";
 
@@ -74,6 +78,7 @@ const main = async () => {
         await prisma.database.create({
           data: {
             id: databaseDTO.id,
+            name: databaseDTO.name,
             lastFetchedAt,
             firstIntegratedAt,
             createdAt: databaseDTO.createdAt,
@@ -153,34 +158,34 @@ const main = async () => {
               createdAt: page.createdAt,
               url: page.url,
             };
-            if (page.lastEditedBy) {
-              try {
-                prisma.user.upsert({
-                  where: {
-                    id: page.lastEditedBy.id,
-                  },
-                  update: {
-                    name: page.lastEditedBy.name,
-                    avatarURL: page.lastEditedBy.avatarURL,
-                    email: page.lastEditedBy.email,
-                  },
-                  create: {
-                    id: page.lastEditedBy.id,
-                    name: page.lastEditedBy.name!,
-                    avatarURL: page.lastEditedBy.avatarURL!,
-                    email: page.lastEditedBy.email,
-                  },
-                });
-                result.userId = page.lastEditedBy.id;
-                userMap.set(page.lastEditedBy.id, {
-                  id: page.lastEditedBy.id,
-                  name: page.lastEditedBy.name!,
-                  avatarURL: page.lastEditedBy.avatarURL!,
-                  email: page.lastEditedBy.email,
-                });
-              } catch (err) {
-                throw err;
-              }
+            if (!page.lastEditedBy) return result;
+            const lastEditedBy = page.lastEditedBy;
+            try {
+              prisma.user.upsert({
+                where: {
+                  id: lastEditedBy.id,
+                },
+                update: {
+                  name: lastEditedBy.name,
+                  avatarURL: lastEditedBy.avatarURL,
+                  email: lastEditedBy.email,
+                },
+                create: {
+                  id: lastEditedBy.id,
+                  name: lastEditedBy.name!,
+                  avatarURL: lastEditedBy.avatarURL!,
+                  email: lastEditedBy.email,
+                },
+              });
+              result.userId = lastEditedBy.id;
+              userMap.set(lastEditedBy.id, {
+                id: lastEditedBy.id,
+                name: lastEditedBy.name!,
+                avatarURL: lastEditedBy.avatarURL!,
+                email: lastEditedBy?.email || null,
+              });
+            } catch (err) {
+              throw err;
             }
             return result;
           })
@@ -193,24 +198,24 @@ const main = async () => {
             await prisma.page.createMany({
               data: pageCreateInputValues,
             });
-            const slackClient = new Slack(;
+            const slackClient = new Slack();
             // Slack 通知
             for (const value of pageCreateInputValues) {
-              const msg = `新しいページが投稿されました ${value.url}`;
-              const blocks: KnownBlock[] = [
-                {
-                  type: "section",
-                  text: {
-                    type: "mrkdwn",
-                    text: msg,
-                  },
-                },
-              ];
+              const databaseName = hadStoredDatabase.name || "";
+              const { name, url, createdAt } = value;
               if (value.userId) {
                 const user = userMap.get(value.userId);
-                // TODO: user
+                slackClient.postMessage({
+                  databaseName,
+                  page: { name, url, createdAt },
+                  user,
+                });
+              } else {
+                slackClient.postMessage({
+                  databaseName,
+                  page: { name, url, createdAt },
+                });
               }
-              // sendMessage(msg, slackClient, blocks);
             }
           } catch (e) {
             throw e;
@@ -239,6 +244,7 @@ const task = new AsyncTask(
     throw err;
   }
 );
-const job = new SimpleIntervalJob({ minutes: 1 }, task);
+const simpleIntervalSchedule: SimpleIntervalSchedule = { seconds: 30 };
+const job = new SimpleIntervalJob(simpleIntervalSchedule, task);
 
 scheduler.addSimpleIntervalJob(job);

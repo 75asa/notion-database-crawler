@@ -1,5 +1,6 @@
 import { Client } from "@notionhq/client/build/src";
 import { DatabasesQueryResponse } from "@notionhq/client/build/src/api-endpoints";
+import { RichText } from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { DatabaseDTO, PageDTO } from "./types";
 import {
@@ -15,14 +16,23 @@ export class Notion {
     this.notion = new Client({ auth: authKey });
   }
 
+  private getName(titleList: RichText[]) {
+    return titleList.reduce((acc, cur) => {
+      if (!("plain_text" in cur)) return acc;
+      return (acc += ` ${cur.plain_text}`);
+    }, "");
+  }
+
   // integration が取得可能な database を取得
   async getAllDatabase(): Promise<DatabaseDTO[]> {
     const searched = await this.notion.search({
       filter: { value: "database", property: "object" },
     });
     return searched.results.map(data => {
+      const name = data.object === "database" ? this.getName(data.title) : "";
       return {
         id: data.id,
+        name,
         createdAt: parseDate(data.created_time),
         lastEditedAt: parseDate(data.last_edited_time),
         pages: [],
@@ -40,7 +50,8 @@ export class Notion {
         method: "post",
         body: {
           filter: {
-            property: "createdAt",
+            // property: "CreatedAt",
+            property: process.env.NOTION_CREATED_AT_PROP_NAME || "CreatedAt",
             created_time: {
               // 前回同期した時間以降にフィルター
               on_or_after: parseISO8601(lastFetchedAt),
@@ -62,17 +73,15 @@ export class Notion {
         // TODO: 削除ページどうするか検討
         if (page.archived) continue;
         const propName = page.properties?.Name;
-        const propLastEditedBy = page.properties?.LastEditedBy;
-        let name = "";
+        const propLastEditedBy =
+          page.properties[
+            process.env.NOTION_LAST_EDITED_BY_PROP_NAME || "LastEditedBy"
+          ];
+        let name = isTitlePropertyValue(propName)
+          ? this.getName(propName.title)
+          : "";
         let lastEditedBy;
         // タイトル含むか
-        // TODO: TitleRichPropertyValue も考慮
-        if (isTitlePropertyValue(propName)) {
-          name = propName.title.reduce((acc, cur) => {
-            if (!("plain_text" in cur)) return acc;
-            return (acc += ` ${cur.plain_text}`);
-          }, "");
-        }
 
         if (isLastEditedByPropertyValue(propLastEditedBy)) {
           const user = propLastEditedBy.last_edited_by;
@@ -82,6 +91,12 @@ export class Notion {
               name: user!.name,
               avatarURL: user!.avatar_url,
               email: user.person!.email,
+            };
+          } else if (user.type === "bot") {
+            lastEditedBy = {
+              id: user.id,
+              name: user!.name,
+              avatarURL: user!.avatar_url,
             };
           }
         }

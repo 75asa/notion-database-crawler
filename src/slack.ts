@@ -4,51 +4,41 @@ import {
   KnownBlock,
   WebClient,
 } from "@slack/web-api";
+import { PostMessageArg } from "./types";
 
 export class Slack {
   private client;
-  private message;
-  private blocks;
-  constructor(
-    message: string,
-    pageCreateManyInput: Prisma.PageCreateManyInput,
-    user?: User
-  ) {
+  constructor() {
     this.client = this.init();
-    this.message = message;
-    this.blocks = this.makeBlock(pageCreateManyInput, user);
   }
 
-  init() {
+  private init() {
     const token = process.env.SLACK_BOT_TOKEN;
     if (!token) throw "SLACK_BOT_TOKEN not found";
     return new WebClient(token);
   }
 
-  private makeBlock(
-    pageCreateManyInput: Prisma.PageCreateManyInput,
-    user?: User
-  ) {
+  async postMessage(arg: PostMessageArg) {
+    const text = `新しいページが投稿されました`;
     const blocks: KnownBlock[] = [
       {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: this.message,
+          text,
         },
       },
     ];
-    return blocks;
-  }
-
-  async sendMessage() {
     const msgOption: ChatPostMessageArguments = {
       channel: process.env.CHANNEL_NAME!,
-      as_user: true,
-      icon_url: "user.avatarURL",
-      text: this.message,
-      blocks: this.blocks,
+      text,
+      blocks: blocks,
     };
+
+    if (arg.user) {
+      msgOption.as_user = true;
+      msgOption.icon_url = arg.user.avatarURL;
+    }
     await this.client.chat.postMessage(msgOption);
   }
 }
