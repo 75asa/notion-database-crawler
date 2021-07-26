@@ -1,9 +1,9 @@
-import { Prisma, User } from "@prisma/client";
 import {
   ChatPostMessageArguments,
   KnownBlock,
   WebClient,
 } from "@slack/web-api";
+import { Config } from "./Config";
 import { PostMessageArg } from "./types";
 
 export class Slack {
@@ -13,13 +13,11 @@ export class Slack {
   }
 
   private init() {
-    const token = process.env.SLACK_BOT_TOKEN;
-    if (!token) throw "SLACK_BOT_TOKEN not found";
-    return new WebClient(token);
+    return new WebClient(Config.Slack.BOT_TOKEN);
   }
 
   async postMessage(arg: PostMessageArg) {
-    const text = `新しいページが投稿されました`;
+    const text = `${arg.databaseName} に新しいページ: <${arg.page.url}|${arg.page.name}> が投稿されました`;
     const blocks: KnownBlock[] = [
       {
         type: "section",
@@ -30,7 +28,7 @@ export class Slack {
       },
     ];
     const msgOption: ChatPostMessageArguments = {
-      channel: process.env.CHANNEL_NAME!,
+      channel: Config.Slack.CHANNEL_NAME,
       text,
       blocks: blocks,
     };
