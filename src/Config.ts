@@ -18,4 +18,6 @@ export namespace Config {
     export const LAST_EDITED_BY_PROP_NAME =
       process.env.NOTION_LAST_EDITED_BY_PROP_NAME || "LastEditedBy";
   }
+  export const JOB_INTERVAL_SECONDS =
+    Number(process.env.JOB_INTERVAL_SECONDS) || 60;
 }

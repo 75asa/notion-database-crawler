@@ -187,4 +187,4 @@ const main = async () => {
 };
 
 const job = new Scheduler(main);
-job.setInterval({ seconds: 10 });
+job.setInterval({ seconds: Config.JOB_INTERVAL_SECONDS });
