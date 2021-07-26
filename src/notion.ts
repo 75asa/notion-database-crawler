@@ -2,6 +2,7 @@ import { Client } from "@notionhq/client/build/src";
 import { DatabasesQueryResponse } from "@notionhq/client/build/src/api-endpoints";
 import { RichText } from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
+import { Config } from "./Config";
 import { DatabaseDTO, PageDTO } from "./types";
 import {
   isLastEditedByPropertyValue,
@@ -19,7 +20,7 @@ export class Notion {
   private getName(titleList: RichText[]) {
     return titleList.reduce((acc, cur) => {
       if (!("plain_text" in cur)) return acc;
-      return (acc += ` ${cur.plain_text}`);
+      return (acc += (acc.length ? " " : "") + cur.plain_text);
     }, "");
   }
 
@@ -51,7 +52,7 @@ export class Notion {
         body: {
           filter: {
             // property: "CreatedAt",
-            property: process.env.NOTION_CREATED_AT_PROP_NAME || "CreatedAt",
+            property: Config.Notion.CREATED_AT_PROP_NAME,
             created_time: {
               // 前回同期した時間以降にフィルター
               on_or_after: parseISO8601(lastFetchedAt),
@@ -74,9 +75,7 @@ export class Notion {
         if (page.archived) continue;
         const propName = page.properties?.Name;
         const propLastEditedBy =
-          page.properties[
-            process.env.NOTION_LAST_EDITED_BY_PROP_NAME || "LastEditedBy"
-          ];
+          page.properties[Config.Notion.LAST_EDITED_BY_PROP_NAME];
         let name = isTitlePropertyValue(propName)
           ? this.getName(propName.title)
           : "";
