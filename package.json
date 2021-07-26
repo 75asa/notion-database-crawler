@@ -27,6 +27,7 @@
     "migrate": "yarn prisma migrate dev",
     "migrate:reset": "yarn prisma migrate reset",
     "migrate:deploy": "yarn prisma migrate deploy",
+    "studio": "yarn prisma studio",
     "deploy": "tsc . && node dist/index.js"
   },
   "dependencies": {
@@ -45,7 +46,7 @@
     "eslint": "^7.30.0",
     "jest": "^27.0.6",
     "prettier": "^2.3.2",
-    "prisma": "2.26.0",
+    "prisma": "^2.27.0",
     "ts-jest": "^27.0.3",
     "ts-node": "^10.0.0",
     "ts-node-dev": "^1.1.8",

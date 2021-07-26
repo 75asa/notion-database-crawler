@@ -1,95 +1,84 @@
 // Find the official Notion API client @ https://github.com/makenotion/notion-sdk-js/
 // npm install @notionhq/client
-import dotenv from "dotenv";
 import { Prisma, PrismaClient, User } from "@prisma/client";
-import {
-  AsyncTask,
-  SimpleIntervalJob,
-  SimpleIntervalSchedule,
-  ToadScheduler,
-} from "toad-scheduler";
-import { Slack } from "./slack";
-import { Notion } from "./notion";
+import { Slack } from "./Slack";
+import { Notion } from "./Notion";
+import { UserRepository } from "./repository/UserRepository";
+import { Scheduler } from "./Scheduler";
+import { Config } from "./Config";
+import { DatabaseRepository } from "./repository/DatabaseRepository";
+import { MainUseCase } from "./UseCases/main";
+import { DatabaseService } from "./service/DatabaseService";
 
 const prisma = new PrismaClient();
-const config = dotenv.config().parsed;
-
-if (config) {
-  for (const key in config) {
-    process.env[key] = config[key];
-  }
-}
 
 const main = async () => {
   console.log("main:start");
   await prisma.$connect();
-  const notionKey = process.env!.NOTION_KEY;
-  if (!notionKey) throw "Notion API Key not found";
-  const notion = new Notion(notionKey);
+  const notion = new Notion(Config.Notion.KEY);
   // integration が取得可能な database (from Notion)
   const allNotionDatabases = await notion.getAllDatabase();
   // database に紐づいてる Page (from Notion)
-  const allStoredDatabases = await Promise.all(
-    allNotionDatabases.map(async databaseDTO => {
-      const result: { id: string; lastFetchedAt: Date } = {
-        id: "",
-        lastFetchedAt: new Date(),
+  await Promise.all(
+    allNotionDatabases.map(async notionDatabase => {
+      // メインのユースケースをinvoke
+      // await new MainUseCase(notionDatabase, databaseRepo).invoke();
+      const result: Prisma.DatabaseUpdateArgs = {
+        data: {
+          lastFetchedAt: new Date(),
+          size: 0,
+          lastEditedAt: notionDatabase.last_edited_time,
+        },
+        where: { id: notionDatabase.id },
       };
-      const hadStoredDatabase = await prisma.database.findFirst({
-        where: {
-          id: databaseDTO.id,
-        },
-        include: {
-          pages: {
-            include: {
-              LastEditedBy: true,
-            },
-          },
-        },
-      });
-      // 前回同期した時間で Notion Page をフィルタ
-      const now = new Date();
-      let lastFetchedAt = now;
-      let firstIntegratedAt = now;
-      let isFirstTime = true;
-      // 同期時間を記録
-      result.lastFetchedAt = now;
 
+      const databaseService = new DatabaseService(
+        notionDatabase,
+        new DatabaseRepository()
+      );
+      const initResult = await databaseService.init();
+      const hadStoredDatabaseIncludeAllRelations =
+        await databaseRepo.findStoredDatabaseIncludeAllRelations(
+          notionDatabase.id
+        );
+      let isFirstTime = true;
+
+      // TODO: UseCase 化
       // DB保存済みの場合
-      if (hadStoredDatabase) {
+      if (hadStoredDatabaseIncludeAllRelations) {
         // TODO: 型情報みる
-        lastFetchedAt = hadStoredDatabase.lastFetchedAt;
-        firstIntegratedAt = hadStoredDatabase.firstIntegratedAt;
+        result.data.lastFetchedAt =
+          hadStoredDatabaseIncludeAllRelations.lastFetchedAt;
         isFirstTime = false;
-        result.id = hadStoredDatabase.id;
+        result.data.id = hadStoredDatabaseIncludeAllRelations.id;
       }
+      // 前回同期した時間で Notion Page をフィルタ
       const pagesDTO = await notion.getAllPagesFromNotionDatabase(
-        databaseDTO.id,
-        lastFetchedAt
+        notionDatabase.id,
+        result.data.lastFetchedAt
       );
 
-      databaseDTO.pages = pagesDTO;
-      databaseDTO.size = pagesDTO.length;
+      notionDatabase.pages = pagesDTO;
+      notionDatabase.size = pagesDTO.length;
 
       // Database に Page [] があり、 DB に保存してない場合
       if (isFirstTime) {
-        result.id = databaseDTO.id;
+        databaseFinallyUpdateArg.id = notionDatabase.id;
         // 初期登録
         await prisma.database.create({
           data: {
-            id: databaseDTO.id,
-            name: databaseDTO.name,
-            lastFetchedAt,
-            firstIntegratedAt,
-            createdAt: databaseDTO.createdAt,
-            lastEditedAt: databaseDTO.lastEditedAt,
-            size: databaseDTO.size,
+            id: notionDatabase.id,
+            name: notionDatabase.name,
+            lastFetchedAt: notionDatabase.lastFetchedAt!,
+            createdAt: notionDatabase.createdAt,
+            lastEditedAt: notionDatabase.lastEditedAt,
+            size: notionDatabase.size,
           },
         });
-        if (databaseDTO.size) {
-          for (const page of databaseDTO.pages) {
+        if (notionDatabase.size) {
+          for (const page of notionDatabase.pages) {
             if (page.lastEditedBy) {
-              prisma.page.create({
+              await prisma.page.create({
                 data: {
                   id: page.id,
                   name: page.name,
@@ -120,7 +109,7 @@ const main = async () => {
                 },
               });
             } else {
-              prisma.page.create({
+              await prisma.page.create({
                 data: {
                   id: page.id,
                   name: page.name,
@@ -139,13 +128,13 @@ const main = async () => {
             }
           }
         }
-      } else if (hadStoredDatabase !== null) {
+      } else if (hadStoredDatabaseIncludeAllRelations !== null) {
         // database に紐づいたページを取得
-        const hadStoredPages = hadStoredDatabase.pages;
+        const hadStoredPages = hadStoredDatabaseIncludeAllRelations.pages;
 
         const userMap = new Map<string, User>();
         // 2回目以降なので差分を比較
-        const pageCreateInputValues = databaseDTO.pages
+        const pageCreateInputValues = notionDatabase.pages
           .map(page => {
             const hadStored = hadStoredPages.some(storedPage => {
               return storedPage.id === page.id;
@@ -178,12 +167,14 @@ const main = async () => {
                 },
               });
               result.userId = lastEditedBy.id;
-              userMap.set(lastEditedBy.id, {
-                id: lastEditedBy.id,
-                name: lastEditedBy.name!,
-                avatarURL: lastEditedBy.avatarURL!,
-                email: lastEditedBy?.email || null,
-              });
+              // userMap.set(lastEditedBy.id, {
+              //   id: lastEditedBy.id,
+              //   name: lastEditedBy.name!,
+              //   avatarURL: lastEditedBy.avatarURL!,
+              //   email: lastEditedBy?.email || null,
+              // });
+              const user = new UserRepository(lastEditedBy);
+              userMap.set(lastEditedBy.id);
             } catch (err) {
               throw err;
             }
@@ -201,7 +192,8 @@ const main = async () => {
             const slackClient = new Slack();
             // Slack 通知
             for (const value of pageCreateInputValues) {
-              const databaseName = hadStoredDatabase.name || "";
+              const databaseName =
+                hadStoredDatabaseIncludeAllRelations.name || "";
               const { name, url, createdAt } = value;
               if (value.userId) {
                 const user = userMap.get(value.userId);
@@ -222,29 +214,20 @@ const main = async () => {
           }
         }
         // Database 更新
+        await databaseRepo.update(databaseFinallyUpdateArg);
         await prisma.database.update({
-          where: { id: result.id },
-          data: { lastFetchedAt: result.lastFetchedAt, size: databaseDTO.size },
+          where: { id: databaseFinallyUpdateArg.id },
+          data: {
+            lastFetchedAt: databaseFinallyUpdateArg.lastFetchedAt,
+            size: notionDatabase.size,
+          },
         });
       }
-      return result;
+      return databaseFinallyUpdateArg;
     })
   );
-  await prisma.database.updateMany({ where: {}, data: {} });
   console.log("main:end");
 };
 
-const scheduler = new ToadScheduler();
-const task = new AsyncTask(
-  "run main",
-  () => {
-    return main();
-  },
-  (err: Error) => {
-    throw err;
-  }
-);
-const simpleIntervalSchedule: SimpleIntervalSchedule = { seconds: 30 };
-const job = new SimpleIntervalJob(simpleIntervalSchedule, task);
-
-scheduler.addSimpleIntervalJob(job);
+const job = new Scheduler(main);
+job.setInterval({ seconds: 10 });

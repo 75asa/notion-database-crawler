@@ -1,14 +1,18 @@
 import { Client } from "@notionhq/client/build/src";
 import { DatabasesQueryResponse } from "@notionhq/client/build/src/api-endpoints";
-import { RichText } from "@notionhq/client/build/src/api-types";
-import { RequestParameters } from "@notionhq/client/build/src/Client";
-import { DatabaseDTO, PageDTO } from "./types";
 import {
-  isLastEditedByPropertyValue,
-  isTitlePropertyValue,
-  parseDate,
-  parseISO8601,
-} from "./utils";
+  Database,
+  LastEditedByPropertyValue,
+  Page,
+  PropertyValue,
+  RichText,
+  TitlePropertyValue,
+} from "@notionhq/client/build/src/api-types";
+import { RequestParameters } from "@notionhq/client/build/src/Client";
+import { Config } from "./Config";
+import { DatabaseDTO, PageDTO } from "./types";
+import { UserRepository } from "./repository/UserRepository";
+import { parseDate, parseISO8601 } from "./utils";
 
 export class Notion {
   private notion;
@@ -23,26 +27,43 @@ export class Notion {
     }, "");
   }
 
+  private isTitlePropertyValue = (
+    propVal: PropertyValue
+  ): propVal is TitlePropertyValue => {
+    // TODO: propValue.title === RichText[] も入れたい
+    return (propVal as TitlePropertyValue).type === "title";
+  };
+
+  private isLastEditedByPropertyValue = (
+    propVal: PropertyValue
+  ): propVal is LastEditedByPropertyValue => {
+    return (propVal as LastEditedByPropertyValue).type === "last_edited_by";
+  };
+
+  // private isTitleInputPropertyValue = (
+  //   propValue: PropertyValue
+  // ): propValue is TitleInputPropertyValue => {
+  //   return (
+  //     (propValue as TitleInputPropertyValue).type === "title" &&
+  //     // TODO: こうしたい
+  //     (propValue as TitleInputPropertyValue).title === RichTextInput[]
+  //   );
+  // };
+
   // integration が取得可能な database を取得
-  async getAllDatabase(): Promise<DatabaseDTO[]> {
+  async getAllDatabase(): Promise<Database[]> {
     const searched = await this.notion.search({
       filter: { value: "database", property: "object" },
     });
-    return searched.results.map(data => {
-      const name = data.object === "database" ? this.getName(data.title) : "";
-      return {
-        id: data.id,
-        name,
-        createdAt: parseDate(data.created_time),
-        lastEditedAt: parseDate(data.last_edited_time),
-        pages: [],
-        size: 0,
-      };
-    });
+    return searched.results.filter(
+      (result): result is Exclude<typeof result, Page> => {
+        return result.object === "database";
+      }
+    );
   }
 
   async getAllPagesFromNotionDatabase(databaseId: string, lastFetchedAt: Date) {
-    let allPages: PageDTO[] = [];
+    let allPages: Page[] = [];
 
     const getPages = async (cursor?: string | null) => {
       const requestPayload: RequestParameters = {
@@ -50,8 +71,7 @@ export class Notion {
         method: "post",
         body: {
           filter: {
-            // property: "CreatedAt",
-            property: process.env.NOTION_CREATED_AT_PROP_NAME || "CreatedAt",
+            property: Config.Notion.CREATED_AT_PROP_NAME,
             created_time: {
               // 前回同期した時間以降にフィルター
               on_or_after: parseISO8601(lastFetchedAt),
@@ -72,43 +92,7 @@ export class Notion {
       for (const page of pages.results) {
         // TODO: 削除ページどうするか検討
         if (page.archived) continue;
-        const propName = page.properties?.Name;
-        const propLastEditedBy =
-          page.properties[
-            process.env.NOTION_LAST_EDITED_BY_PROP_NAME || "LastEditedBy"
-          ];
-        let name = isTitlePropertyValue(propName)
-          ? this.getName(propName.title)
-          : "";
-        let lastEditedBy;
-        // タイトル含むか
-
-        if (isLastEditedByPropertyValue(propLastEditedBy)) {
-          const user = propLastEditedBy.last_edited_by;
-          if (user.type === "person") {
-            lastEditedBy = {
-              id: user.id,
-              name: user!.name,
-              avatarURL: user!.avatar_url,
-              email: user.person!.email,
-            };
-          } else if (user.type === "bot") {
-            lastEditedBy = {
-              id: user.id,
-              name: user!.name,
-              avatarURL: user!.avatar_url,
-            };
-          }
-        }
-
-        allPages.push({
-          id: page.id,
-          databaseId,
-          name,
-          createdAt: parseDate(page.created_time),
-          lastEditedBy,
-          url: page.url,
-        });
+        allPages.push(page);
       }
       if (pages.has_more) {
         const next_cursor = pages.next_cursor;

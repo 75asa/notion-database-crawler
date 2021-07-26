@@ -1,9 +1,10 @@
-import { Prisma, User } from "@prisma/client";
+import { Page, User } from "@prisma/client";
 import {
   ChatPostMessageArguments,
   KnownBlock,
   WebClient,
 } from "@slack/web-api";
+import { Config } from "./Config";
 import { PostMessageArg } from "./types";
 
 export class Slack {
@@ -13,13 +14,11 @@ export class Slack {
   }
 
   private init() {
-    const token = process.env.SLACK_BOT_TOKEN;
-    if (!token) throw "SLACK_BOT_TOKEN not found";
-    return new WebClient(token);
+    return new WebClient(Config.Slack.BOT_TOKEN);
   }
 
-  async postMessage(arg: PostMessageArg) {
-    const text = `新しいページが投稿されました`;
+  private getBlocks(page: Page) {
+    const text = `新しいページが投稿されました ${page.url}`;
     const blocks: KnownBlock[] = [
       {
         type: "section",
@@ -29,16 +28,29 @@ export class Slack {
         },
       },
     ];
+    return blocks;
+  }
+
+  private getOption(page: Page, user?: User) {
     const msgOption: ChatPostMessageArguments = {
-      channel: process.env.CHANNEL_NAME!,
-      text,
-      blocks: blocks,
+      channel: Config.Slack.CHANNEL_NAME,
+      blocks: this.getBlocks(page),
     };
 
-    if (arg.user) {
+    if (user) {
       msgOption.as_user = true;
-      msgOption.icon_url = arg.user.avatarURL;
+      msgOption.username = user.name;
+      msgOption.icon_url = user.avatarURL;
     }
-    await this.client.chat.postMessage(msgOption);
+
+    return msgOption;
+  }
+
+  async postMessage(arg: PostMessageArg) {
+    try {
+      await this.client.chat.postMessage(this.getOption(arg.page, arg.user));
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

@@ -22,7 +22,7 @@ export interface UserDTO {
   id: string;
   name?: string;
   avatarURL?: string;
-  email?: string;
+  email: string | null;
 }
 
 export interface PostMessageArg {
