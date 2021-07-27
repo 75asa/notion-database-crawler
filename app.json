@@ -45,6 +45,6 @@
   "image": "heroku/nodejs",
   "addons": ["heroku-postgresql"],
   "scripts": {
-    "post-deploy": "yarn migrate:deploy"
+    "postdeploy": "yarn migrate:deploy"
   }
 }
