@@ -1,18 +1,18 @@
 {
-  "name": "notion-nippo",
+  "name": "notion-database-crawler",
   "version": "1.0.0",
   "description": "",
   "keywords": [],
-  "homepage": "https://github.com/75asa/notion-nippo#readme",
+  "homepage": "https://github.com/75asa/notion-database-crawler#readme",
   "bugs": {
-    "url": "https://github.com/75asa/notion-nippo/issues"
+    "url": "https://github.com/75asa/notion-database-crawler/issues"
   },
-  "license": "ISC",
-  "author": "",
-  "main": "index.js",
+  "license": "MIT",
+  "author": "75asa",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/75asa/notion-nippo.git"
+    "url": "git+https://github.com/75asa/notion-database-crawler.git"
   },
   "scripts": {
     "ts-node": "ts-node",

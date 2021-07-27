@@ -5,3 +5,4 @@ db
 data
 dist
 out
+installer.sh

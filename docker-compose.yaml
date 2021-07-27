@@ -3,7 +3,7 @@ version: '3'
 services:
   db:
     image: postgres:13
-    container_name: "postgres-notion-nippo"
+    container_name: "postgres-notion-database-crawler"
     restart: always
     environment:
       POSTGRES_USER: notion #optional

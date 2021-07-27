@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, User } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { Slack } from "./Slack";
 import { Notion } from "./Notion";
 import { Scheduler } from "./Scheduler";

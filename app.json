@@ -1,0 +1,54 @@
+{
+  "name": "notion-database-crawler",
+  "description": "slack x notion",
+  "repository": "https://github.com/75asa/notion-database-crawler",
+  "keywords": [
+    "Slack",
+    "Slack API",
+    "TypeScript",
+    "Heroku",
+    "Notion",
+    "Notion API"
+  ],
+  "env": {
+    "NOTION_KEY": {
+      "description": "Notion KEY FYI: https://developers.notion.com/docs/getting-started",
+      "value": "secret_xxxx"
+    },
+    "SLACK_BOT_TOKEN": {
+      "description": "Slack App Bot Token - https://api.slack.com/apps",
+      "value": "xoxb-************-************-************************"
+    },
+    "CHANNEL_NAME": {
+      "description": "the channel daily reports are posted",
+      "value": "t_nippo"
+    },
+    "JOB_INTERVAL_SECONDS": {
+      "description": "job's default interval",
+      "value": "30"
+    },
+    "NOTION_CREATED_AT_PROP_NAME": {
+      "description": "`created_at` type prop name at Notion",
+      "value": "CreatedAt",
+      "required": false
+    },
+    "NOTION_LAST_EDITED_BY_PROP_NAME": {
+      "description": "`last_edited_by` type prop name at Notion",
+      "value": "LastEditedBy",
+      "required": false
+    },
+    "YARN_PRODUCTION": {
+      "description": "for TypeScript build",
+      "value": "false"
+    }
+  },
+  "image": "heroku/nodejs",
+  "addons": [
+    {
+      "plan": "heroku-postgresql",
+      "options": {
+        "version": "13.3"
+      }
+    }
+  ]
+}
