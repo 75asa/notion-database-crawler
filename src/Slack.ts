@@ -34,6 +34,7 @@ export class Slack {
     };
 
     if (arg.user) {
+      msgOption.as_user = false;
       msgOption.username = arg.user.name;
       msgOption.icon_url = arg.user.avatarURL;
     }
