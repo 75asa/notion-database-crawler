@@ -17,6 +17,7 @@ const main = async () => {
     allNotionDatabases.map(async databaseDTO => {
       const updateArgs: Prisma.DatabaseUpdateArgs = {
         data: {
+          name: databaseDTO.name,
           size: databaseDTO.size,
           lastFetchedAt: new Date(),
           lastEditedAt: databaseDTO.lastEditedAt,
@@ -118,7 +119,8 @@ const main = async () => {
             return item !== undefined;
           });
         if (pages.length) {
-          updateArgs.data.size = pages.length;
+          updateArgs.data.size =
+            (updateArgs.data.size as number) + pages.length;
           for (const page of pages) {
             const lastEditedBy = page.lastEditedBy!;
             const result = await prisma.page.create({
