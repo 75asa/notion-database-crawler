@@ -43,12 +43,8 @@
     }
   },
   "image": "heroku/nodejs",
-  "addons": [
-    {
-      "plan": "heroku-postgresql",
-      "options": {
-        "version": "13.3"
-      }
-    }
-  ]
+  "addons": ["heroku-postgresql"],
+  "scripts": {
+    "post-deploy": "yarn migrate:deploy"
+  }
 }

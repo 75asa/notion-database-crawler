@@ -1,6 +1,6 @@
 # notion-database-crawler
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/75asa/notion-database-crawler/tree/master{:target="_blank"})
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/75asa/notion-database-crawler/tree/master)
 
 # What is this ?
 
