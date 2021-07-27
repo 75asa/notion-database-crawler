@@ -105,7 +105,6 @@ const main = async () => {
         // database に紐づいたページを取得
         const hadStoredPages = hadStoredDatabase.pages;
 
-        const userMap = new Map<string, User>();
         // 2回目以降なので差分を比較
         const pages = databaseDTO.pages
           .map(page => {

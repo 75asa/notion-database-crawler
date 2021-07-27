@@ -35,6 +35,7 @@ export class Slack {
 
     if (arg.user) {
       msgOption.as_user = true;
+      msgOption.username = arg.user.name;
       msgOption.icon_url = arg.user.avatarURL;
     }
     await this.client.chat.postMessage(msgOption);
