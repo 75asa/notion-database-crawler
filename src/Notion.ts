@@ -1,15 +1,15 @@
 import { Client } from "@notionhq/client/build/src";
 import { DatabasesQueryResponse } from "@notionhq/client/build/src/api-endpoints";
-import { RichText } from "@notionhq/client/build/src/api-types";
+import {
+  LastEditedByPropertyValue,
+  PropertyValue,
+  RichText,
+  TitlePropertyValue,
+} from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { Config } from "./Config";
 import { DatabaseDTO, PageDTO } from "./types";
-import {
-  isLastEditedByPropertyValue,
-  isTitlePropertyValue,
-  parseDate,
-  parseISO8601,
-} from "./utils";
+import { parseDate, parseISO8601 } from "./utils";
 
 export class Notion {
   private notion;
@@ -23,6 +23,19 @@ export class Notion {
       return (acc += (acc.length ? " " : "") + cur.plain_text);
     }, "");
   }
+
+  private isTitlePropertyValue = (
+    propValue: PropertyValue
+  ): propValue is TitlePropertyValue => {
+    // TODO: propValue.title === RichText[] も入れたい
+    return (propValue as TitlePropertyValue).type === "title";
+  };
+
+  private isLastEditedByPropertyValue = (
+    propValue: PropertyValue
+  ): propValue is LastEditedByPropertyValue => {
+    return (propValue as LastEditedByPropertyValue).type === "last_edited_by";
+  };
 
   // integration が取得可能な database を取得
   async getAllDatabase(): Promise<DatabaseDTO[]> {
@@ -76,13 +89,13 @@ export class Notion {
         const propName = page.properties?.Name;
         const propLastEditedBy =
           page.properties[Config.Notion.LAST_EDITED_BY_PROP_NAME];
-        let name = isTitlePropertyValue(propName)
+        let name = this.isTitlePropertyValue(propName)
           ? this.getName(propName.title)
           : "";
         let lastEditedBy;
         // タイトル含むか
 
-        if (isLastEditedByPropertyValue(propLastEditedBy)) {
+        if (this.isLastEditedByPropertyValue(propLastEditedBy)) {
           const user = propLastEditedBy.last_edited_by;
           if (user.type === "person") {
             lastEditedBy = {

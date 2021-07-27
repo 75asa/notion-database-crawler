@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+
 const config = dotenv.config().parsed;
 
 if (config) {
