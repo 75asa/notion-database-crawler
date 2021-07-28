@@ -10,6 +10,7 @@ import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { Config } from "./Config";
 import { DatabaseDTO, PageDTO } from "./types";
 import { parseDate, parseISO8601 } from "./utils";
+import { User } from "./valueObject/User";
 
 export class Notion {
   private notion;
@@ -96,21 +97,8 @@ export class Notion {
         // タイトル含むか
 
         if (this.isLastEditedByPropertyValue(propLastEditedBy)) {
-          const user = propLastEditedBy.last_edited_by;
-          if (user.type === "person") {
-            lastEditedBy = {
-              id: user.id,
-              name: user!.name,
-              avatarURL: user!.avatar_url,
-              email: user.person!.email,
-            };
-          } else if (user.type === "bot") {
-            lastEditedBy = {
-              id: user.id,
-              name: user!.name,
-              avatarURL: user!.avatar_url,
-            };
-          }
+          const user = User.create(propLastEditedBy.last_edited_by);
+          lastEditedBy = user.instance;
         }
 
         allPages.push({
