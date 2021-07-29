@@ -70,36 +70,41 @@ const main = async () => {
         });
         if (databaseDTO.size) {
           for (const page of databaseDTO.pages) {
-            prisma.page.create({
-              data: {
-                id: page.id,
-                name: page.name!,
-                createdAt: page.createdAt,
-                url: page.url,
-                Database: {
-                  connect: {
-                    id: page.databaseId,
-                  },
-                },
-                LastEditedBy: {
-                  connectOrCreate: {
-                    where: {
-                      id: page.lastEditedBy!.id,
-                    },
-                    create: {
-                      id: page.lastEditedBy!.id,
-                      name: page.lastEditedBy!.name!,
-                      avatarURL: page.lastEditedBy!.avatarURL!,
-                      email: page.lastEditedBy!.email!,
+            try {
+              await prisma.page.create({
+                data: {
+                  id: page.id,
+                  name: page.name!,
+                  createdAt: page.createdAt,
+                  url: page.url,
+                  Database: {
+                    connect: {
+                      id: page.databaseId,
                     },
                   },
+                  LastEditedBy: {
+                    connectOrCreate: {
+                      where: {
+                        id: page.lastEditedBy!.id,
+                      },
+                      create: {
+                        id: page.lastEditedBy!.id,
+                        name: page.lastEditedBy!.name!,
+                        avatarURL: page.lastEditedBy!.avatarURL!,
+                        email: page.lastEditedBy!.email!,
+                      },
+                    },
+                  },
                 },
-              },
-              include: {
-                Database: true,
-                LastEditedBy: true,
-              },
-            });
+                include: {
+                  Database: true,
+                  LastEditedBy: true,
+                },
+              });
+            } catch (e) {
+              console.error({ page, e });
+              throw e;
+            }
           }
         }
       } else if (hadStoredDatabase !== null) {
