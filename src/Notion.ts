@@ -98,7 +98,7 @@ export class Notion {
 
         if (this.isLastEditedByPropertyValue(propLastEditedBy)) {
           const user = User.create(propLastEditedBy.last_edited_by);
-          lastEditedBy = user.instance;
+          lastEditedBy = user.entity;
         }
 
         allPages.push({
