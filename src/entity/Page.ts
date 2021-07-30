@@ -1,0 +1,31 @@
+import { Page as NotionPage } from "@notionhq/client/build/src/api-types";
+import { Page as PageProps } from "@prisma/client";
+import { Config } from "~/Config";
+import { parseDate } from "~/utils";
+import { DatabaseId } from "~/valueObject/DatabaseId";
+import { NameProperty } from "~/valueObject/NameProperty";
+import { UserId } from "~/valueObject/UserId";
+import { Entity } from "./Entity";
+import { User } from "./User";
+
+export class Page extends Entity<PageProps> {
+  static create(props: NotionPage): Page {
+    const name = NameProperty.create(props.properties.Name).value;
+    const propLastEditedBy =
+      props.properties[Config.Notion.LAST_EDITED_BY_PROP_NAME];
+    const value = {
+      id: props.id,
+      databaseId: DatabaseId.create(props).value,
+      name,
+      createdAt: parseDate(props.created_time),
+      url: props.url,
+      userId: UserId.create(propLastEditedBy).value,
+      User: User.create(propLastEditedBy).props
+    };
+    return new Page(value, value.id);
+  }
+
+  get props(): PageProps {
+    return this.props;
+  }
+}

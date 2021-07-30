@@ -1,4 +1,5 @@
 import { User } from "@prisma/client";
+import { Page } from "./entity/Page";
 export interface DatabaseDTO {
   id: string;
   name?: string;
@@ -26,11 +27,7 @@ export interface UserDTO {
 }
 
 export interface PostMessageArg {
-  page: {
-    name?: string | null;
-    url: string;
-    createdAt: Date | string;
-  };
+  page: Page;
   databaseName?: string;
   user?: User;
 }

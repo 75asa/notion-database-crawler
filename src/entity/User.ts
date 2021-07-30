@@ -1,16 +1,32 @@
-import { User as NotionUser } from "@notionhq/client/build/src/api-types";
+import {
+  LastEditedByPropertyValue,
+  PropertyValue,
+} from "@notionhq/client/build/src/api-types";
 import { User as UserProps } from "@prisma/client";
 import { Entity } from "./Entity";
 
+const isLastEditedByPropertyValue = (
+  propValue: PropertyValue
+): propValue is LastEditedByPropertyValue => {
+  return (propValue as LastEditedByPropertyValue).type === "last_edited_by";
+};
+
 export class User extends Entity<UserProps> {
-  private constructor(props: UserProps, id: string) {
-    super(props, id);
+  static create(props: PropertyValue): User {
+    if (!isLastEditedByPropertyValue(props)) {
+      throw new Error("User.create: props must be a LastEditedByPropertyValue");
+    }
+    const notionUser = props.last_edited_by;
+    const value = {
+      id: notionUser.id,
+      name: notionUser.name || "",
+      avatarURL: notionUser.avatar_url || "",
+      email: notionUser.type === "person" ? notionUser.person!.email! : null,
+    };
+    return new User(value, value.id);
   }
-  static create(props: NotionUser): User {
-    const { id, name, avatar_url, type } = props;
-    avatar_url = avatar_url || "";
-    if (!name) throw new Error("User name is required");
-    userArg.email = props.type === "person" ? props.person!.email : "";
-    return new User(userArg, id);
+
+  get props(): UserProps {
+    return this.props;
   }
 }
