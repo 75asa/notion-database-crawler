@@ -33,7 +33,7 @@ const main = async () => {
       // DB保存済みの場合
       if (hadStoredDatabase) {
         isFirstTime = false;
-        database.setLastFetchedAt = hadStoredDatabase.lastFetchedAt;
+        database.lastFetchedAt = hadStoredDatabase.lastFetchedAt;
       }
       const pagesAndUser = await notionRepo.getAllPageAndUserFromDatabase(
         database.props.id,
@@ -51,35 +51,34 @@ const main = async () => {
         } catch (e) {
           throw e;
         }
-        if (database.size) {
-          for (const page of pagesAndUser) {
-            try {
-              const { userId, databaseId, ...refinedPage } = page.page.props;
-              await prisma.page.create({
-                data: {
-                  ...refinedPage,
-                  Database: {
-                    connect: {
-                      id: databaseId,
-                    },
-                  },
-                  LastEditedBy: {
-                    connectOrCreate: {
-                      where: {
-                        id: userId,
-                      },
-                      create: page.user.props,
-                    },
+        if (!database.size) return;
+        for (const page of pagesAndUser) {
+          const { userId, databaseId, ...refinedPage } = page.page.props;
+          try {
+            await prisma.page.create({
+              data: {
+                ...refinedPage,
+                Database: {
+                  connect: {
+                    id: databaseId,
                   },
                 },
-                include: {
-                  Database: true,
-                  LastEditedBy: true,
+                LastEditedBy: {
+                  connectOrCreate: {
+                    where: {
+                      id: userId,
+                    },
+                    create: page.user.props,
+                  },
                 },
-              });
-            } catch (e) {
-              throw e;
-            }
+              },
+              include: {
+                Database: true,
+                LastEditedBy: true,
+              },
+            });
+          } catch (e) {
+            throw e;
           }
         }
       } else if (hadStoredDatabase !== null) {
@@ -114,35 +113,39 @@ const main = async () => {
           const lastEditedBy = pageAndUser.user;
           const page = pageAndUser.page;
           const { userId, databaseId, ...refinedPage } = pageAndUser.page.props;
-          const result = await prisma.page.create({
-            data: {
-              ...refinedPage,
-              Database: {
-                connect: {
-                  id: databaseId,
-                },
-              },
-              LastEditedBy: {
-                connectOrCreate: {
-                  where: {
-                    id: userId,
+          try {
+            await prisma.page.create({
+              data: {
+                ...refinedPage,
+                Database: {
+                  connect: {
+                    id: databaseId,
                   },
-                  create: lastEditedBy.props,
+                },
+                LastEditedBy: {
+                  connectOrCreate: {
+                    where: {
+                      id: userId,
+                    },
+                    create: lastEditedBy.props,
+                  },
                 },
               },
-            },
-            include: {
-              Database: true,
-              LastEditedBy: true,
-            },
-          });
+              include: {
+                Database: true,
+                LastEditedBy: true,
+              },
+            });
+          } catch (e) {
+            throw e;
+          }
           const slackClient = new Slack();
           // Slack 通知
           // const databaseName = hadStoredDatabase.name || "";
           slackClient.postMessage({
             databaseName: database.props.name,
             page,
-            user: result.LastEditedBy,
+            user: lastEditedBy,
           });
         }
         // Database 更新

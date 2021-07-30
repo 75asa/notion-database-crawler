@@ -10,9 +10,6 @@ export abstract class Entity<T> {
     return this._props;
   }
 
-  // protected set props(key: string, value: T) {
-  //   this._props[key] = value;
-  // }
   protected set props(value: T) {
     this._props = value;
   }

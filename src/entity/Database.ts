@@ -37,19 +37,19 @@ export class Database extends Entity<DatabaseProps> {
     return this.props;
   }
 
-  set setLastFetchedAt(lastFetchedAt: Date) {
+  set name(name: string) {
+    this.props.name = name;
+  }
+
+  set lastFetchedAt(lastFetchedAt: Date) {
     this.props.lastFetchedAt = lastFetchedAt;
   }
 
-  set setLastEditedAt(lastEditedAt: Date) {
+  set lastEditedAt(lastEditedAt: Date) {
     this.props.lastEditedAt = lastEditedAt;
   }
 
   set size(size: number) {
     this.props.size = size;
-  }
-
-  set setName(name: string) {
-    this.props.name = name;
   }
 }

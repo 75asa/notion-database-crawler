@@ -1,5 +1,5 @@
-import { User } from "@prisma/client";
 import { Page } from "./entity/Page";
+import { User } from "./entity/User";
 export interface DatabaseDTO {
   id: string;
   name?: string;
