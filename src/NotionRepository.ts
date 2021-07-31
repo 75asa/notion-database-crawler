@@ -29,10 +29,10 @@ export class NotionRepository {
       });
   }
 
-  async getAllPageAndUserFromDatabase(databaseId: string, lastFetchedAt: Date) {
+  async getAllContentsFromDatabase(databaseId: string, lastFetchedAt: Date) {
     let allPageAndUsers: { page: Page; user: User }[] = [];
 
-    const getPages = async (cursor?: string | null) => {
+    const getPages = async (cursor?: string) => {
       const requestPayload: RequestParameters = {
         path: `databases/${databaseId}/query`,
         method: "post",
@@ -66,8 +66,7 @@ export class NotionRepository {
         allPageAndUsers.push({ page, user });
       }
       if (pages.has_more) {
-        const next_cursor = pages.next_cursor;
-        await getPages(next_cursor);
+        await getPages(pages.next_cursor ?? undefined);
       }
     };
     await getPages();

@@ -35,12 +35,12 @@ const main = async () => {
         isFirstTime = false;
         database.lastFetchedAt = hadStoredDatabase.lastFetchedAt;
       }
-      const pagesAndUser = await notionRepo.getAllPageAndUserFromDatabase(
+      const allContents = await notionRepo.getAllContentsFromDatabase(
         database.props.id,
         database.props.lastFetchedAt
       );
 
-      database.size = pagesAndUser.length;
+      database.size = allContents.length;
       // Database に Page [] があり、 DB に保存してない場合
       if (isFirstTime) {
         // 初期登録
@@ -52,7 +52,7 @@ const main = async () => {
           throw e;
         }
         if (!database.size) return;
-        for (const page of pagesAndUser) {
+        for (const page of allContents) {
           const { userId, databaseId, ...refinedPage } = page.page.props;
           try {
             await prisma.page.create({
@@ -86,7 +86,7 @@ const main = async () => {
         const hadStoredPages = hadStoredDatabase.pages;
 
         // 2回目以降なので差分を比較
-        const notStoredPages = pagesAndUser.filter(pageSet => {
+        const notStoredPages = allContents.filter(pageSet => {
           const hadStored = hadStoredPages.some(storedPage => {
             return storedPage.id === pageSet.page.props.id;
           });
