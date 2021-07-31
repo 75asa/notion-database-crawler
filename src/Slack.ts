@@ -1,8 +1,5 @@
-import {
-  ChatPostMessageArguments,
-  KnownBlock,
-  WebClient,
-} from "@slack/web-api";
+import { ChatPostMessageArguments, WebClient } from "@slack/web-api";
+import { jsxslack } from "jsx-slack";
 import { Config } from "./Config";
 import { PostMessageArg } from "./types";
 
@@ -16,21 +13,22 @@ export class Slack {
     return new WebClient(Config.Slack.BOT_TOKEN);
   }
 
+  private blocks(text: string) {
+    return jsxslack`
+      <Blocks>
+        <Section>
+          <p>${text}</p>
+        </Section>
+      </Blocks>
+    `;
+  }
+
   async postMessage(arg: PostMessageArg) {
     const text = `${arg.databaseName} に新しいページ: <${arg.page.props.url}|${arg.page.props.name}> が投稿されました`;
-    const blocks: KnownBlock[] = [
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text,
-        },
-      },
-    ];
     const msgOption: ChatPostMessageArguments = {
       channel: Config.Slack.CHANNEL_NAME,
       text,
-      blocks: blocks,
+      blocks: this.blocks(text),
     };
 
     if (arg.user) {
