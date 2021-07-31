@@ -17,7 +17,7 @@ const main = async () => {
     allDatabases.map(async database => {
       const hadStoredDatabase = await prisma.database.findFirst({
         where: {
-          id: database.props.id,
+          id: database.id,
         },
         include: {
           pages: {
@@ -36,8 +36,8 @@ const main = async () => {
         database.lastFetchedAt = hadStoredDatabase.lastFetchedAt;
       }
       const allContents = await notionRepo.getAllContentsFromDatabase(
-        database.props.id,
-        database.props.lastFetchedAt
+        database.id,
+        database.lastFetchedAt
       );
 
       database.size = allContents.length;
@@ -46,14 +46,14 @@ const main = async () => {
         // 初期登録
         try {
           await prisma.database.create({
-            data: database.props,
+            data: { ...database.props },
           });
         } catch (e) {
           throw e;
         }
         if (!database.size) return;
-        for (const page of allContents) {
-          const { userId, databaseId, ...refinedPage } = page.page.props;
+        for (const content of allContents) {
+          const { userId, databaseId, ...refinedPage } = content.page.props;
           try {
             await prisma.page.create({
               data: {
@@ -68,7 +68,7 @@ const main = async () => {
                     where: {
                       id: userId,
                     },
-                    create: page.user.props,
+                    create: content.user.props,
                   },
                 },
               },
@@ -88,7 +88,7 @@ const main = async () => {
         // 2回目以降なので差分を比較
         const notStoredPages = allContents.filter(pageSet => {
           const hadStored = hadStoredPages.some(storedPage => {
-            return storedPage.id === pageSet.page.props.id;
+            return storedPage.id === pageSet.page.id;
           });
           if (hadStored) return false;
           return hadStored;
@@ -143,7 +143,7 @@ const main = async () => {
           // Slack 通知
           // const databaseName = hadStoredDatabase.name || "";
           slackClient.postMessage({
-            databaseName: database.props.name,
+            databaseName: database.name,
             page,
             user: lastEditedBy,
           });
@@ -151,7 +151,7 @@ const main = async () => {
         // Database 更新
         try {
           await prisma.database.update({
-            where: { id: database.props.id },
+            where: { id: database.id },
             data: database.props,
           });
         } catch (e) {

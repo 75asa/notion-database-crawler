@@ -26,7 +26,16 @@ export class User extends Entity<UserProps> {
     return new User(value, value.id);
   }
 
+  get id(): string {
+    return this._id;
+  }
+
   get props(): UserProps {
-    return this.props;
+    return {
+      id: this._id,
+      name: this.props.name,
+      avatarURL: this.props.avatarURL,
+      email: this.props.email,
+    };
   }
 }

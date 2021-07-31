@@ -23,7 +23,38 @@ export class Page extends Entity<PageProps> {
     return new Page(value, value.id);
   }
 
+  get id(): string {
+    return this._id;
+  }
+
+  get name(): string {
+    return this.props.name;
+  }
+
+  get url(): string {
+    return this.props.url;
+  }
+
+  get databaseId(): DatabaseId {
+    return this.databaseId;
+  }
+
+  get createdAt(): Date {
+    return this.createdAt;
+  }
+
+  get userId(): UserId {
+    return this.userId;
+  }
+
   get props(): PageProps {
-    return this.props;
+    return {
+      id: this.id,
+      databaseId: this.databaseId.value,
+      name: this.name,
+      createdAt: this.createdAt,
+      url: this.url,
+      userId: this.userId.value,
+    };
   }
 }
