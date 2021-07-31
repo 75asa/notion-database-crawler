@@ -1,6 +1,6 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { Slack } from "./Slack";
-import { Notion } from "./Notion";
+import { NotionRepository } from "./NotionRepository";
 import { Scheduler } from "./Scheduler";
 import { Config } from "./Config";
 
@@ -9,24 +9,15 @@ const prisma = new PrismaClient();
 const main = async () => {
   console.log("main:start");
   await prisma.$connect();
-  const notion = new Notion(Config.Notion.KEY);
-  // integration が取得可能な database (from Notion)
-  const allNotionDatabases = await notion.getAllDatabase();
+  const notionRepo = new NotionRepository(Config.Notion.KEY);
+  // integration が取得可能な prisma database
+  const allDatabases = await notionRepo.getAllDatabase();
   // database に紐づいてる Page (from Notion)
   await Promise.all(
-    allNotionDatabases.map(async databaseDTO => {
-      const updateArgs: Prisma.DatabaseUpdateArgs = {
-        data: {
-          name: databaseDTO.name,
-          size: databaseDTO.size,
-          lastFetchedAt: new Date(),
-          lastEditedAt: databaseDTO.lastEditedAt,
-        },
-        where: { id: databaseDTO.id },
-      };
+    allDatabases.map(async database => {
       const hadStoredDatabase = await prisma.database.findFirst({
         where: {
-          id: databaseDTO.id,
+          id: database.props.id,
         },
         include: {
           pages: {
@@ -41,115 +32,43 @@ const main = async () => {
 
       // DB保存済みの場合
       if (hadStoredDatabase) {
-        // TODO: 型情報みる
-        updateArgs.data.lastFetchedAt = hadStoredDatabase.lastFetchedAt;
         isFirstTime = false;
-        updateArgs.where.id = hadStoredDatabase.id;
+        database.lastFetchedAt = hadStoredDatabase.lastFetchedAt;
       }
-      const pagesDTO = await notion.getAllPagesFromNotionDatabase(
-        databaseDTO.id,
-        updateArgs.data.lastFetchedAt as Date
+      const allContents = await notionRepo.getAllContentsFromDatabase(
+        database.props.id,
+        database.props.lastFetchedAt
       );
 
-      databaseDTO.pages = pagesDTO;
-      databaseDTO.size = pagesDTO.length;
-
+      database.size = allContents.length;
       // Database に Page [] があり、 DB に保存してない場合
       if (isFirstTime) {
-        updateArgs.where.id = databaseDTO.id;
         // 初期登録
-        await prisma.database.create({
-          data: {
-            id: databaseDTO.id,
-            name: databaseDTO.name!,
-            lastFetchedAt: updateArgs.data.lastFetchedAt as Date,
-            createdAt: databaseDTO.createdAt,
-            lastEditedAt: databaseDTO.lastEditedAt,
-            size: databaseDTO.size,
-          },
-        });
-        if (databaseDTO.size) {
-          for (const page of databaseDTO.pages) {
-            try {
-              await prisma.page.create({
-                data: {
-                  id: page.id,
-                  name: page.name!,
-                  createdAt: page.createdAt,
-                  url: page.url,
-                  Database: {
-                    connect: {
-                      id: page.databaseId,
-                    },
-                  },
-                  LastEditedBy: {
-                    connectOrCreate: {
-                      where: {
-                        id: page.lastEditedBy!.id,
-                      },
-                      create: {
-                        id: page.lastEditedBy!.id,
-                        name: page.lastEditedBy!.name!,
-                        avatarURL: page.lastEditedBy!.avatarURL!,
-                        email: page.lastEditedBy!.email!,
-                      },
-                    },
-                  },
-                },
-                include: {
-                  Database: true,
-                  LastEditedBy: true,
-                },
-              });
-            } catch (e) {
-              console.error({ page, e });
-              throw e;
-            }
-          }
-        }
-      } else if (hadStoredDatabase !== null) {
-        // database に紐づいたページを取得
-        const hadStoredPages = hadStoredDatabase.pages;
-
-        // 2回目以降なので差分を比較
-        const pages = databaseDTO.pages
-          .map(page => {
-            const hadStored = hadStoredPages.some(storedPage => {
-              return storedPage.id === page.id;
-            });
-            if (hadStored) return;
-            return page;
-          })
-          .filter((item): item is Exclude<typeof item, undefined> => {
-            return item !== undefined;
+        try {
+          await prisma.database.create({
+            data: database.props,
           });
-        if (pages.length) {
-          updateArgs.data.size =
-            (updateArgs.data.size as number) + pages.length;
-          for (const page of pages) {
-            const lastEditedBy = page.lastEditedBy!;
-            const result = await prisma.page.create({
+        } catch (e) {
+          throw e;
+        }
+        if (!database.size) return;
+        for (const page of allContents) {
+          const { userId, databaseId, ...refinedPage } = page.page.props;
+          try {
+            await prisma.page.create({
               data: {
-                id: page.id,
-                name: page.name!,
-                createdAt: page.createdAt,
-                url: page.url,
+                ...refinedPage,
                 Database: {
                   connect: {
-                    id: page.databaseId,
+                    id: databaseId,
                   },
                 },
                 LastEditedBy: {
                   connectOrCreate: {
                     where: {
-                      id: lastEditedBy!.id,
+                      id: userId,
                     },
-                    create: {
-                      id: lastEditedBy!.id,
-                      name: lastEditedBy!.name!,
-                      avatarURL: lastEditedBy!.avatarURL!,
-                      email: lastEditedBy!.email!,
-                    },
+                    create: page.user.props,
                   },
                 },
               },
@@ -158,34 +77,88 @@ const main = async () => {
                 LastEditedBy: true,
               },
             });
-            const slackClient = new Slack();
-            // Slack 通知
-            const databaseName = hadStoredDatabase.name || "";
-            if (lastEditedBy) {
-              slackClient.postMessage({
-                databaseName,
-                page: {
-                  name: page.name,
-                  url: page.url,
-                  createdAt: page.createdAt,
-                },
-                user: result.LastEditedBy,
-              });
-            } else {
-              slackClient.postMessage({
-                databaseName,
-                page: {
-                  name: page.name,
-                  url: page.url,
-                  createdAt: page.createdAt,
-                },
-                user: result.LastEditedBy,
-              });
-            }
+          } catch (e) {
+            throw e;
           }
         }
+      } else if (hadStoredDatabase !== null) {
+        // database に紐づいたページを取得
+        const hadStoredPages = hadStoredDatabase.pages;
+
+        // 2回目以降なので差分を比較
+        const notStoredPages = allContents.filter(pageSet => {
+          const hadStored = hadStoredPages.some(storedPage => {
+            return storedPage.id === pageSet.page.props.id;
+          });
+          if (hadStored) return false;
+          return hadStored;
+        });
+        // 差分がない場合は何もしない
+        if (!notStoredPages.length) {
+          try {
+            await prisma.database.update({
+              where: { id: database.props.id },
+              data: database.props,
+            });
+          } catch (e) {
+            throw e;
+          } finally {
+            return;
+          }
+        }
+
+        database.size += notStoredPages.length;
+
+        for (const pageAndUser of notStoredPages) {
+          const lastEditedBy = pageAndUser.user;
+          const page = pageAndUser.page;
+          const { userId, databaseId, ...refinedPage } = pageAndUser.page.props;
+          try {
+            await prisma.page.create({
+              data: {
+                ...refinedPage,
+                Database: {
+                  connect: {
+                    id: databaseId,
+                  },
+                },
+                LastEditedBy: {
+                  connectOrCreate: {
+                    where: {
+                      id: userId,
+                    },
+                    create: lastEditedBy.props,
+                  },
+                },
+              },
+              include: {
+                Database: true,
+                LastEditedBy: true,
+              },
+            });
+          } catch (e) {
+            throw e;
+          }
+          const slackClient = new Slack();
+          // Slack 通知
+          // const databaseName = hadStoredDatabase.name || "";
+          slackClient.postMessage({
+            databaseName: database.props.name,
+            page,
+            user: lastEditedBy,
+          });
+        }
         // Database 更新
-        await prisma.database.update(updateArgs);
+        try {
+          await prisma.database.update({
+            where: { id: database.props.id },
+            data: database.props,
+          });
+        } catch (e) {
+          throw e;
+        } finally {
+          return;
+        }
       }
     })
   );

@@ -2,6 +2,8 @@
   "compilerOptions": {
     "target": "es2018",
     "module": "commonjs",
+    "jsx": "react-jsx",
+    "jsxImportSource": "jsx-slack",
     "moduleResolution": "node",
     "lib": ["es2018", "dom"],
     "esModuleInterop": true,
