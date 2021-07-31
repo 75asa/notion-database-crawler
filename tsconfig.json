@@ -16,10 +16,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
-    "paths": {
-      "~/*": ["./src/*"],
-      "@/*": ["./src/*"]
-    },
+    // "paths": {
+    //   "~/*": ["./src/*"],
+    //   "@/*": ["./src/*"]
+    // },
     "types": ["@types/node"]
   },
   "exclude": ["node_modules", "dist", "**/*.spec.ts"],

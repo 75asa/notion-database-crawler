@@ -4,7 +4,7 @@ import {
   RichText,
 } from "@notionhq/client/build/src/api-types";
 import { Database as DatabaseProps } from "@prisma/client";
-import { parseDate } from "~/utils";
+import { parseDate } from "../utils";
 
 // TODO: unify
 const getName = (titleList: RichText[]) => {
