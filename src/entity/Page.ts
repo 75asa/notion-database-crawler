@@ -6,7 +6,6 @@ import { DatabaseId } from "~/valueObject/DatabaseId";
 import { NameProperty } from "~/valueObject/NameProperty";
 import { UserId } from "~/valueObject/UserId";
 import { Entity } from "./Entity";
-import { User } from "./User";
 
 export class Page extends Entity<PageProps> {
   static create(props: NotionPage): Page {
@@ -20,7 +19,6 @@ export class Page extends Entity<PageProps> {
       createdAt: parseDate(props.created_time),
       url: props.url,
       userId: UserId.create(propLastEditedBy).value,
-      User: User.create(propLastEditedBy).props
     };
     return new Page(value, value.id);
   }
