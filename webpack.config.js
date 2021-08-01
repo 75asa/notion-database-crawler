@@ -1,5 +1,3 @@
-const debug = process.env.NODE_ENV !== "production";
-const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
@@ -23,15 +21,15 @@ module.exports = {
       // TypeScript をコンパイルする
       use: [
         {
-          loader: 'ts-loader',
-        },
-        {
           loader: 'babel-loader',
           options: {
             presets: [
               '@babel/preset-react',
             ]
           }
+        },
+        {
+          loader: 'ts-loader',
         }
       ],
     },

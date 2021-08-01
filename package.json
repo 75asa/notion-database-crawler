@@ -31,6 +31,7 @@
     "deploy": "tsc . && node dist/index.js"
   },
   "dependencies": {
+    "@babel/core": "^7.14.8",
     "@babel/preset-env": "^7.14.8",
     "@babel/preset-react": "^7.14.5",
     "@notionhq/client": "^0.2.1",
@@ -43,6 +44,7 @@
     "toad-scheduler": "^1.4.0"
   },
   "devDependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.14.5",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
