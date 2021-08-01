@@ -1,5 +1,6 @@
 import { ChatPostMessageArguments, WebClient } from "@slack/web-api";
-import { jsxslack } from "jsx-slack";
+/** @jsxImportSource jsx-slack */
+import { Blocks, jsxslack, Section } from "jsx-slack";
 import { Config } from "./Config";
 import { PostMessageArg } from "./types";
 
@@ -14,13 +15,20 @@ export class Slack {
   }
 
   private blocks(text: string) {
-    return jsxslack`
+    return (
       <Blocks>
         <Section>
-          <p>${text}</p>
+          <p>{text}</p>
         </Section>
       </Blocks>
-    `;
+    );
+    // return jsxslack`
+    //   <Blocks>
+    //     <Section>
+    //       <p>${text}</p>
+    //     </Section>
+    //   </Blocks>
+    // `;
   }
 
   async postMessage(arg: PostMessageArg) {

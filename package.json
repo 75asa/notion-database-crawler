@@ -22,6 +22,7 @@
     "start": "node dist/index.js",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
     "build": "tsc -p .",
+    "webpack": "webpack",
     "postinstall": "yarn build",
     "generate": "yarn prisma generate",
     "migrate": "yarn prisma migrate dev",
@@ -30,6 +31,8 @@
     "deploy": "tsc . && node dist/index.js"
   },
   "dependencies": {
+    "@babel/preset-env": "^7.14.8",
+    "@babel/preset-react": "^7.14.5",
     "@notionhq/client": "^0.2.1",
     "@prisma/client": "2.26.0",
     "@slack/web-api": "^6.2.4",
@@ -44,14 +47,21 @@
     "@types/node": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-loader": "^8.2.2",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
     "eslint": "^7.30.0",
     "jest": "^27.0.6",
     "prettier": "^2.3.2",
     "prisma": "2.26.0",
     "ts-jest": "^27.0.3",
+    "ts-loader": "^9.2.4",
     "ts-node": "^10.0.0",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "webpack": "^5.47.1",
+    "webpack-cli": "^4.7.2"
   },
   "engines": {
     "yarn": "1.*",
