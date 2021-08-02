@@ -1,6 +1,10 @@
 import { Client } from "@notionhq/client/build/src";
-import { DatabasesQueryResponse } from "@notionhq/client/build/src/api-endpoints";
-import { Page as NotionPage } from "@notionhq/client/build/src/api-types";
+import {
+  BlocksChildrenListParameters,
+  BlocksChildrenListResponse,
+  DatabasesQueryResponse,
+} from "@notionhq/client/build/src/api-endpoints";
+import { Block, Page as NotionPage } from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { Config } from "./Config";
 import { Database } from "./entity/Database";
@@ -71,5 +75,32 @@ export class NotionRepository {
     };
     await getPages();
     return allPageAndUsers;
+  }
+
+  async getAllBlocksFromPage(pageId: string) {
+    let allBlocks: Block[] = [];
+
+    const getBlocks = async (cursor?: string) => {
+      let blocks = null;
+      const blocksChildrenListParameters: BlocksChildrenListParameters = {
+        block_id: pageId,
+      };
+      if (cursor) blocksChildrenListParameters.start_cursor = cursor;
+      try {
+        blocks = (await this.notion.blocks.children.list(
+          blocksChildrenListParameters
+        )) as BlocksChildrenListResponse;
+      } catch (e) {
+        throw e;
+      }
+      if (!blocks.results.length) return;
+      allBlocks.push(...blocks.results);
+      if (blocks.has_more) {
+        await getBlocks(blocks.next_cursor ?? undefined);
+      }
+    };
+    await getBlocks();
+
+    return allBlocks;
   }
 }
