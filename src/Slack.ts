@@ -20,6 +20,7 @@ export class Slack {
       channel: Config.Slack.CHANNEL_NAME,
       text,
       blocks: JSXSlack(Header(arg.databaseName!, arg.page)),
+      unfurl_links: true
     };
 
     if (arg.user) {
