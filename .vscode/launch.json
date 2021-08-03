@@ -5,8 +5,8 @@
       "type": "node",
       "request": "launch",
       "name": "Launch TypeScript",
-      "program": "${file}",
-      "preLaunchTask": "Compile TypeScript",
+      "program": "${workspaceFolder}/dist/index.js",
+      "preLaunchTask": "Transpile TypeScript",
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]

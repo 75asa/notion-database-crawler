@@ -26,10 +26,10 @@ export class Database extends Entity<DatabaseProps> {
   }
 
   set lastFetchedAt(lastFetchedAt: Date) {
-    this.lastFetchedAt = lastFetchedAt;
+    this.props.lastFetchedAt = lastFetchedAt;
   }
 
   set size(size: number) {
-    this.size = size;
+    this.props.size = size;
   }
 }
