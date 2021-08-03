@@ -29,4 +29,12 @@ export class User extends Entity<UserProps> {
   get id(): string {
     return this._id;
   }
+
+  get name(): string {
+    return this.props.name;
+  }
+
+  get avatarURL(): string {
+    return this.props.avatarURL;
+  }
 }

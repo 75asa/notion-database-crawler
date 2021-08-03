@@ -74,7 +74,7 @@ const main = async () => {
           await pageRepo.create(page, user);
           const slackClient = new Slack();
           // Slack 通知
-          slackClient.postMessage({
+          await slackClient.postMessage({
             databaseName: database.name,
             page,
             user: user,
