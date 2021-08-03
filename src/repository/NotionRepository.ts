@@ -6,11 +6,11 @@ import {
 } from "@notionhq/client/build/src/api-endpoints";
 import { Block, Page as NotionPage } from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
-import { Config } from "./Config";
-import { Database } from "./entity/Database";
-import { Page } from "./entity/Page";
-import { User } from "./entity/User";
-import { parseISO8601 } from "./utils";
+import { Config } from "../Config";
+import { Database } from "../model/entity/Database";
+import { Page } from "../model/entity/Page";
+import { User } from "../model/entity/User";
+import { parseISO8601 } from "../utils";
 
 export class NotionRepository {
   private notion;

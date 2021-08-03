@@ -1,17 +1,9 @@
 import {
   PropertyValue,
-  RichText,
   TitlePropertyValue,
 } from "@notionhq/client/build/src/api-types";
+import { getName } from "../propertyHelpers";
 import { PrimitiveValueObject } from "./PrimitiveValueObject";
-
-// TODO: unify
-const getName = (titleList: RichText[]) => {
-  return titleList.reduce((acc, cur) => {
-    if (!("plain_text" in cur)) return acc;
-    return (acc += (acc.length ? " " : "") + cur.plain_text);
-  }, "");
-};
 
 const isTitlePropertyValue = (
   propValue: PropertyValue

@@ -1,7 +1,7 @@
 import { Page as NotionPage } from "@notionhq/client/build/src/api-types";
 import { Page as PageProps } from "@prisma/client";
-import { Config } from "../Config";
-import { parseDate } from "../utils";
+import { Config } from "../../Config";
+import { parseDate } from "../../utils";
 import { DatabaseId } from "../valueObject/DatabaseId";
 import { NameProperty } from "../valueObject/NameProperty";
 import { UserId } from "../valueObject/UserId";
@@ -20,41 +20,18 @@ export class Page extends Entity<PageProps> {
       url: props.url,
       userId: UserId.create(propLastEditedBy).value,
     };
-    return new Page(value, value.id);
+    return new Page(value);
   }
 
-  get id(): string {
+  get id() {
     return this._id;
   }
 
-  get name(): string {
+  get name() {
     return this.props.name;
   }
 
-  get url(): string {
+  get url() {
     return this.props.url;
-  }
-
-  get databaseId(): DatabaseId {
-    return this.databaseId;
-  }
-
-  get createdAt(): Date {
-    return this.createdAt;
-  }
-
-  get userId(): UserId {
-    return this.userId;
-  }
-
-  get props(): PageProps {
-    return {
-      id: this.id,
-      databaseId: this.databaseId.value,
-      name: this.name,
-      createdAt: this.createdAt,
-      url: this.url,
-      userId: this.userId.value,
-    };
   }
 }

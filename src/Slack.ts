@@ -23,7 +23,7 @@ export class Slack {
     };
 
     if (arg.user) {
-      const { name, avatarURL } = arg.user.props;
+      const { name, avatarURL } = arg.user.allProps();
       msgOption.username = name;
       msgOption.icon_url = avatarURL;
     }

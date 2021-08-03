@@ -1,5 +1,5 @@
-import { Page } from "./entity/Page";
-import { User } from "./entity/User";
+import { Page } from "./model/entity/Page";
+import { User } from "./model/entity/User";
 export interface PostMessageArg {
   page: Page;
   databaseName?: string;

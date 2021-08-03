@@ -23,19 +23,10 @@ export class User extends Entity<UserProps> {
       avatarURL: notionUser.avatar_url || "",
       email: notionUser.type === "person" ? notionUser.person!.email! : null,
     };
-    return new User(value, value.id);
+    return new User(value);
   }
 
   get id(): string {
     return this._id;
-  }
-
-  get props(): UserProps {
-    return {
-      id: this._id,
-      name: this.props.name,
-      avatarURL: this.props.avatarURL,
-      email: this.props.email,
-    };
   }
 }
