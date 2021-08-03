@@ -1,7 +1,7 @@
-import { ValueObject } from "./ValueObject";
+import { AbstractValueObject } from "./AbstractValueObject";
 
-export abstract class PrimitiveValueObject<T> extends ValueObject<T> {
+export abstract class PrimitiveValueObject<T> extends AbstractValueObject<T> {
   get value(): T {
-    return this.props;
+    return this._value;
   }
 }

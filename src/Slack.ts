@@ -7,7 +7,6 @@ import { User } from "./model/entity/User";
 
 export class Slack {
   private client;
-  private jsxElements: JSXSlack.JSX.Element[] = [];
   constructor() {
     this.client = this.init();
   }
@@ -16,11 +15,7 @@ export class Slack {
     return new WebClient(Config.Slack.BOT_TOKEN);
   }
 
-  setBlocks(arg: { page: Page; databaseName: string; user: User, elements: JSXSlack.JSX.Element[]}) {
-    return JSXSlack(Header(arg.databaseName!, arg.page, elements));
-  }
-
-  async postMessage(arg: { page: Page; databaseName: string; user: User, elements: JSXSlack.JSX.Element[]}) {
+  async postMessage(arg: { page: Page; databaseName: string; user: User }) {
     const text = `${arg.databaseName} に新しいページ: ${arg.page.name} が投稿されました`;
     const msgOption: ChatPostMessageArguments = {
       channel: Config.Slack.CHANNEL_NAME,
@@ -28,7 +23,7 @@ export class Slack {
       username: arg.user.name,
       icon_ur: arg.user.avatarURL,
       unfurl_links: true,
-      blocks: this.setBlocks({databaseName: arg.databaseName!, page: arg.page, elements}))
+      blocks: JSXSlack(Header(arg.databaseName!, arg.page)),
     };
 
     try {
