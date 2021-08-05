@@ -1,5 +1,8 @@
 import { Block } from "@notionhq/client/build/src/api-types";
-import JSXSlack from "jsx-slack";
+/** @jsxImportSource jsx-slack **/
+import JSXSlack, { Blocks, Divider, Header } from "jsx-slack";
+import { Page } from "../entity/Page";
+import { User } from "../entity/User";
 import { BulletedListItem } from "./blocks/BulletedListItem";
 import { ValueObject } from "./ValueObject";
 
@@ -14,7 +17,7 @@ export class ContentBlock extends ValueObject<ContentBlockProps> {
     for (const block of blocks) {
       switch (block.type) {
         case "bulleted_list_item":
-          jsxElements.push(BulletedListItem(block));
+          jsxElements.push(<BulletedListItem>{block}</BulletedListItem>);
           break;
         case "child_page":
           break;
@@ -43,4 +46,17 @@ export class ContentBlock extends ValueObject<ContentBlockProps> {
     return this.props.elements;
   }
 
+  makeBlock(arg: { page: Page; databaseName: string; user: User }) {
+    return (
+      <Blocks>
+        <Header>
+          <b>{arg.databaseName}</b> に新しいページ:{" "}
+          <a href={arg.page.url}>{arg.page.name}</a>
+          が投稿されました
+        </Header>
+        <Divider />
+        {...this.elements}
+      </Blocks>
+    );
+  }
 }

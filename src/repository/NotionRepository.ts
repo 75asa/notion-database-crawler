@@ -4,7 +4,10 @@ import {
   BlocksChildrenListResponse,
   DatabasesQueryResponse,
 } from "@notionhq/client/build/src/api-endpoints";
-import { Block, Page as NotionPage } from "@notionhq/client/build/src/api-types";
+import {
+  Block,
+  Page as NotionPage,
+} from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { Config } from "../Config";
 import { Database } from "../model/entity/Database";

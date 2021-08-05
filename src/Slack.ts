@@ -1,14 +1,19 @@
+import { Block } from "@notionhq/client/build/src/api-types";
 import { ChatPostMessageArguments, WebClient } from "@slack/web-api";
 import JSXSlack from "jsx-slack";
 import { Header } from "./blocks/Header";
 import { Config } from "./Config";
 import { Page } from "./model/entity/Page";
 import { User } from "./model/entity/User";
+import { ContentBlock } from "./model/valueObject/ContentsBlock";
 
 export class Slack {
   private client;
-  constructor() {
+  private contentsBlock;
+  private text;
+  constructor(contentsBlock: ContentBlock) {
     this.client = this.init();
+    this.contentsBlock = contentsBlock;
   }
 
   private init() {

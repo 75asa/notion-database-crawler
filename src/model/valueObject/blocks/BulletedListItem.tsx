@@ -1,22 +1,31 @@
 /** @jsxImportSource jsx-slack **/
 import { Section } from "jsx-slack";
 import { BulletedListItemBlock } from "@notionhq/client/build/src/api-types";
-import { RichText } from "./RichText";
+import { RichTextText } from "./RichText";
 
-export const BulletedListItem = (props: BulletedListItemBlock) => {
-  const result = props.bulleted_list_item.text.map(text => {
+interface BulletedListItemProps {
+  children: BulletedListItemBlock;
+}
+
+export const BulletedListItem = ({ children }: BulletedListItemProps) => {
+  // const texts = children.bulleted_list_item.text;
+  const bulletedListItems = children.bulleted_list_item.text.map(text => {
     switch (text.type) {
       case "text":
         text;
-        return RichText(text);
+        return <RichTextText>{text}</RichTextText>;
       case "equation":
         text;
-        // return RichTextEquation(text);
         break;
       case "mention":
         text;
         break;
     }
   });
-  return <Section>- {...result}</Section>;
+  // TODO: ワンラインになるか確認
+  return (
+    <Section>
+      <b>-</b> {...bulletedListItems}
+    </Section>
+  );
 };

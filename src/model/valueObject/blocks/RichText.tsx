@@ -1,7 +1,15 @@
 /** @jsxImportSource jsx-slack **/
-import { RichTextText } from "@notionhq/client/build/src/api-types";
+import { RichTextText as NotionRichTextText } from "@notionhq/client/build/src/api-types";
 import { Annotations } from "./Annotations";
 
-export const RichText = (props: RichTextText) => {
-  return Annotations(props.annotations, props.text);
+interface RichTextTextProps {
+  children: NotionRichTextText;
+}
+
+export const RichTextText = ({ children }: RichTextTextProps) => {
+  return (
+    <>
+      <Annotations>{children}</Annotations>
+    </>
+  );
 };
