@@ -5,7 +5,6 @@ import { Scheduler } from "./Scheduler";
 import { Config } from "./Config";
 import { PrismaPageRepository } from "./repository/PrismaPageRepository";
 import { PrismaDatabaseRepository } from "./repository/PrismaDatabaseRepository";
-import { ContentBlock } from "./model/valueObject/ContentsBlock";
 
 const prisma = new PrismaClient();
 
@@ -74,8 +73,7 @@ const main = async () => {
           const page = pageAndUser.page;
           await pageRepo.create(page, user);
           const blocks = await notionRepo.getAllBlocksFromPage(page.id);
-          const contentsBlock = ContentBlock.create(blocks);
-          const slackClient = new Slack(contentsBlock);
+          const slackClient = new Slack(blocks);
           // slackClient.setBlocks(blocks);
           // Slack 通知
           await slackClient.postMessage({
