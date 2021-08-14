@@ -25,13 +25,14 @@ export class Slack {
       Header(arg.databaseName!, arg.page),
       ...this.contentsBlock.elements,
     ];
+    const translatedBlocks = block.map(item => JSXSlack(item));
     const msgOption: ChatPostMessageArguments = {
       channel: Config.Slack.CHANNEL_NAME,
       text,
       username: arg.user.name,
       icon_ur: arg.user.avatarURL,
       unfurl_links: true,
-      blocks: block.map(item => JSXSlack(item)),
+      blocks: translatedBlocks,
     };
 
     try {
