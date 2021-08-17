@@ -45,7 +45,7 @@ export class NotionRepository {
         method: "post",
         body: {
           filter: {
-            property: Config.Notion.CREATED_AT_PROP_NAME,
+            property: Config.Notion.Props.CREATED_AT,
             created_time: {
               // 前回同期した時間以降にフィルター
               on_or_after: parseISO8601(lastFetchedAt),
@@ -68,7 +68,7 @@ export class NotionRepository {
         if (rawPage.archived) continue;
         const page = Page.create(rawPage);
         const user = User.create(
-          rawPage.properties[Config.Notion.LAST_EDITED_BY_PROP_NAME]
+          rawPage.properties[Config.Notion.Props.LAST_EDITED_BY]
         );
         allPageAndUsers.push({ page, user });
       }

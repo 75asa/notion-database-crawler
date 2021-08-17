@@ -7,9 +7,8 @@ interface BulletedListItemProps {
   children: BulletedListItemBlock;
 }
 
-export const BulletedListItem = ({ children }: BulletedListItemProps) => {
-  // const texts = children.bulleted_list_item.text;
-  const bulletedListItems = children.bulleted_list_item.text.map(text => {
+export const BulletedListItem = (props: BulletedListItemProps) => {
+  const bulletedListItems = props.children.bulleted_list_item.text.map(text => {
     switch (text.type) {
       case "text":
         text;

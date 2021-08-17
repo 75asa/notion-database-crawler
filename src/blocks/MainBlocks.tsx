@@ -1,8 +1,12 @@
 /** @jsxImportSource jsx-slack **/
-import { Blocks, Divider, Section } from "jsx-slack";
+import JSXSlack, { Blocks, Divider, Section } from "jsx-slack";
 import { Page } from "src/model/entity/Page";
 
-export const Header = (databaseName: string, page: Page) => {
+export const MainBlocks = (
+  databaseName: string,
+  page: Page,
+  contents: JSXSlack.JSX.Element[]
+) => {
   return (
     <Blocks>
       <Section>
@@ -10,6 +14,7 @@ export const Header = (databaseName: string, page: Page) => {
         が投稿されました
       </Section>
       <Divider />
+      {...contents}
     </Blocks>
   );
 };

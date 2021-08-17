@@ -14,10 +14,13 @@ export namespace Config {
   }
   export namespace Notion {
     export const KEY = process.env.NOTION_KEY!;
-    export const CREATED_AT_PROP_NAME =
-      process.env.NOTION_CREATED_AT_PROP_NAME || "CreatedAt";
-    export const LAST_EDITED_BY_PROP_NAME =
-      process.env.NOTION_LAST_EDITED_BY_PROP_NAME || "LastEditedBy";
+    export namespace Props {
+      export const NAME = process.env.NOTION_NAME || "Name";
+      export const CREATED_AT =
+        process.env.NOTION_CREATED_AT_PROP || "CreatedAt";
+      export const LAST_EDITED_BY =
+        process.env.NOTION_LAST_EDITED_BY_PROP || "LastEditedBy";
+    }
   }
   export const JOB_INTERVAL_SECONDS =
     Number(process.env.JOB_INTERVAL_SECONDS) || 60;
