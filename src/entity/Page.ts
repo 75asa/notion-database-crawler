@@ -2,9 +2,7 @@ import { Page as NotionPage } from "@notionhq/client/build/src/api-types";
 import { Page as PageProps } from "@prisma/client";
 import { Config } from "../Config";
 import { parseDate } from "../utils";
-import { DatabaseId } from "../valueObject/DatabaseId";
-import { NameProperty } from "../valueObject/NameProperty";
-import { UserId } from "../valueObject/UserId";
+import { DatabaseId, NameProperty, UserId } from "../valueObject";
 import { Entity } from "./Entity";
 
 export class Page extends Entity<PageProps> {
