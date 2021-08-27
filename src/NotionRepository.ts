@@ -3,9 +3,7 @@ import { DatabasesQueryResponse } from "@notionhq/client/build/src/api-endpoints
 import { Page as NotionPage } from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { Config } from "./Config";
-import { Database } from "./entity/Database";
-import { Page } from "./entity/Page";
-import { User } from "./entity/User";
+import { Database, Page, User } from "./entity";
 import { parseISO8601 } from "./utils";
 
 export class NotionRepository {
@@ -24,7 +22,7 @@ export class NotionRepository {
         (data): data is Exclude<typeof data, NotionPage> =>
           data.object === "database"
       )
-      .map(database => {
+      .map((database) => {
         return Database.create(database);
       });
   }

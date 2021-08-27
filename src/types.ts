@@ -1,5 +1,4 @@
-import { Page } from "./entity/Page";
-import { User } from "./entity/User";
+import { Page, User } from "./entity";
 export interface PostMessageArg {
   page: Page;
   databaseName?: string;

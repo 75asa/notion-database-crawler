@@ -14,7 +14,7 @@ const main = async () => {
   const allDatabases = await notionRepo.getAllDatabase();
   // database に紐づいてる Page (from Notion)
   await Promise.all(
-    allDatabases.map(async database => {
+    allDatabases.map(async (database) => {
       const hadStoredDatabase = await prisma.database.findFirst({
         where: {
           id: database.id,
@@ -86,8 +86,8 @@ const main = async () => {
         const hadStoredPages = hadStoredDatabase.pages;
 
         // 2回目以降なので差分を比較
-        const notStoredPages = allContents.filter(pageSet => {
-          const hadStored = hadStoredPages.some(storedPage => {
+        const notStoredPages = allContents.filter((pageSet) => {
+          const hadStored = hadStoredPages.some((storedPage) => {
             return storedPage.id === pageSet.page.id;
           });
           if (hadStored) return false;

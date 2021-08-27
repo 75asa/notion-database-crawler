@@ -1,6 +1,11 @@
-import { ChatPostMessageArguments, WebClient } from "@slack/web-api";
+import {
+  Block,
+  ChatPostMessageArguments,
+  KnownBlock,
+  WebClient,
+} from "@slack/web-api";
 /** @jsxImportSource jsx-slack */
-import { Blocks, jsxslack, Section } from "jsx-slack";
+import JSXSlack, { Blocks, jsxslack, Node, Section } from "jsx-slack";
 import { Config } from "./Config";
 import { PostMessageArg } from "./types";
 
