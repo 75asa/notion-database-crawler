@@ -1,5 +1,4 @@
 import { RichTextText } from "@notionhq/client/build/src/api-types";
-import { Fragment } from "jsx-slack";
 
 interface AnnotationsProps {
   children: RichTextText;
@@ -7,48 +6,30 @@ interface AnnotationsProps {
 export const Annotations = ({ children }: AnnotationsProps) => {
   const content = children.text.content;
   const { annotations, text } = children;
-  let blocks = !!text.link ? (
-    <Fragment>
-      <a href={text.link!.url}>{content}</a>
-    </Fragment>
+  const withLink = !!text.link;
+  let blocks = withLink ? (
+    <a href={text.link!.url}>{content}</a>
   ) : (
-    <Fragment>
-      <p>{content}</p>
-    </Fragment>
+    <p>{content}</p>
   );
+
   for (const annotation in annotations) {
     switch (annotation) {
       case "bold":
         if (!annotations[annotation]) break;
-        blocks = (
-          <Fragment>
-            <b>{blocks}</b>
-          </Fragment>
-        );
+        blocks = <b>{blocks}</b>;
         break;
       case "italic":
         if (!annotations[annotation]) break;
-        blocks = (
-          <Fragment>
-            <i>{blocks}</i>
-          </Fragment>
-        );
+        blocks = <i>{blocks}</i>;
         break;
       case "strikethrough":
         if (!annotations[annotation]) break;
-        blocks = (
-          <Fragment>
-            <strike>{blocks}</strike>
-          </Fragment>
-        );
+        blocks = <strike>{blocks}</strike>;
         break;
       case "code":
         if (!annotations[annotation]) break;
-        blocks = (
-          <Fragment>
-            <code>{blocks}</code>
-          </Fragment>
-        );
+        blocks = <code>{blocks}</code>;
         break;
       case "default":
         // underline, color

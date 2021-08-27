@@ -7,9 +7,5 @@ interface RichTextTextProps {
 }
 
 export const RichTextText = ({ children }: RichTextTextProps) => {
-  return (
-    <>
-      <Annotations>{children}</Annotations>
-    </>
-  );
+  return <Annotations>{children}</Annotations>;
 };

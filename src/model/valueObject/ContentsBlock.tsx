@@ -11,21 +11,8 @@ interface ContentBlockProps {
   elements: JSXSlack.JSX.Element[];
 }
 
-interface CustomComponent {
-  children: JSXSlack.JSX.Element[];
-}
-
 export class ContentBlock extends ValueObject<ContentBlockProps> {
   static create(blocks: Block[]) {
-    // const CustomComponent = ({ children }: CustomComponent) =>
-    //   JSXSlack.Children.toArray(children).join("");
-
-    // console.log(
-    //   <CustomComponent>
-    //     a{"b"}c<JSXSlack.Fragment>{["d", "e"]}f</JSXSlack.Fragment>
-    //   </CustomComponent>
-    // );
-    // -> abcdef
     const jsxElements: JSXSlack.JSX.Element[] = [];
     for (const block of blocks) {
       switch (block.type) {
@@ -55,8 +42,6 @@ export class ContentBlock extends ValueObject<ContentBlockProps> {
           break;
       }
     }
-    // console.log(<CustomComponent>{jsxElements}</CustomComponent>);
-    // console.log(CustomComponent({ children: jsxElements }));
     return new ContentBlock({ blocks, elements: jsxElements });
   }
 
