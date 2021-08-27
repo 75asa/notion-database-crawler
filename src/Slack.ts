@@ -26,6 +26,8 @@ export class Slack {
       blocks: JSXSlack(Header(arg.databaseName!, arg.page)),
     };
 
+    console.dir({ msgOption }, { depth: null });
+
     try {
       await this.client.chat.postMessage(msgOption);
     } catch (e) {
