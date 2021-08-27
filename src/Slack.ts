@@ -22,7 +22,7 @@ export class Slack {
       channel: Config.Slack.CHANNEL_NAME,
       text,
       username: arg.user.name,
-      icon_ur: arg.user.avatarURL,
+      icon_url: arg.user.avatarURL,
       unfurl_links: true,
       blocks: JSXSlack(Header(databaseName!, page)),
     };
