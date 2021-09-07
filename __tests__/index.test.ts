@@ -1,1 +1,1 @@
-test('index test', () => {})
+test("index test", () => {});
