@@ -6,7 +6,7 @@ export const Header = (databaseName: string, page: Page) => {
   return (
     <Blocks>
       <Section>
-        <Mrkdwn verbatim={false}>
+        <Mrkdwn>
           <b>{databaseName}</b> に新しいページ:{" "}
           <a href={page.url}>{page.name}</a>
           が投稿されました
