@@ -17,7 +17,7 @@ export class Slack {
 
   async postMessage(arg: { page: Page; databaseName: string; user: User }) {
     const { databaseName, page } = arg;
-    const text = `${databaseName} に新しいページ: <${page.name}|(${page.url}> が投稿されました`;
+    const text = `${databaseName} に新しいページ: <(${page.url}|${page.name}> が投稿されました`;
     const msgOption: ChatPostMessageArguments = {
       channel: Config.Slack.CHANNEL_NAME,
       text,
