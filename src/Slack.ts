@@ -16,13 +16,13 @@ export class Slack {
   }
 
   async postMessage(arg: { page: Page; databaseName: string; user: User }) {
-    const { databaseName, page } = arg;
+    const { databaseName, page, user } = arg;
     const text = `${databaseName} に新しいページ: <${page.url}|${page.name}> が投稿されました`;
     const msgOption: ChatPostMessageArguments = {
       channel: Config.Slack.CHANNEL_NAME,
       text,
-      username: arg.user.name,
-      icon_url: arg.user.avatarURL,
+      username: user.name,
+      icon_url: user.avatarURL,
       unfurl_links: true,
       blocks: JSXSlack(Header(databaseName!, page)),
     };
