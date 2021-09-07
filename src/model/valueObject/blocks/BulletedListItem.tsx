@@ -1,7 +1,7 @@
 /** @jsxImportSource jsx-slack **/
-import JSXSlack, { Section } from "jsx-slack";
-import { BulletedListItemBlock } from "@notionhq/client/build/src/api-types";
-import { RichTextText } from "./RichText";
+import JSXSlack, { Section } from 'jsx-slack';
+import { BulletedListItemBlock } from '@notionhq/client/build/src/api-types';
+import { RichTextText } from './RichText';
 
 interface BulletedListItemProps {
   children: BulletedListItemBlock;
@@ -9,15 +9,15 @@ interface BulletedListItemProps {
 
 export const BulletedListItem = (props: BulletedListItemProps) => {
   const bulletedListItems = props.children.bulleted_list_item.text
-    .map(text => {
+    .map((text) => {
       switch (text.type) {
-        case "text":
+        case 'text':
           text;
           return <RichTextText>{text}</RichTextText>;
-        case "equation":
+        case 'equation':
           text;
           break;
-        case "mention":
+        case 'mention':
           text;
           break;
       }
@@ -25,10 +25,14 @@ export const BulletedListItem = (props: BulletedListItemProps) => {
     .filter(
       (item): item is Exclude<typeof item, undefined> => item !== undefined
     );
-  // TODO: ワンラインになるか確認
+
   return (
     <Section>
-      <li>{JSXSlack.Children.toArray(bulletedListItems).join("")}</li>
+      <ul>
+        {JSXSlack.Children.toArray(bulletedListItems).map((item) => (
+          <li>{item.toString()}</li>
+        ))}
+      </ul>
     </Section>
   );
 };
