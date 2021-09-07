@@ -1,17 +1,17 @@
-import { Page as NotionPage } from "@notionhq/client/build/src/api-types";
-import { Page as PageProps } from "@prisma/client";
-import { Config } from "../../Config";
-import { parseDate } from "../../utils";
-import { DatabaseId } from "../valueObject/DatabaseId";
-import { NameProperty } from "../valueObject/NameProperty";
-import { UserId } from "../valueObject/UserId";
-import { Entity } from "./Entity";
+import { Page as NotionPage } from '@notionhq/client/build/src/api-types'
+import { Page as PageProps } from '@prisma/client'
+import { Config } from '../../Config'
+import { parseDate } from '../../utils'
+import { DatabaseId } from '../valueObject/DatabaseId'
+import { NameProperty } from '../valueObject/NameProperty'
+import { UserId } from '../valueObject/UserId'
+import { Entity } from './Entity'
 
 export class Page extends Entity<PageProps> {
   static create(props: NotionPage): Page {
-    const name = NameProperty.create(props.properties.Name).value;
+    const name = NameProperty.create(props.properties.Name).value
     const propLastEditedBy =
-      props.properties[Config.Notion.LAST_EDITED_BY_PROP_NAME];
+      props.properties[Config.Notion.LAST_EDITED_BY_PROP_NAME]
     const value = {
       id: props.id,
       databaseId: DatabaseId.create(props).value,
@@ -19,19 +19,19 @@ export class Page extends Entity<PageProps> {
       createdAt: parseDate(props.created_time),
       url: props.url,
       userId: UserId.create(propLastEditedBy).value,
-    };
-    return new Page(value);
+    }
+    return new Page(value)
   }
 
   get id() {
-    return this._id;
+    return this._id
   }
 
   get name() {
-    return this.props.name;
+    return this.props.name
   }
 
   get url() {
-    return this.props.url;
+    return this.props.url
   }
 }

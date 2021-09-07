@@ -8,7 +8,6 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
-    'prettier/@typescript-eslint',
   ],
   globals: {
     Atomics: 'readonly',
@@ -18,7 +17,7 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'prettier'],
   rules: {
     'prettier/prettier': [
       2,
@@ -34,4 +33,3 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
 }
-

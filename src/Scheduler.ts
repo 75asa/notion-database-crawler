@@ -3,24 +3,24 @@ import {
   SimpleIntervalJob,
   SimpleIntervalSchedule,
   ToadScheduler,
-} from "toad-scheduler";
+} from 'toad-scheduler'
 
 export class Scheduler {
-  private scheduler: ToadScheduler;
-  private task: AsyncTask;
+  private scheduler: ToadScheduler
+  private task: AsyncTask
   constructor(func: Function) {
-    this.scheduler = new ToadScheduler();
+    this.scheduler = new ToadScheduler()
     this.task = new AsyncTask(
-      "run main",
+      'run main',
       () => func(),
       (err: Error) => {
-        throw err;
+        throw err
       }
-    );
+    )
   }
 
   setInterval(simpleIntervalSchedule: SimpleIntervalSchedule) {
-    const job = new SimpleIntervalJob(simpleIntervalSchedule, this.task);
-    this.scheduler.addSimpleIntervalJob(job);
+    const job = new SimpleIntervalJob(simpleIntervalSchedule, this.task)
+    this.scheduler.addSimpleIntervalJob(job)
   }
 }

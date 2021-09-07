@@ -1,7 +1,7 @@
-import { AbstractValueObject } from "./AbstractValueObject";
+import { AbstractValueObject } from './AbstractValueObject'
 
 interface ValueObjectProps {
-  [index: string]: any;
+  [index: string]: any
 }
 
 export abstract class ValueObject<
