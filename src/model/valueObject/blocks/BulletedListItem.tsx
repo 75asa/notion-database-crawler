@@ -25,10 +25,14 @@ export const BulletedListItem = (props: BulletedListItemProps) => {
     .filter(
       (item): item is Exclude<typeof item, undefined> => item !== undefined
     );
-  // TODO: ワンラインになるか確認
+
   return (
     <Section>
-      <li>{JSXSlack.Children.toArray(bulletedListItems).join("")}</li>
+      <ul>
+        {JSXSlack.Children.toArray(bulletedListItems).map((item) => (
+          <li>{item.toString()}</li>
+        ))}
+      </ul>
     </Section>
   );
 };
