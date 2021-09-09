@@ -19,17 +19,9 @@ const main = async () => {
     allDatabases.map(async database => {
       const databaseRepo = new PrismaDatabaseRepository(prisma);
       const hadStoredDatabase = await databaseRepo.find(database.id);
-      // 前回同期した時間で Notion Page をフィルタ
-      let isFirstTime = true;
-
-      // DB保存済みの場合
-      if (hadStoredDatabase) {
-        isFirstTime = false;
-        database.lastFetchedAt = hadStoredDatabase.lastFetchedAt;
-      }
+      const isFirstTime = hadStoredDatabase ? true : false;
       const allContents = await notionRepo.getAllContentsFromDatabase(
-        database.id,
-        database.lastFetchedAt
+        database.id
       );
 
       database.size = allContents.length;
