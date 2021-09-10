@@ -19,7 +19,7 @@ const main = async () => {
     allDatabases.map(async database => {
       const databaseRepo = new PrismaDatabaseRepository(prisma);
       const hadStoredDatabase = await databaseRepo.find(database.id);
-      const isFirstTime = hadStoredDatabase ? true : false;
+      const isFirstTime = hadStoredDatabase ? false : true;
       const allContents = await notionRepo.getAllContentsFromDatabase(
         database.id
       );

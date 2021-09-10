@@ -13,7 +13,6 @@ import { Config } from "../Config";
 import { Database } from "../model/entity/Database";
 import { Page } from "../model/entity/Page";
 import { User } from "../model/entity/User";
-import { parseISO8601 } from "../utils";
 
 export class NotionRepository {
   private notion;
