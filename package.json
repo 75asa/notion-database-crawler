@@ -30,28 +30,28 @@
     "deploy": "tsc . && node dist/index.js"
   },
   "dependencies": {
-    "@notionhq/client": "^0.2.1",
-    "@prisma/client": "2.26.0",
-    "@slack/web-api": "^6.2.4",
+    "@notionhq/client": "^0.3.1",
+    "@prisma/client": "3.0.2",
+    "@slack/web-api": "^6.4.0",
     "dayjs": "^1.10.6",
     "dotenv": "^10.0.0",
     "jsx-slack": "^4.3.0",
     "shallow-equal-object": "^1.1.1",
-    "toad-scheduler": "^1.4.0"
+    "toad-scheduler": "^1.5.0"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.24",
-    "@types/node": "^16.0.0",
-    "@typescript-eslint/eslint-plugin": "^4.28.2",
-    "@typescript-eslint/parser": "^4.28.2",
-    "eslint": "^7.30.0",
-    "jest": "^27.0.6",
-    "prettier": "^2.3.2",
-    "prisma": "2.26.0",
-    "ts-jest": "^27.0.3",
-    "ts-node": "^10.0.0",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.9.1",
+    "@typescript-eslint/eslint-plugin": "^4.31.0",
+    "@typescript-eslint/parser": "^4.31.0",
+    "eslint": "^7.32.0",
+    "jest": "^27.1.1",
+    "prettier": "^2.4.0",
+    "prisma": "3.0.2",
+    "ts-jest": "^27.0.5",
+    "ts-node": "^10.2.1",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.3.5"
+    "typescript": "^4.4.2"
   },
   "engines": {
     "yarn": "1.*",
