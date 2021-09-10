@@ -18,6 +18,10 @@ export namespace Config {
       process.env.NOTION_CREATED_AT_PROP_NAME || "CreatedAt";
     export const LAST_EDITED_BY_PROP_NAME =
       process.env.NOTION_LAST_EDITED_BY_PROP_NAME || "LastEditedBy";
+    export const IS_PUBLISHED =
+      process.env.NOTION_IS_PUBLISHED || "IsPublished";
+    export const NAME = process.env.NOTION_NAME || "Name";
+    export const IGNORE_PREFIX = process.env.IGNORE_PREFIX || "Copy of";
   }
   export const JOB_INTERVAL_SECONDS =
     Number(process.env.JOB_INTERVAL_SECONDS) || 60;

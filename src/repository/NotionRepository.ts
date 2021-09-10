@@ -4,13 +4,15 @@ import {
   BlocksChildrenListResponse,
   DatabasesQueryResponse,
 } from "@notionhq/client/build/src/api-endpoints";
-import { Block, Page as NotionPage } from "@notionhq/client/build/src/api-types";
+import {
+  Block,
+  Page as NotionPage,
+} from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { Config } from "../Config";
 import { Database } from "../model/entity/Database";
 import { Page } from "../model/entity/Page";
 import { User } from "../model/entity/User";
-import { parseISO8601 } from "../utils";
 
 export class NotionRepository {
   private notion;
@@ -33,7 +35,7 @@ export class NotionRepository {
       });
   }
 
-  async getAllContentsFromDatabase(databaseId: string, lastFetchedAt: Date) {
+  async getAllContentsFromDatabase(databaseId: string) {
     let allPageAndUsers: { page: Page; user: User }[] = [];
 
     const getPages = async (cursor?: string) => {
@@ -42,11 +44,20 @@ export class NotionRepository {
         method: "post",
         body: {
           filter: {
-            property: Config.Notion.CREATED_AT_PROP_NAME,
-            created_time: {
-              // 前回同期した時間以降にフィルター
-              on_or_after: parseISO8601(lastFetchedAt),
-            },
+            and: [
+              {
+                property: Config.Notion.NAME,
+                text: {
+                  does_not_contain: Config.Notion.IGNORE_PREFIX,
+                },
+              },
+              {
+                property: Config.Notion.IS_PUBLISHED,
+                checkbox: {
+                  equals: true,
+                },
+              },
+            ],
           },
         },
       };
