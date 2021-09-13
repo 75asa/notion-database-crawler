@@ -14,6 +14,7 @@ import { Database } from "../model/entity/Database";
 import { Page } from "../model/entity/Page";
 import { User } from "../model/entity/User";
 
+const { Props, IGNORE_PREFIX, MUST_EXIST_PROPS } = Config.Notion;
 export class NotionRepository {
   private notion;
   constructor(authKey: string) {
@@ -30,6 +31,11 @@ export class NotionRepository {
         (data): data is Exclude<typeof data, NotionPage> =>
           data.object === "database"
       )
+      .filter(database => {
+        return MUST_EXIST_PROPS.every(MUST_EXIST_PROP => {
+          return Object.keys(database.properties).includes(MUST_EXIST_PROP);
+        });
+      })
       .map(database => {
         return Database.create(database);
       });
@@ -46,13 +52,13 @@ export class NotionRepository {
           filter: {
             and: [
               {
-                property: Config.Notion.NAME,
+                property: Props.NAME,
                 text: {
-                  does_not_contain: Config.Notion.IGNORE_PREFIX,
+                  does_not_contain: IGNORE_PREFIX,
                 },
               },
               {
-                property: Config.Notion.IS_PUBLISHED,
+                property: Props.IS_PUBLISHED,
                 checkbox: {
                   equals: true,
                 },
@@ -75,9 +81,7 @@ export class NotionRepository {
         // TODO: 削除ページどうするか検討
         if (rawPage.archived) continue;
         const page = Page.create(rawPage);
-        const user = User.create(
-          rawPage.properties[Config.Notion.LAST_EDITED_BY_PROP_NAME]
-        );
+        const user = User.create(rawPage.properties[Props.LAST_EDITED_BY]);
         allPageAndUsers.push({ page, user });
       }
       if (pages.has_more) {
