@@ -26,22 +26,6 @@ export const BulletedListItem = (props: BulletedListItemProps) => {
       (item): item is Exclude<typeof item, undefined> => item !== undefined
     );
 
-  console.log(
-    props.children.bulleted_list_item.text.map((text) => {
-      switch (text.type) {
-        case 'text':
-          text;
-          return <RichTextText text={text} />;
-        case 'equation':
-          text;
-          break;
-        case 'mention':
-          text;
-          break;
-      }
-    })
-  );
-
   return (
     <Section>
       <li>{JSXSlack.Children.toArray(bulletedListItems).join('')}</li>
