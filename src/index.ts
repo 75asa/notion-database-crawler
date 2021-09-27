@@ -18,8 +18,8 @@ const main = async () => {
   await Promise.all(
     allDatabases.map(async database => {
       const databaseRepo = new PrismaDatabaseRepository(prisma);
-      const hadStoredDatabase = await databaseRepo.find(database.id);
-      const isFirstTime = hadStoredDatabase ? false : true;
+      const storedDatabase = await databaseRepo.find(database.id);
+      const isFirstTime = storedDatabase ? false : true;
       const allContents = await notionRepo.getAllContentsFromDatabase(
         database.id
       );
@@ -36,20 +36,20 @@ const main = async () => {
           const page = content.page;
           await pageRepo.create(page, user);
         }
-      } else if (hadStoredDatabase !== null) {
+      } else if (storedDatabase !== null) {
         // database に紐づいたページを取得
-        const hadStoredPages = hadStoredDatabase.pages;
+        const storedPages = storedDatabase.pages;
 
         // 2回目以降なので差分を比較
-        const notStoredPages = allContents.filter(content => {
-          const hadStored = hadStoredPages.some(storedPage => {
+        const unstoredPages = allContents.filter(content => {
+          const hadStored = storedPages.some(storedPage => {
             return storedPage.id === content.page.id;
           });
           //  DBに一つでも同じIDがあれば保存ずみなので false を返す
           return hadStored ? false : true;
         });
         // 差分がない場合は何もしない
-        if (!notStoredPages.length) {
+        if (!unstoredPages.length) {
           try {
             await databaseRepo.update(database);
           } finally {
@@ -57,10 +57,10 @@ const main = async () => {
           }
         }
 
-        database.size += notStoredPages.length;
+        database.size += unstoredPages.length;
         const pageRepo = new PrismaPageRepository(prisma);
 
-        for (const pageAndUser of notStoredPages) {
+        for (const pageAndUser of unstoredPages) {
           const user = pageAndUser.user;
           const page = pageAndUser.page;
           await pageRepo.create(page, user);

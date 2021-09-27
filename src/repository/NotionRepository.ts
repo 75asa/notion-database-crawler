@@ -23,9 +23,15 @@ export class NotionRepository {
 
   // integration が取得可能な database を取得
   async getAllDatabase() {
-    const searched = await this.notion.search({
-      filter: { value: "database", property: "object" },
-    });
+    let searched;
+    try {
+      searched = await this.notion.search({
+        filter: { value: "database", property: "object" },
+      });
+    } catch (e) {
+      throw e;
+    }
+
     return searched.results
       .filter(
         (data): data is Exclude<typeof data, NotionPage> =>
