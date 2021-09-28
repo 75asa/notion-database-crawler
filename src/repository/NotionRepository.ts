@@ -4,10 +4,10 @@ import {
   BlocksChildrenListResponse,
   DatabasesQueryResponse,
 } from "@notionhq/client/build/src/api-endpoints";
-import {
-  Block,
-  Page as NotionPage,
-} from "@notionhq/client/build/src/api-types";
+// import {
+//   Block,
+//   Page as NotionPage,
+// } from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { Config } from "../Config";
 import { Database } from "../model/entity/Database";
@@ -35,15 +35,17 @@ export class NotionRepository {
 
     return searched.results
       .filter(
-        (data): data is Exclude<typeof data, NotionPage> =>
-          data.object === "database"
+        (data): data is Exclude<typeof data, typeof data["properties"]> =>
+          "properties" in data
       )
       .filter((database) => {
         return MUST_EXIST_PROPS.every((MUST_EXIST_PROP) => {
           return Object.keys(database.properties).includes(MUST_EXIST_PROP);
         });
       })
-      .map((database) => {
+      .map(database => {
+        // TODO: 1. typeof NotionDatabase が実装されるのを待つ
+        // TODO: 2. Entity のファクトリメソッドを ↑で絞った properties を引数にする
         return Database.create(database);
       });
   }
