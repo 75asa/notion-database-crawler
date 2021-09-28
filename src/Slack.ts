@@ -24,15 +24,15 @@ export class Slack {
       username: user.name,
       icon_url: user.avatarURL,
       unfurl_links: true,
-      blocks: JSXSlack(Header(databaseName!, page)),
+      blocks: JSXSlack(Header(databaseName, page)),
     };
 
-    console.dir({ msgOption }, { depth: null });
+    // console.dir({ msgOption, Config }, { depth: null });
 
     try {
       await this.client.chat.postMessage(msgOption);
     } catch (e) {
-      throw e;
+      if (e instanceof Error) throw e;
     }
   }
 }

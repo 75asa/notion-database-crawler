@@ -29,7 +29,8 @@ export class NotionRepository {
         filter: { value: "database", property: "object" },
       });
     } catch (e) {
-      throw e;
+      if (e instanceof Error) throw e;
+      if (!searched) throw new Error("searched is null");
     }
 
     return searched.results
@@ -37,18 +38,18 @@ export class NotionRepository {
         (data): data is Exclude<typeof data, NotionPage> =>
           data.object === "database"
       )
-      .filter(database => {
-        return MUST_EXIST_PROPS.every(MUST_EXIST_PROP => {
+      .filter((database) => {
+        return MUST_EXIST_PROPS.every((MUST_EXIST_PROP) => {
           return Object.keys(database.properties).includes(MUST_EXIST_PROP);
         });
       })
-      .map(database => {
+      .map((database) => {
         return Database.create(database);
       });
   }
 
   async getAllContentsFromDatabase(databaseId: string) {
-    let allPageAndUsers: { page: Page; user: User }[] = [];
+    const allPageAndUsers: { page: Page; user: User }[] = [];
 
     const getPages = async (cursor?: string) => {
       const requestPayload: RequestParameters = {
@@ -80,11 +81,11 @@ export class NotionRepository {
           requestPayload
         )) as DatabasesQueryResponse;
       } catch (e) {
-        throw e;
+        if (e instanceof Error) throw e;
+        if (!pages) throw new Error("pages is null");
       }
 
       for (const rawPage of pages.results) {
-        // TODO: 削除ページどうするか検討
         if (rawPage.archived) continue;
         const page = Page.create(rawPage);
         const user = User.create(rawPage.properties[Props.LAST_EDITED_BY]);
@@ -99,7 +100,7 @@ export class NotionRepository {
   }
 
   async getAllBlocksFromPage(pageId: string) {
-    let allBlocks: Block[] = [];
+    const allBlocks: Block[] = [];
 
     const getBlocks = async (cursor?: string) => {
       let blocks = null;
@@ -112,7 +113,8 @@ export class NotionRepository {
           blocksChildrenListParameters
         )) as BlocksChildrenListResponse;
       } catch (e) {
-        throw e;
+        if (e instanceof Error) throw e;
+        if (!blocks) throw new Error("blocks is null");
       }
       if (!blocks.results.length) return;
       allBlocks.push(...blocks.results);

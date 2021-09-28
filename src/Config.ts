@@ -7,13 +7,14 @@ if (config) {
     process.env[key] = config[key];
   }
 }
+
 export namespace Config {
   export namespace Slack {
-    export const BOT_TOKEN = process.env.SLACK_BOT_TOKEN!;
-    export const CHANNEL_NAME = process.env.CHANNEL_NAME!;
+    export const BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
+    export const CHANNEL_NAME = process.env.SLACK_CHANNEL_NAME;
   }
   export namespace Notion {
-    export const KEY = process.env.NOTION_KEY!;
+    export const KEY = process.env.NOTION_KEY;
     export const IGNORE_PREFIX = process.env.IGNORE_PREFIX || "Copy of";
     export namespace Props {
       export const CREATED_AT =

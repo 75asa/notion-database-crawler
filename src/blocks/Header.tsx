@@ -1,6 +1,6 @@
 /** @jsxImportSource jsx-slack **/
 import { Blocks, Mrkdwn, Section } from "jsx-slack";
-import { Page } from "src/model/entity/Page";
+import { Page } from "model/entity/Page";
 
 export const Header = (databaseName: string, page: Page) => {
   return (

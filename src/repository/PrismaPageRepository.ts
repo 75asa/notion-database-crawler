@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Page } from "src/model/entity/Page";
-import { User } from "src/model/entity/User";
+import { Page } from "model/entity/Page";
+import { User } from "model/entity/User";
 
 interface IPageRepository {
   create(page: Page, user: User): Promise<void>;
@@ -35,7 +35,7 @@ export class PrismaPageRepository implements IPageRepository {
         },
       });
     } catch (e) {
-      throw e;
+      if (e instanceof Error) throw e;
     }
   }
 }
