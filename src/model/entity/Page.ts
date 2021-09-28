@@ -11,7 +11,7 @@ export class Page extends Entity<PageProps> {
   static create(props: NotionPage): Page {
     const name = NameProperty.create(props.properties.Name).value;
     const propLastEditedBy =
-      props.properties[Config.Notion.LAST_EDITED_BY_PROP_NAME];
+      props.properties[Config.Notion.Props.LAST_EDITED_BY];
     const value = {
       id: props.id,
       databaseId: DatabaseId.create(props).value,

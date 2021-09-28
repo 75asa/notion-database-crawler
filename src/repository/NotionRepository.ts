@@ -13,9 +13,8 @@ import { Config } from "../Config";
 import { Database } from "../model/entity/Database";
 import { Page } from "../model/entity/Page";
 import { User } from "../model/entity/User";
-import { parseISO8601 } from "../utils";
 
-const { Notion } = Config;
+const { Props, IGNORE_PREFIX, MUST_EXIST_PROPS } = Config.Notion;
 export class NotionRepository {
   private notion;
   constructor(authKey: string) {
@@ -24,20 +23,32 @@ export class NotionRepository {
 
   // integration が取得可能な database を取得
   async getAllDatabase() {
-    const searched = await this.notion.search({
-      filter: { value: "database", property: "object" },
-    });
+    let searched;
+    try {
+      searched = await this.notion.search({
+        filter: { value: "database", property: "object" },
+      });
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      if (!searched) throw new Error("searched is null");
+    }
+
     return searched.results
       .filter(
         (data): data is Exclude<typeof data, NotionPage> =>
           data.object === "database"
       )
+      .filter((database) => {
+        return MUST_EXIST_PROPS.every((MUST_EXIST_PROP) => {
+          return Object.keys(database.properties).includes(MUST_EXIST_PROP);
+        });
+      })
       .map((database) => {
         return Database.create(database);
       });
   }
 
-  async getAllContentsFromDatabase(databaseId: string, lastFetchedAt: Date) {
+  async getAllContentsFromDatabase(databaseId: string) {
     const allPageAndUsers: { page: Page; user: User }[] = [];
 
     const getPages = async (cursor?: string) => {
@@ -46,11 +57,20 @@ export class NotionRepository {
         method: "post",
         body: {
           filter: {
-            property: Notion.CREATED_AT_PROP_NAME,
-            created_time: {
-              // 前回同期した時間以降にフィルター
-              on_or_after: parseISO8601(lastFetchedAt),
-            },
+            and: [
+              {
+                property: Props.NAME,
+                text: {
+                  does_not_contain: IGNORE_PREFIX,
+                },
+              },
+              {
+                property: Props.IS_PUBLISHED,
+                checkbox: {
+                  equals: true,
+                },
+              },
+            ],
           },
         },
       };
@@ -68,9 +88,7 @@ export class NotionRepository {
       for (const rawPage of pages.results) {
         if (rawPage.archived) continue;
         const page = Page.create(rawPage);
-        const user = User.create(
-          rawPage.properties[Notion.LAST_EDITED_BY_PROP_NAME]
-        );
+        const user = User.create(rawPage.properties[Props.LAST_EDITED_BY]);
         allPageAndUsers.push({ page, user });
       }
       if (pages.has_more) {

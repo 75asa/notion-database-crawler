@@ -1,10 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { Slack } from "./Slack";
-import { NotionRepository } from "./repository/NotionRepository";
 import { Scheduler } from "./Scheduler";
 import { Config } from "./Config";
-import { PrismaPageRepository } from "./repository/PrismaPageRepository";
-import { PrismaDatabaseRepository } from "./repository/PrismaDatabaseRepository";
+import {
+  NotionRepository,
+  PrismaDatabaseRepository,
+  PrismaPageRepository,
+} from "./repository";
 
 const prisma = new PrismaClient();
 
@@ -18,18 +20,10 @@ const main = async () => {
   await Promise.all(
     allDatabases.map(async (database) => {
       const databaseRepo = new PrismaDatabaseRepository(prisma);
-      const hadStoredDatabase = await databaseRepo.find(database.id);
-      // 前回同期した時間で Notion Page をフィルタ
-      let isFirstTime = true;
-
-      // DB保存済みの場合
-      if (hadStoredDatabase) {
-        isFirstTime = false;
-        database.lastFetchedAt = hadStoredDatabase.lastFetchedAt;
-      }
+      const storedDatabase = await databaseRepo.find(database.id);
+      const isFirstTime = storedDatabase === null || storedDatabase === undefined ? false : true;
       const allContents = await notionRepo.getAllContentsFromDatabase(
-        database.id,
-        database.lastFetchedAt
+        database.id
       );
 
       database.size = allContents.length;
@@ -44,28 +38,28 @@ const main = async () => {
           const page = content.page;
           await pageRepo.create(page, user);
         }
-      } else if (hadStoredDatabase !== null) {
+      } else if (storedDatabase !== null && storedDatabase !== undefined) {
         // database に紐づいたページを取得
-        const hadStoredPages = hadStoredDatabase.pages;
+        const storedPages = storedDatabase.pages;
 
         // 2回目以降なので差分を比較
-        const notStoredPages = allContents.filter((content) => {
-          const hadStored = hadStoredPages.some((storedPage) => {
+        const unstoredPages = allContents.filter(content => {
+          const hadStored = storedPages.some(storedPage => {
             return storedPage.id === content.page.id;
           });
           //  DBに一つでも同じIDがあれば保存済みなので false を返す
           return hadStored ? false : true;
         });
         // 差分がない場合は Database のみ更新
-        if (!notStoredPages.length) {
+        if (!unstoredPages.length) {
           await databaseRepo.update(database);
           return;
         }
 
-        database.size += notStoredPages.length;
+        database.size += unstoredPages.length;
         const pageRepo = new PrismaPageRepository(prisma);
 
-        for (const pageAndUser of notStoredPages) {
+        for (const pageAndUser of unstoredPages) {
           const user = pageAndUser.user;
           const page = pageAndUser.page;
           await pageRepo.create(page, user);
@@ -74,7 +68,7 @@ const main = async () => {
           await slackClient.postMessage({
             databaseName: database.name,
             page,
-            user: user,
+            user,
           });
         }
         // Database 更新

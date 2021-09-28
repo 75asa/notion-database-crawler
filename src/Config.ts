@@ -8,39 +8,26 @@ if (config) {
   }
 }
 
-type rawConfig = {
-  [key: string]: string | undefined;
-};
-
-type sanitizedConfig = {
-  [key: string]: string;
-};
-
-const getSanitizedConfig = (config: rawConfig): sanitizedConfig => {
-  for (const [key, value] of Object.entries(config)) {
-    if (value === undefined) {
-      throw new Error(`Missing key ${key} in config.env`);
-    }
-  }
-  return config as sanitizedConfig;
-};
-
 export namespace Config {
-  const rawSlack = {
-    BOT_TOKEN: process.env.SLACK_BOT_TOKEN,
-    CHANNEL_NAME: process.env.CHANNEL_NAME,
-  };
-  const sanitized = getSanitizedConfig(rawSlack);
   export namespace Slack {
-    export const BOT_TOKEN = sanitized.BOT_TOKEN;
-    export const CHANNEL_NAME = sanitized.CHANNEL_NAME;
+    export const BOT_TOKEN = process.env.BOT_TOKEN;
+    export const CHANNEL_NAME = process.env.CHANNEL_NAME;
   }
   export namespace Notion {
     export const KEY = process.env.NOTION_KEY;
-    export const CREATED_AT_PROP_NAME =
-      process.env.NOTION_CREATED_AT_PROP_NAME || "CreatedAt";
-    export const LAST_EDITED_BY_PROP_NAME =
-      process.env.NOTION_LAST_EDITED_BY_PROP_NAME || "LastEditedBy";
+    export const IGNORE_PREFIX = process.env.IGNORE_PREFIX || "Copy of";
+    export namespace Props {
+      export const CREATED_AT =
+        process.env.NOTION_CREATED_AT_PROP_NAME || "CreatedAt";
+      export const LAST_EDITED_BY =
+        process.env.NOTION_LAST_EDITED_BY_PROP_NAME || "LastEditedBy";
+      export const IS_PUBLISHED =
+        process.env.NOTION_IS_PUBLISHED || "IsPublished";
+      export const NAME = process.env.NOTION_NAME || "Name";
+    }
+    export const MUST_EXIST_PROPS = Object.keys(Props).map(
+      key => Props[key as keyof typeof Props] as keyof typeof Props
+    );
   }
   export const JOB_INTERVAL_SECONDS =
     Number(process.env.JOB_INTERVAL_SECONDS) || 60;

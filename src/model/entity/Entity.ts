@@ -1,4 +1,4 @@
-const isEntity = (v: unknown): v is Entity<any> => {
+const isEntity = <T extends IDIncludeObject>(v: unknown): v is Entity<T> => {
   return v instanceof Entity;
 };
 
