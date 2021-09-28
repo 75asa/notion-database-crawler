@@ -35,7 +35,7 @@ export class PrismaPageRepository implements IPageRepository {
         },
       });
     } catch (e) {
-      throw e;
+      if (e instanceof Error) throw e;
     }
   }
 }

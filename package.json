@@ -21,7 +21,7 @@
     "dev:watch": "ts-node-dev --respawn src/index.ts",
     "start": "node dist/index.js",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
-    "lint-fix": "yarn lint --fix ; prettier --write \"./{__tests__,src}/**/*.{js,ts}\"",
+    "lint-fix": "yarn lint --fix && prettier --write \"./{__tests__,src}/**/*.{js,ts}\"",
     "build": "tsc -p .",
     "postinstall": "yarn build",
     "generate": "yarn prisma generate",

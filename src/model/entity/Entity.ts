@@ -1,4 +1,4 @@
-const isEntity = (v: any): v is Entity<any> => {
+const isEntity = (v: unknown): v is Entity<any> => {
   return v instanceof Entity;
 };
 

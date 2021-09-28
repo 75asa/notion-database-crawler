@@ -15,6 +15,7 @@ import { Page } from "../model/entity/Page";
 import { User } from "../model/entity/User";
 import { parseISO8601 } from "../utils";
 
+const { Notion } = Config;
 export class NotionRepository {
   private notion;
   constructor(authKey: string) {
@@ -45,7 +46,7 @@ export class NotionRepository {
         method: "post",
         body: {
           filter: {
-            property: Config.Notion.CREATED_AT_PROP_NAME,
+            property: Notion.CREATED_AT_PROP_NAME,
             created_time: {
               // 前回同期した時間以降にフィルター
               on_or_after: parseISO8601(lastFetchedAt),
@@ -60,15 +61,15 @@ export class NotionRepository {
           requestPayload
         )) as DatabasesQueryResponse;
       } catch (e) {
-        throw e;
+        if (e instanceof Error) throw e;
+        if (!pages) throw new Error("pages is null");
       }
 
       for (const rawPage of pages.results) {
-        // TODO: 削除ページどうするか検討
         if (rawPage.archived) continue;
         const page = Page.create(rawPage);
         const user = User.create(
-          rawPage.properties[Config.Notion.LAST_EDITED_BY_PROP_NAME]
+          rawPage.properties[Notion.LAST_EDITED_BY_PROP_NAME]
         );
         allPageAndUsers.push({ page, user });
       }
@@ -94,7 +95,8 @@ export class NotionRepository {
           blocksChildrenListParameters
         )) as BlocksChildrenListResponse;
       } catch (e) {
-        throw e;
+        if (e instanceof Error) throw e;
+        if (!blocks) throw new Error("blocks is null");
       }
       if (!blocks.results.length) return;
       allBlocks.push(...blocks.results);

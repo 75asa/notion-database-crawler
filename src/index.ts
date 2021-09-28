@@ -53,16 +53,13 @@ const main = async () => {
           const hadStored = hadStoredPages.some((storedPage) => {
             return storedPage.id === content.page.id;
           });
-          //  DBに一つでも同じIDがあれば保存ずみなので false を返す
+          //  DBに一つでも同じIDがあれば保存済みなので false を返す
           return hadStored ? false : true;
         });
-        // 差分がない場合は何もしない
+        // 差分がない場合は Database のみ更新
         if (!notStoredPages.length) {
-          try {
-            await databaseRepo.update(database);
-          } finally {
-            return;
-          }
+          await databaseRepo.update(database);
+          return;
         }
 
         database.size += notStoredPages.length;
@@ -81,11 +78,8 @@ const main = async () => {
           });
         }
         // Database 更新
-        try {
-          await databaseRepo.update(database);
-        } finally {
-          return;
-        }
+        await databaseRepo.update(database);
+        return;
       }
     })
   );
