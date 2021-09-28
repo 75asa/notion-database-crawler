@@ -21,12 +21,13 @@ const main = async () => {
     allDatabases.map(async (database) => {
       const databaseRepo = new PrismaDatabaseRepository(prisma);
       const storedDatabase = await databaseRepo.find(database.id);
-      const isFirstTime = storedDatabase === null || storedDatabase === undefined ? false : true;
+      const isFirstTime =
+        storedDatabase === null || storedDatabase === undefined ? true : false;
       const allContents = await notionRepo.getAllContentsFromDatabase(
         database.id
       );
 
-      database.size = allContents.length;
+      database.size = allContents.length ?? 0;
       // Database に Page [] があり、 DB に保存してない場合
       if (isFirstTime) {
         // 初期登録
@@ -43,8 +44,8 @@ const main = async () => {
         const storedPages = storedDatabase.pages;
 
         // 2回目以降なので差分を比較
-        const unstoredPages = allContents.filter(content => {
-          const hadStored = storedPages.some(storedPage => {
+        const unstoredPages = allContents.filter((content) => {
+          const hadStored = storedPages.some((storedPage) => {
             return storedPage.id === content.page.id;
           });
           //  DBに一つでも同じIDがあれば保存済みなので false を返す

@@ -4,7 +4,7 @@ import {
   Page as PrismaPage,
   User as PrismaUser,
 } from "@prisma/client";
-import { Database } from "src/model/entity/Database";
+import { Database } from "model/entity/Database";
 
 interface IDatabaseRepository {
   find(databaseId: string): Promise<

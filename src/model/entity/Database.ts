@@ -24,6 +24,10 @@ export class Database extends Entity<DatabaseProps> {
     return this.props.name;
   }
 
+  get size() {
+    return this.props.size;
+  }
+
   set size(size: number) {
     this.props.size = size;
   }
