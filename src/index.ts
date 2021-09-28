@@ -1,10 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { Slack } from "./Slack";
-import { NotionRepository } from "./repository/NotionRepository";
 import { Scheduler } from "./Scheduler";
 import { Config } from "./Config";
-import { PrismaPageRepository } from "./repository/PrismaPageRepository";
-import { PrismaDatabaseRepository } from "./repository/PrismaDatabaseRepository";
+import {
+  NotionRepository,
+  PrismaDatabaseRepository,
+  PrismaPageRepository,
+} from "./repository";
 
 const prisma = new PrismaClient();
 
@@ -69,7 +71,7 @@ const main = async () => {
           await slackClient.postMessage({
             databaseName: database.name,
             page,
-            user: user,
+            user,
           });
         }
         // Database 更新
