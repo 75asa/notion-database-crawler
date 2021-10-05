@@ -15,7 +15,7 @@
     "strict": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": ".",
+    "baseUrl": "./src",
     // "paths": {
     //   "~/*": ["./src/*"],
     //   "@/*": ["./src/*"]

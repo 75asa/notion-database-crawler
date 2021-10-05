@@ -13,8 +13,8 @@ import { Config } from "../Config";
 import { Database } from "../model/entity/Database";
 import { Page } from "../model/entity/Page";
 import { User } from "../model/entity/User";
-import { parseISO8601 } from "../utils";
 
+const { Props, IGNORE_PREFIX, MUST_EXIST_PROPS } = Config.Notion;
 export class NotionRepository {
   private notion;
   constructor(authKey: string) {
@@ -23,21 +23,33 @@ export class NotionRepository {
 
   // integration が取得可能な database を取得
   async getAllDatabase() {
-    const searched = await this.notion.search({
-      filter: { value: "database", property: "object" },
-    });
+    let searched;
+    try {
+      searched = await this.notion.search({
+        filter: { value: "database", property: "object" },
+      });
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      if (!searched) throw new Error("searched is null");
+    }
+
     return searched.results
       .filter(
         (data): data is Exclude<typeof data, NotionPage> =>
           data.object === "database"
       )
-      .map(database => {
+      .filter((database) => {
+        return MUST_EXIST_PROPS.every((MUST_EXIST_PROP) => {
+          return Object.keys(database.properties).includes(MUST_EXIST_PROP);
+        });
+      })
+      .map((database) => {
         return Database.create(database);
       });
   }
 
-  async getAllContentsFromDatabase(databaseId: string, lastFetchedAt: Date) {
-    let allPageAndUsers: { page: Page; user: User }[] = [];
+  async getAllContentsFromDatabase(databaseId: string) {
+    const allPageAndUsers: { page: Page; user: User }[] = [];
 
     const getPages = async (cursor?: string) => {
       const requestPayload: RequestParameters = {
@@ -45,11 +57,20 @@ export class NotionRepository {
         method: "post",
         body: {
           filter: {
-            property: Config.Notion.Props.CREATED_AT,
-            created_time: {
-              // 前回同期した時間以降にフィルター
-              on_or_after: parseISO8601(lastFetchedAt),
-            },
+            and: [
+              {
+                property: Props.NAME,
+                text: {
+                  does_not_contain: IGNORE_PREFIX,
+                },
+              },
+              {
+                property: Props.IS_PUBLISHED,
+                checkbox: {
+                  equals: true,
+                },
+              },
+            ],
           },
         },
       };
@@ -60,16 +81,14 @@ export class NotionRepository {
           requestPayload
         )) as DatabasesQueryResponse;
       } catch (e) {
-        throw e;
+        if (e instanceof Error) throw e;
+        if (!pages) throw new Error("pages is null");
       }
 
       for (const rawPage of pages.results) {
-        // TODO: 削除ページどうするか検討
         if (rawPage.archived) continue;
         const page = Page.create(rawPage);
-        const user = User.create(
-          rawPage.properties[Config.Notion.Props.LAST_EDITED_BY]
-        );
+        const user = User.create(rawPage.properties[Props.LAST_EDITED_BY]);
         allPageAndUsers.push({ page, user });
       }
       if (pages.has_more) {
@@ -81,7 +100,7 @@ export class NotionRepository {
   }
 
   async getAllBlocksFromPage(pageId: string) {
-    let allBlocks: Block[] = [];
+    const allBlocks: Block[] = [];
 
     const getBlocks = async (cursor?: string) => {
       let blocks = null;
@@ -94,7 +113,8 @@ export class NotionRepository {
           blocksChildrenListParameters
         )) as BlocksChildrenListResponse;
       } catch (e) {
-        throw e;
+        if (e instanceof Error) throw e;
+        if (!blocks) throw new Error("blocks is null");
       }
       if (!blocks.results.length) return;
       allBlocks.push(...blocks.results);

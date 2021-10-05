@@ -12,7 +12,6 @@ export class Database extends Entity<DatabaseProps> {
       name,
       createdAt: parseDate(props.created_time),
       lastEditedAt: parseDate(props.last_edited_time),
-      lastFetchedAt: new Date(),
       size: 0,
     });
   }
@@ -25,8 +24,8 @@ export class Database extends Entity<DatabaseProps> {
     return this.props.name;
   }
 
-  set lastFetchedAt(lastFetchedAt: Date) {
-    this.props.lastFetchedAt = lastFetchedAt;
+  get size() {
+    return this.props.size;
   }
 
   set size(size: number) {

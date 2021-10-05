@@ -17,10 +17,7 @@ export class ContentBlock extends ValueObject<ContentBlockProps> {
     for (const block of blocks) {
       switch (block.type) {
         case "bulleted_list_item":
-          const bulletedListItem = (
-            <BulletedListItem>{block}</BulletedListItem>
-          );
-          jsxElements.push(bulletedListItem);
+          jsxElements.push(<BulletedListItem>{block}</BulletedListItem>);
           break;
         case "child_page":
           break;
