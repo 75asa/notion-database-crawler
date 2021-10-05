@@ -17,11 +17,17 @@ export class User extends Entity<UserProps> {
       throw new Error("User.create: props must be a LastEditedByPropertyValue");
     }
     const notionUser = props.last_edited_by;
+    const { id, name, avatar_url, type } = notionUser;
+    let email = null;
+    if (type === "person") {
+      const { person } = notionUser;
+      if (person) email = person.email;
+    }
     const value = {
-      id: notionUser.id,
-      name: notionUser.name || "",
-      avatarURL: notionUser.avatar_url || "",
-      email: notionUser.type === "person" ? notionUser.person!.email! : null,
+      id,
+      name: name || "",
+      avatarURL: avatar_url || "",
+      email,
     };
     return new User(value);
   }

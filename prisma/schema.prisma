@@ -11,13 +11,12 @@ generator client {
 }
 
 model Database {
-  id            String   @unique
-  name          String
-  createdAt     DateTime
-  lastEditedAt  DateTime
-  lastFetchedAt DateTime
-  pages         Page[]
-  size          Int      @default(0)
+  id           String   @unique
+  name         String
+  createdAt    DateTime
+  lastEditedAt DateTime
+  pages        Page[]
+  size         Int      @default(0)
 }
 
 model Page {

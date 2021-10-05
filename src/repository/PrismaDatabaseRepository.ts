@@ -4,7 +4,7 @@ import {
   Page as PrismaPage,
   User as PrismaUser,
 } from "@prisma/client";
-import { Database } from "src/model/entity/Database";
+import { Database } from "model/entity/Database";
 
 interface IDatabaseRepository {
   find(databaseId: string): Promise<
@@ -14,6 +14,7 @@ interface IDatabaseRepository {
         })[];
       })
     | null
+    | undefined
   >;
   create(database: Database): Promise<void>;
   update(database: Database): Promise<void>;
@@ -37,7 +38,7 @@ export class PrismaDatabaseRepository implements IDatabaseRepository {
         },
       });
     } catch (e) {
-      throw e;
+      if (e instanceof Error) throw e;
     }
   }
 
@@ -47,7 +48,7 @@ export class PrismaDatabaseRepository implements IDatabaseRepository {
         data: { ...database.allProps() },
       });
     } catch (e) {
-      throw e;
+      if (e instanceof Error) throw e;
     }
   }
 
@@ -58,7 +59,7 @@ export class PrismaDatabaseRepository implements IDatabaseRepository {
         data: database.allProps(),
       });
     } catch (e) {
-      throw e;
+      if (e instanceof Error) throw e;
     }
   }
 }

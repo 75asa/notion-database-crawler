@@ -1,6 +1,6 @@
 /** @jsxImportSource jsx-slack **/
-import JSXSlack, { Blocks, Divider, Section } from "jsx-slack";
-import { Page } from "src/model/entity/Page";
+import JSXSlack, { Blocks, Mrkdwn, Section, Divider } from "jsx-slack";
+import { Page } from "model/entity/Page";
 
 export const MainBlocks = (
   databaseName: string,
@@ -10,8 +10,11 @@ export const MainBlocks = (
   return (
     <Blocks>
       <Section>
-        <b>{databaseName}</b> に新しいページ: <a href={page.url}>{page.name}</a>
-        が投稿されました
+        <Mrkdwn>
+          <b>{databaseName}</b> に新しいページ:{" "}
+          <a href={page.url}>{page.name}</a>
+          が投稿されました
+        </Mrkdwn>
       </Section>
       <Divider />
       {...contents}

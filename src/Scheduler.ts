@@ -8,7 +8,7 @@ import {
 export class Scheduler {
   private scheduler: ToadScheduler;
   private task: AsyncTask;
-  constructor(func: Function) {
+  constructor(func: () => Promise<void>) {
     this.scheduler = new ToadScheduler();
     this.task = new AsyncTask(
       "run main",
