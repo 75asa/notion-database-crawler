@@ -17,7 +17,7 @@
   "scripts": {
     "ts-node": "ts-node",
     "test": "jest",
-    "dev": "ts-node src/index.ts",
+    "dev": "ts-node --files src/index.ts",
     "dev:watch": "ts-node-dev --respawn src/index.ts",
     "start": "node dist/index.js",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
