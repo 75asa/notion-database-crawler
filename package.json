@@ -18,7 +18,7 @@
     "ts-node": "ts-node",
     "test": "jest",
     "dev": "ts-node --files src/index.ts",
-    "dev:watch": "ts-node-dev --respawn src/index.ts",
+    "dev:watch": "ts-node-dev --respawn --files src/index.ts",
     "start": "node dist/index.js",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
     "lint-fix": "yarn lint --fix && prettier --write \"./{__tests__,src}/**/*.{js,ts}\"",
