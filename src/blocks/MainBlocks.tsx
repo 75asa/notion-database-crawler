@@ -1,5 +1,5 @@
 /** @jsxImportSource jsx-slack **/
-import JSXSlack, { Blocks, Mrkdwn, Section, Divider } from "jsx-slack";
+import JSXSlack, { Blocks, Mrkdwn, Section, Divider, Header } from "jsx-slack";
 import { Page } from "model/entity/Page";
 
 export const MainBlocks = (
@@ -9,6 +9,7 @@ export const MainBlocks = (
 ) => {
   return (
     <Blocks>
+      <Header></Header>
       <Section>
         <Mrkdwn>
           <b>{databaseName}</b> に新しいページ:{" "}
@@ -17,7 +18,8 @@ export const MainBlocks = (
         </Mrkdwn>
       </Section>
       <Divider />
-      {...contents}
+      {/* TODO: まずは BulletedListItem を表示 */}
+      {/* {...contents} */}
     </Blocks>
   );
 };
