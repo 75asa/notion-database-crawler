@@ -13,10 +13,10 @@ export class Page extends Entity<PageProps> {
     const name = NameProperty.create(properties[NAME]).value;
     const value = {
       id,
-      databaseId: DatabaseId.create(props).value,
       name,
       createdAt: parseDate(created_time),
       url,
+      databaseId: DatabaseId.create(props).value,
       userId: UserId.create(properties[LAST_EDITED_BY]).value,
     };
     return new Page(value);
