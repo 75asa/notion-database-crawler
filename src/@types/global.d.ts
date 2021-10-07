@@ -6,6 +6,6 @@ declare namespace NodeJS {
     readonly PUBLIC_URL: string;
     readonly SLACK_BOT_TOKEN: string;
     readonly SLACK_CHANNEL_NAME: string;
-    readonly NOTION_KEY: string
+    readonly NOTION_KEY: string;
   }
 }

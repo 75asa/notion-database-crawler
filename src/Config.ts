@@ -26,7 +26,7 @@ export namespace Config {
       export const NAME = process.env.NOTION_NAME || "Name";
     }
     export const MUST_EXIST_PROPS = Object.keys(Props).map(
-      key => Props[key as keyof typeof Props] as keyof typeof Props
+      (key) => Props[key as keyof typeof Props] as keyof typeof Props
     );
   }
   export const JOB_INTERVAL_SECONDS =

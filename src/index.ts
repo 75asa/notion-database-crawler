@@ -67,7 +67,9 @@ const main = async () => {
           const user = pageAndUser.user;
           const page = pageAndUser.page;
           await pageRepo.create(page, user);
-          const slackClient = new Slack();
+          const blocks = await notionRepo.getAllBlocksFromPage(page.id);
+          const slackClient = new Slack(blocks);
+          // slackClient.setBlocks(blocks);
           // Slack 通知
           await slackClient.postMessage({
             databaseName: database.name,

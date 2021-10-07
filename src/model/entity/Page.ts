@@ -9,7 +9,9 @@ import { Entity } from "./Entity";
 
 export class Page extends Entity<PageProps> {
   static create(props: NotionPage): Page {
-    const name = NameProperty.create(props.properties.Name).value;
+    const name = NameProperty.create(
+      props.properties[Config.Notion.Props.NAME]
+    ).value;
     const propLastEditedBy =
       props.properties[Config.Notion.Props.LAST_EDITED_BY];
     const value = {
