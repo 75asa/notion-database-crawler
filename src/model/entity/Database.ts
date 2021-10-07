@@ -1,8 +1,7 @@
 import { Entity } from "./Entity";
 import { Database as NotionDatabase } from "@notionhq/client/build/src/api-types";
 import { Database as DatabaseProps } from "@prisma/client";
-import { parseDate } from "../../utils";
-import { getName } from "../propertyHelpers";
+import { getName, parseDate } from "../../utils";
 
 export class Database extends Entity<DatabaseProps> {
   static create(props: NotionDatabase): Database {
