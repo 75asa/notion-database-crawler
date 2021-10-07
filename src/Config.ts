@@ -15,7 +15,7 @@ export namespace Config {
   }
   export namespace Notion {
     export const KEY = process.env.NOTION_KEY;
-    export const IGNORE_PREFIX = process.env.IGNORE_PREFIX || "Copy of";
+    export const IGNORE_PREFIX = process.env.NOTION_IGNORE_PREFIX || "Copy of";
     export namespace Props {
       export const CREATED_AT =
         process.env.NOTION_CREATED_AT_PROP_NAME || "CreatedAt";
