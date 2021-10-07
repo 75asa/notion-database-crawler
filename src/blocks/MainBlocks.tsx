@@ -17,7 +17,7 @@ export const MainBlocks = (
         </Mrkdwn>
       </Section>
       <Divider />
-      {...contents}
+      {/* {...contents} */}
     </Blocks>
   );
 };

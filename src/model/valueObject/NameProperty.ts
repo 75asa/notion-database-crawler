@@ -2,7 +2,7 @@ import {
   PropertyValue,
   TitlePropertyValue,
 } from "@notionhq/client/build/src/api-types";
-import { getName } from "utils";
+import { getName } from "../../utils";
 import { PrimitiveValueObject } from "./PrimitiveValueObject";
 
 const isTitlePropertyValue = (

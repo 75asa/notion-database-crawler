@@ -29,9 +29,9 @@ export const BulletedListItem = (props: BulletedListItemProps) => {
   return (
     <Section>
       <ul>
-        {JSXSlack.Children.toArray(bulletedListItems).map((item) => (
-          <li>{item.toString()}</li>
-        ))}
+        {/* {JSXSlack.Children.toArray(bulletedListItems).map((item) => (
+          <li>{item}</li>
+        ))} */}
       </ul>
     </Section>
   );

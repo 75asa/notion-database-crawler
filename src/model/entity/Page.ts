@@ -1,6 +1,6 @@
 import { Page as NotionPage } from "@notionhq/client/build/src/api-types";
 import { Page as PageProps } from "@prisma/client";
-import { NameProperty, DatabaseId, UserId } from "model/valueObject";
+import { NameProperty, DatabaseId, UserId } from "../../model/valueObject";
 import { Config } from "../../Config";
 import { parseDate } from "../../utils";
 import { Entity } from "./Entity";

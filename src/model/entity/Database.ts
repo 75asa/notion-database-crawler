@@ -5,12 +5,13 @@ import { getName, parseDate } from "../../utils";
 
 export class Database extends Entity<DatabaseProps> {
   static create(props: NotionDatabase): Database {
-    const name = getName(props.title);
+    const { id, title, created_time, last_edited_time } = props;
+    const name = getName(title);
     return new Database({
-      id: props.id,
+      id,
       name,
-      createdAt: parseDate(props.created_time),
-      lastEditedAt: parseDate(props.last_edited_time),
+      createdAt: parseDate(created_time),
+      lastEditedAt: parseDate(last_edited_time),
       size: 0,
     });
   }
