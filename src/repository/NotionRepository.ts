@@ -81,6 +81,8 @@ export class NotionRepository {
           requestPayload
         )) as DatabasesQueryResponse;
       } catch (e) {
+        console.dir({ e }, { depth: null });
+        // TODO: 502 Error なら return
         if (e instanceof Error) throw e;
         if (!pages) throw new Error("pages is null");
       }
