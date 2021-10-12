@@ -10,6 +10,7 @@ import {
 } from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { Config } from "../Config";
+import { NotionErrors } from "../errors";
 import { Database } from "../model/entity/Database";
 import { Page } from "../model/entity/Page";
 import { User } from "../model/entity/User";
@@ -80,11 +81,14 @@ export class NotionRepository {
         pages = (await this.notion.request(
           requestPayload
         )) as DatabasesQueryResponse;
-      } catch (e) {
-        console.dir({ e }, { depth: null });
-        // TODO: 502 Error なら return
-        if (e instanceof Error) throw e;
-        if (!pages) throw new Error("pages is null");
+      } catch (error) {
+        console.dir({ error }, { depth: null });
+        if (error instanceof NotionErrors) {
+          // TODO: 502 Error なら return
+          if (error.is502Error()) return;
+        }
+        if (error instanceof Error) throw error;
+        if (!pages) throw new Error(`pages is null: ${error}`);
       }
 
       for (const rawPage of pages.results) {
