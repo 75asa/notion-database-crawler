@@ -21,7 +21,8 @@ export class Slack {
 
   async postMessage(arg: { page: Page; databaseName: string; user: User }) {
     const { databaseName, page, user } = arg;
-    const text = `${databaseName} に新しいページ: <${page.url}|${page.name}> が投稿されました`;
+    const { url, name } = page;
+    const text = `${databaseName} に新しいページ: <${url}|${name}> が投稿されました`;
     const block = MainBlocks(databaseName, page, this.contentsBlock.elements);
     const translatedBlocks = JSXSlack(block);
 

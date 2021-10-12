@@ -19,6 +19,6 @@ export class NameProperty extends PrimitiveValueObject<string> {
         `Invalid NameProperty propValue: ${console.dir(propValue)}`
       );
     }
-    return new NameProperty(getName(propValue.title));
+    return new NameProperty(getName(propValue.title) || "Untitled");
   }
 }

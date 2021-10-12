@@ -18,12 +18,12 @@ export namespace Config {
     export const IGNORE_PREFIX = process.env.NOTION_IGNORE_PREFIX || "Copy of";
     export namespace Props {
       export const CREATED_AT =
-        process.env.NOTION_CREATED_AT_PROP_NAME || "CreatedAt";
-      export const LAST_EDITED_BY =
-        process.env.NOTION_LAST_EDITED_BY_PROP_NAME || "LastEditedBy";
+        process.env.NOTION_CREATED_AT_PROP || "CreatedAt";
+      export const CREATED_BY =
+        process.env.NOTION_CREATED_BY_PROP || "CreatedBy";
       export const IS_PUBLISHED =
-        process.env.NOTION_IS_PUBLISHED || "IsPublished";
-      export const NAME = process.env.NOTION_NAME || "Name";
+        process.env.NOTION_IS_PUBLISHED_PROP || "IsPublished";
+      export const NAME = process.env.NOTION_NAME_PROP || "Name";
     }
     export const MUST_EXIST_PROPS = Object.keys(Props).map(
       (key) => Props[key as keyof typeof Props] as keyof typeof Props
