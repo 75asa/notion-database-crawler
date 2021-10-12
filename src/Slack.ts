@@ -1,5 +1,6 @@
 import { Block } from "@notionhq/client/build/src/api-types";
 import { ChatPostMessageArguments, WebClient } from "@slack/web-api";
+import { MainAttachments } from "./attachments/MainAttachments";
 import JSXSlack from "jsx-slack";
 import { MainBlocks } from "./blocks/MainBlocks";
 import { Config } from "./Config";
@@ -10,9 +11,11 @@ import { ContentBlock } from "./model/valueObject/ContentsBlock";
 export class Slack {
   private client;
   private contentsBlock;
+  private blocks;
   constructor(blocks: Block[]) {
     this.client = this.init();
     this.contentsBlock = ContentBlock.create(blocks);
+    this.blocks = blocks;
   }
 
   private init() {
@@ -25,6 +28,7 @@ export class Slack {
     const text = `${databaseName} に新しいページ: <${url}|${name}> が投稿されました`;
     const block = MainBlocks(databaseName, page, this.contentsBlock.elements);
     const translatedBlocks = JSXSlack(block);
+    const attachments = MainAttachments(this.blocks);
 
     const msgOption: ChatPostMessageArguments = {
       channel: Config.Slack.CHANNEL_NAME,
@@ -33,6 +37,7 @@ export class Slack {
       icon_url: user.avatarURL,
       unfurl_links: true,
       blocks: translatedBlocks,
+      attachments,
     };
 
     console.dir({ msgOption }, { depth: null });
