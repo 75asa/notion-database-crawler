@@ -5,7 +5,7 @@ import { Config } from "../../Config";
 import { parseDate } from "../../utils";
 import { Entity } from "./Entity";
 
-const { NAME, CREATED_BY } = Config.Notion.Props;
+const { NAME, LAST_EDITED_BY } = Config.Notion.Props;
 
 export class Page extends Entity<PageProps> {
   static create(props: NotionPage): Page {
@@ -17,7 +17,7 @@ export class Page extends Entity<PageProps> {
       createdAt: parseDate(created_time),
       url,
       databaseId: DatabaseId.create(props).value,
-      userId: UserId.create(properties[CREATED_BY]).value,
+      userId: UserId.create(properties[LAST_EDITED_BY]).value,
     };
     return new Page(value);
   }
