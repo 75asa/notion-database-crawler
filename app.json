@@ -19,7 +19,7 @@
       "description": "Slack App Bot Token - https://api.slack.com/apps",
       "value": "xoxb-************-************-************************"
     },
-    "CHANNEL_NAME": {
+    "SLACK_CHANNEL_NAME": {
       "description": "the channel daily reports are posted",
       "value": "t_nippo"
     },
@@ -27,14 +27,24 @@
       "description": "job's default interval",
       "value": "30"
     },
-    "NOTION_CREATED_AT_PROP_NAME": {
-      "description": "`created_at` type prop name at Notion",
+    "NOTION_CREATED_AT_PROP": {
+      "description": "`created_at` type prop name at Notion. default CreatedAt",
       "value": "CreatedAt",
       "required": false
     },
-    "NOTION_LAST_EDITED_BY_PROP_NAME": {
-      "description": "`last_edited_by` type prop name at Notion",
-      "value": "LastEditedBy",
+    "NOTION_CREATED_BY_PROP": {
+      "description": "`created_by` type prop name at Notion. default CreatedBy",
+      "value": "CreatedBy",
+      "required": false
+    },
+    "NOTION_IS_PUBLISHED_PROP": {
+      "description": "`checkbox` type prop name to notify Slack at Notion. default IsPublished",
+      "value": "IsPublished",
+      "required": false
+    },
+    "NOTION_NAME_PROP": {
+      "description": "`text` type prop name. default Name",
+      "value": "Name",
       "required": false
     },
     "YARN_PRODUCTION": {
