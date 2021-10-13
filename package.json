@@ -33,6 +33,8 @@
   "dependencies": {
     "@notionhq/client": "^0.3.1",
     "@prisma/client": "3.0.2",
+    "@sentry/node": "^6.13.3",
+    "@sentry/tracing": "^6.13.3",
     "@slack/web-api": "^6.4.0",
     "dayjs": "^1.10.6",
     "dd-trace": "^1.4.1",

@@ -10,7 +10,7 @@ import {
 } from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
 import { Config } from "../Config";
-import { NotionErrors } from "../errors";
+import { NotionError } from "../errors";
 import { Database } from "../model/entity/Database";
 import { Page } from "../model/entity/Page";
 import { User } from "../model/entity/User";
@@ -83,7 +83,7 @@ export class NotionRepository {
         )) as DatabasesQueryResponse;
       } catch (error) {
         console.dir({ error }, { depth: null });
-        if (error instanceof NotionErrors) {
+        if (error instanceof NotionError) {
           // TODO: 502 Error なら return
           if (error.is502Error()) return;
         }
