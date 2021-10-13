@@ -29,6 +29,9 @@ export namespace Config {
       (key) => Props[key as keyof typeof Props] as keyof typeof Props
     );
   }
+  export namespace Sentry {
+    export const DSN = process.env.SENTRY_DSN;
+  }
   export const JOB_INTERVAL_SECONDS =
     Number(process.env.JOB_INTERVAL_SECONDS) || 60;
 }
