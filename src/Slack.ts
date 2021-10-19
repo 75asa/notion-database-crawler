@@ -28,7 +28,7 @@ export class Slack {
     const text = `${databaseName} に新しいページ: <${url}|${name}> が投稿されました`;
     const block = MainBlocks(databaseName, page, this.contentsBlock.elements);
     const translatedBlocks = JSXSlack(block);
-    const attachments = MainAttachments(this.blocks);
+    const attachments = MainAttachments(this.blocks, name);
 
     const msgOption: ChatPostMessageArguments = {
       channel: Config.Slack.CHANNEL_NAME,
