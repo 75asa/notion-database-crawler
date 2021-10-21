@@ -84,7 +84,6 @@ export class NotionRepository {
       } catch (error) {
         console.dir({ error }, { depth: null });
         if (error instanceof NotionError) {
-          // TODO: 502 Error なら return
           if (error.is502Error()) return;
         }
         if (error instanceof Error) throw error;

@@ -11,6 +11,9 @@ export class Page extends Entity<PageProps> {
   static create(props: NotionPage): Page {
     const { properties, id, created_time, url } = props;
     const name = NameProperty.create(properties[NAME]).value;
+    // TODO: properties から Slack に表示したい項目を環境変数から取得する
+    // e.g. からだ:select, しごと:select, こころ:select, Date:date
+    // ~:notion_prop_type によって ValueObject を生成
     const value = {
       id,
       name,
