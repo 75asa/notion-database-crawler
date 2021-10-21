@@ -2,17 +2,12 @@ import {
   PropertyValue,
   URLPropertyValue,
 } from "@notionhq/client/build/src/api-types";
+import { isDetectiveType } from "../../../../utils";
 import { PrimitiveValueObject } from "../../PrimitiveValueObject";
-
-const isURLPropertyValue = (
-  propValue: PropertyValue
-): propValue is URLPropertyValue => {
-  return (propValue as URLPropertyValue).type === "url";
-};
 
 export class URL extends PrimitiveValueObject<string> {
   static create(propValue: PropertyValue): URL {
-    if (!isURLPropertyValue(propValue)) {
+    if (!isDetectiveType<URLPropertyValue>(propValue)) {
       throw new Error(
         `Invalid URLProperty propValue: ${JSON.stringify(propValue)}`
       );
