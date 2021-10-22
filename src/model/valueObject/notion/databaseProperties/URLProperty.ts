@@ -5,8 +5,8 @@ import {
 import { isDetectiveType } from "../../../../utils";
 import { PrimitiveValueObject } from "../../PrimitiveValueObject";
 
-export class URL extends PrimitiveValueObject<string> {
-  static create(propValue: PropertyValue): URL {
+export class URLProperty extends PrimitiveValueObject<string> {
+  static create(propValue: PropertyValue): URLProperty {
     if (!isDetectiveType<URLPropertyValue>(propValue)) {
       throw new Error(
         `Invalid URLProperty propValue: ${JSON.stringify(propValue)}`
@@ -14,6 +14,6 @@ export class URL extends PrimitiveValueObject<string> {
     }
     const { url } = propValue;
     if (!url) throw new Error("URLProperty propValue is missing url");
-    return new URL(url);
+    return new URLProperty(url);
   }
 }

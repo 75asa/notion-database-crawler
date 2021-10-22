@@ -4,8 +4,9 @@ import {
 } from "@notionhq/client/build/src/api-types";
 import { isDetectiveType } from "../../../../utils";
 import { PrimitiveValueObject } from "../../PrimitiveValueObject";
-export class MultiSelect extends PrimitiveValueObject<string[]> {
-  static create(propValue: PropertyValue): MultiSelect {
+
+export class MultiSelectProperty extends PrimitiveValueObject<string[]> {
+  static create(propValue: PropertyValue): MultiSelectProperty {
     if (!isDetectiveType<MultiSelectPropertyValue>(propValue)) {
       throw new Error(
         `Invalid URLProperty propValue: ${JSON.stringify(propValue)}`
@@ -18,6 +19,6 @@ export class MultiSelect extends PrimitiveValueObject<string[]> {
       .filter(
         (item): item is Exclude<typeof item, undefined> => item !== undefined
       );
-    return new MultiSelect(optionsNames);
+    return new MultiSelectProperty(optionsNames);
   }
 }
