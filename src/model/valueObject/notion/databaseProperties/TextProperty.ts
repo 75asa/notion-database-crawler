@@ -2,9 +2,9 @@ import {
   PropertyValue,
   RichTextPropertyValue,
 } from "@notionhq/client/build/src/api-types";
+import { UserBlock } from "..";
 import { isDetectiveType } from "../../../../utils";
 import { PrimitiveValueObject } from "../../PrimitiveValueObject";
-import { PeopleProperty } from "./PeopleProperty";
 
 export class TextProperty extends PrimitiveValueObject<string> {
   static create(propValue: PropertyValue): TextProperty {
@@ -16,17 +16,34 @@ export class TextProperty extends PrimitiveValueObject<string> {
 
     const richText = propValue.rich_text;
     const reducedText = richText.reduce((acc, cur) => {
-      switch (cur.type) {
+      const { plain_text, annotations, equation, href, type } = cur;
+      switch (type) {
         case "equation": {
-          const { plain_text, annotations, equation } = cur;
           acc += plain_text;
           return acc;
         }
         case "mention": {
-          const { plain_text, annotations, mention } = cur;
-          if (mention) {
-            PeopleProperty.create(mention)
+          const { type } = cur.mention;
+          switch (type) {
+            case "database": {
+              cur.mention.database.id;
+              break;
+            }
+            case "user": {
+              if (cur.mention.type === "user") {
+                const user = UserBlock.create(cur.mention.user);
+                user.props;
+              }
+              break;
+            }
+            case "date": {
+              break;
+            }
+            case "page": {
+              break;
+            }
           }
+
           acc += `@${plain_text}`;
           return acc;
         }

@@ -2,8 +2,9 @@ import {
   PropertyValue,
   TitlePropertyValue,
 } from "@notionhq/client/build/src/api-types";
-import { getName, isDetectiveType } from "../../utils";
-import { PrimitiveValueObject } from "./PrimitiveValueObject";
+import { getName, isDetectiveType } from "../../../../utils";
+import { PrimitiveValueObject } from "../../PrimitiveValueObject";
+
 export class NameProperty extends PrimitiveValueObject<string> {
   static create(propValue: PropertyValue): NameProperty {
     if (!isDetectiveType<TitlePropertyValue>(propValue)) {

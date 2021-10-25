@@ -1,14 +1,12 @@
 import {
   PeoplePropertyValue,
-  User,
   PropertyValue,
 } from "@notionhq/client/build/src/api-types";
 import { isDetectiveType } from "../../../../utils";
 import { ValueObject } from "../../ValueObject";
+import { UserBlock } from "../blocks/UserBlock";
 
-
-
-export class PeopleProperty extends ValueObject<PeoplePropertyProps[]> {
+export class PeopleProperty extends ValueObject<UserBlock[]> {
   static create(propValue: PropertyValue): PeopleProperty {
     if (!isDetectiveType<PeoplePropertyValue>(propValue)) {
       throw new Error(
@@ -18,18 +16,7 @@ export class PeopleProperty extends ValueObject<PeoplePropertyProps[]> {
     const { people } = propValue;
     const peopleList = people
       .map((item) => {
-        const { name, type, avatar_url } = item;
-        if (type === "bot") {
-          return {
-            name: name || "",
-            icon: avatar_url || "",
-          };
-        } else if (type === "person") {
-          return {
-            name: name || "",
-            icon: avatar_url || "",
-          };
-        }
+        return UserBlock.create(item);
       })
       .filter(
         (item): item is Exclude<typeof item, undefined> => item !== undefined
