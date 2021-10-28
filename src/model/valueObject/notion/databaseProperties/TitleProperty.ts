@@ -5,13 +5,13 @@ import {
 import { getName, isDetectiveType } from "../../../../utils";
 import { PrimitiveValueObject } from "../../PrimitiveValueObject";
 
-export class NameProperty extends PrimitiveValueObject<string> {
-  static create(propValue: PropertyValue): NameProperty {
+export class TitleProperty extends PrimitiveValueObject<string> {
+  static create(propValue: PropertyValue): TitleProperty {
     if (!isDetectiveType<TitlePropertyValue>(propValue)) {
       throw new Error(
         `Invalid NameProperty propValue: ${console.dir(propValue)}`
       );
     }
-    return new NameProperty(getName(propValue.title) || "Untitled");
+    return new TitleProperty(getName(propValue.title) || "Untitled");
   }
 }

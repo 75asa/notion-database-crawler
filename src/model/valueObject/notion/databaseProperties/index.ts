@@ -1,6 +1,6 @@
 export * from './DateProperty'
 export * from './MultiSelectProperty'
-export * from './NameProperty'
+export * from './TitleProperty'
 export * from './NumberProperty'
 export * from './PeopleProperty'
 export * from './SelectProperty'
