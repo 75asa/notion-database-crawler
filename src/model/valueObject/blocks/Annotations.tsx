@@ -1,7 +1,7 @@
 import {
-  Annotations as AnnotationsType,
   RichTextText,
-} from "@notionhq/client/build/src/api-types";
+  Annotations as AnnotationsType,
+} from "../../../@types/notion-api-types";
 
 interface AnnotationsProps {
   children: RichTextText;
@@ -9,8 +9,8 @@ interface AnnotationsProps {
 export const Annotations = ({ children }: AnnotationsProps) => {
   const content = children.text.content;
   const { annotations, text } = children;
-  let blocks = !!text.link ? (
-    <a href={text.link!.url}>{content}</a>
+  let blocks = text.link ? (
+    <a href={text.link.url}>{content}</a>
   ) : (
     <p>{content}</p>
   );
