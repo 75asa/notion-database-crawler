@@ -6,7 +6,7 @@ import {
   TextProperty,
   TitleProperty,
   URLProperty,
-} from "..";
+} from ".";
 
 export type VisibleProps =
   | typeof PeopleProperty
