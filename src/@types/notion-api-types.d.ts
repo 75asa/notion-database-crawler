@@ -6,7 +6,6 @@ import type {
 
 /** Database */
 export type SearchResult = SearchResponse["results"][number];
-// export type Database = SearchResponse["results"][number]["object"] is "database";
 
 /** Property **/
 export type PostResult = QueryDatabaseResponse["results"][number];
