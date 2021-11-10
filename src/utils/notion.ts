@@ -1,4 +1,4 @@
-import { PropertyValue, RichText } from "@notionhq/client/build/src/api-types";
+import { PropertyValue, RichText } from "../@types/notion-api-types";
 
 export const getName = (titleList: RichText[]) => {
   return titleList.reduce((acc, cur) => {

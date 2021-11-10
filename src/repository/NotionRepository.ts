@@ -1,14 +1,10 @@
 import { Client } from "@notionhq/client/build/src";
 import {
-  BlocksChildrenListParameters,
-  BlocksChildrenListResponse,
-  DatabasesQueryResponse,
+  ListBlockChildrenParameters,
+  QueryDatabaseResponse,
 } from "@notionhq/client/build/src/api-endpoints";
-import {
-  Block,
-  Page as NotionPage,
-} from "@notionhq/client/build/src/api-types";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
+import { Block, PostResult } from "../@types/notion-api-types";
 import { Config } from "../Config";
 import { NotionError } from "../errors";
 import { Database } from "../model/entity/Database";
@@ -17,16 +13,16 @@ import { User } from "../model/entity/User";
 
 const { Props, IGNORE_PREFIX, MUST_EXIST_PROPS } = Config.Notion;
 export class NotionRepository {
-  private notion;
+  #notion;
   constructor(authKey: string) {
-    this.notion = new Client({ auth: authKey });
+    this.#notion = new Client({ auth: authKey });
   }
 
   // integration が取得可能な database を取得
   async getAllDatabase() {
     let searched;
     try {
-      searched = await this.notion.search({
+      searched = await this.#notion.search({
         filter: { value: "database", property: "object" },
       });
     } catch (e) {
@@ -36,7 +32,7 @@ export class NotionRepository {
 
     return searched.results
       .filter(
-        (data): data is Exclude<typeof data, NotionPage> =>
+        (data): data is Exclude<typeof data, PostResult> =>
           data.object === "database"
       )
       .filter((database) => {
@@ -78,9 +74,9 @@ export class NotionRepository {
       if (cursor) requestPayload.body = { start_cursor: cursor };
       let pages = null;
       try {
-        pages = (await this.notion.request(
+        pages = (await this.#notion.request(
           requestPayload
-        )) as DatabasesQueryResponse;
+        )) as QueryDatabaseResponse;
       } catch (error) {
         console.dir({ error }, { depth: null });
         if (error instanceof NotionError) {
@@ -109,14 +105,14 @@ export class NotionRepository {
 
     const getBlocks = async (cursor?: string) => {
       let blocks = null;
-      const blocksChildrenListParameters: BlocksChildrenListParameters = {
+      const blocksChildrenListParameters: ListBlockChildrenParameters = {
         block_id: pageId,
       };
       if (cursor) blocksChildrenListParameters.start_cursor = cursor;
       try {
-        blocks = (await this.notion.blocks.children.list(
+        blocks = await this.#notion.blocks.children.list(
           blocksChildrenListParameters
-        )) as BlocksChildrenListResponse;
+        );
       } catch (e) {
         if (e instanceof Error) throw e;
         if (!blocks) throw new Error("blocks is null");

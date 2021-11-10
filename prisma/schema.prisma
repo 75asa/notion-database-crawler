@@ -15,6 +15,7 @@ model Database {
   name         String
   createdAt    DateTime
   lastEditedAt DateTime
+  url          String
   pages        Page[]
   size         Int      @default(0)
 }
