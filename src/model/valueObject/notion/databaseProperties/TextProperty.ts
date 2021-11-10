@@ -1,14 +1,14 @@
+import { UserBlock } from "..";
 import {
   PropertyValue,
-  RichTextPropertyValue,
-} from "@notionhq/client/build/src/api-types";
-import { UserBlock } from "..";
+  PropertyValueRichText,
+} from "../../../../@types/notion-api-types";
 import { isDetectiveType } from "../../../../utils";
 import { PrimitiveValueObject } from "../../PrimitiveValueObject";
 
 export class TextProperty extends PrimitiveValueObject<string> {
   static create(propValue: PropertyValue): TextProperty {
-    if (!isDetectiveType<RichTextPropertyValue>(propValue)) {
+    if (!isDetectiveType<PropertyValueRichText>(propValue)) {
       throw new Error(
         `Invalid TextPropertyValue: ${JSON.stringify(propValue)}`
       );

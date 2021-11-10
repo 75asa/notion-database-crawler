@@ -1,19 +1,24 @@
 import {
-  PeoplePropertyValue,
   PropertyValue,
-} from "@notionhq/client/build/src/api-types";
+  PropertyValuePeople,
+} from "../../../../@types/notion-api-types";
 import { isDetectiveType } from "../../../../utils";
 import { ValueObject } from "../../ValueObject";
 import { UserBlock } from "../blocks/UserBlock";
 
 export class PeopleProperty extends ValueObject<UserBlock[]> {
   static create(propValue: PropertyValue): PeopleProperty {
-    if (!isDetectiveType<PeoplePropertyValue>(propValue)) {
+    if (!isDetectiveType<PropertyValuePeople>(propValue)) {
       throw new Error(
         `Invalid PeoplePropertyValue: ${JSON.stringify(propValue)}`
       );
     }
+    if (!("type" in propValue))
+      throw new Error(
+        `Invalid PeoplePropertyValue: ${JSON.stringify(propValue)}`
+      );
     const { people } = propValue;
+
     const peopleList = people
       .map((item) => {
         return UserBlock.create(item);

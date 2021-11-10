@@ -25,7 +25,9 @@ export namespace Config {
         process.env.NOTION_IS_PUBLISHED_PROP || "IsPublished";
       export const NAME = process.env.NOTION_NAME_PROP || "Name";
     }
-    export const VISIBLE_PROPS = process.env.NOTION_VISIBLE_PROPS || "";
+    export const VISIBLE_PROPS = (process.env.NOTION_VISIBLE_PROPS || "").split(
+      ","
+    );
     export const MUST_EXIST_PROPS = Object.keys(Props).map(
       (key) => Props[key as keyof typeof Props] as keyof typeof Props
     );

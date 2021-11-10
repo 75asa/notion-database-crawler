@@ -1,13 +1,13 @@
 import {
   PropertyValue,
-  DatePropertyValue,
-} from "@notionhq/client/build/src/api-types";
+  PropertyValueDate,
+} from "../../../../@types/notion-api-types";
 import { isDetectiveType, parseDate } from "../../../../utils";
 import { PrimitiveValueObject } from "../../PrimitiveValueObject";
 
 export class DateProperty extends PrimitiveValueObject<Date> {
   static create(propValue: PropertyValue): DateProperty {
-    if (!isDetectiveType<DatePropertyValue>(propValue)) {
+    if (!isDetectiveType<PropertyValueDate>(propValue)) {
       throw new Error(
         `Invalid DateProperty propValue: ${JSON.stringify(propValue)}`
       );

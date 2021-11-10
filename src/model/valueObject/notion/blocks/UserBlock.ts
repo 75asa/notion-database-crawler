@@ -1,4 +1,4 @@
-import { User } from "@notionhq/client/build/src/api-types";
+import { PropertyValueUser } from "../../../../@types/notion-api-types";
 import { ValueObject } from "../../ValueObject";
 
 export interface UserBlockProps {
@@ -10,7 +10,7 @@ export class UserBlock extends ValueObject<UserBlockProps> {
   private constructor(props: UserBlockProps) {
     super(props);
   }
-  static create(propValue: User): UserBlock {
+  static create(propValue: PropertyValueUser): UserBlock {
     const { name, avatar_url } = propValue;
     if (!name) {
       throw new Error("UserBlock: name is missing");
