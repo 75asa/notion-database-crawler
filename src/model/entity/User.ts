@@ -1,14 +1,14 @@
-import {
-  LastEditedByPropertyValue,
-  PropertyValue,
-} from "@notionhq/client/build/src/api-types";
 import { User as UserProps } from "@prisma/client";
+import {
+  PropertyValue,
+  PropertyValueEditedBy,
+} from "../../@types/notion-api-types";
 import { Entity } from "./Entity";
 
 const isLastEditedByPropertyValue = (
   propValue: PropertyValue
-): propValue is LastEditedByPropertyValue => {
-  return (propValue as LastEditedByPropertyValue).type === "last_edited_by";
+): propValue is PropertyValueEditedBy => {
+  return (propValue as PropertyValueEditedBy).type === "last_edited_by";
 };
 
 export class User extends Entity<UserProps> {
@@ -17,6 +17,8 @@ export class User extends Entity<UserProps> {
       throw new Error("User.create: props must be a LastEditedByPropertyValue");
     }
     const notionUser = props.last_edited_by;
+    if (!("type" in notionUser))
+      throw new Error("User.create: props.last_edited_by must have a type");
     const { id, name, avatar_url, type } = notionUser;
     let email = null;
     if (type === "person") {

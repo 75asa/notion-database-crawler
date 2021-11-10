@@ -1,15 +1,15 @@
 import {
   PropertyValue,
-  TitlePropertyValue,
-} from "@notionhq/client/build/src/api-types";
+  PropertyValueTitle,
+} from "../../@types/notion-api-types";
 import { getName } from "../../utils";
 import { PrimitiveValueObject } from "./PrimitiveValueObject";
 
 const isTitlePropertyValue = (
   propValue: PropertyValue
-): propValue is TitlePropertyValue => {
+): propValue is PropertyValueTitle => {
   // TODO: propValue.title === RichText[] も入れたい
-  return (propValue as TitlePropertyValue).type === "title";
+  return (propValue as PropertyValueTitle).type === "title";
 };
 
 export class NameProperty extends PrimitiveValueObject<string> {

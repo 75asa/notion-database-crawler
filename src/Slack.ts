@@ -1,6 +1,6 @@
-import { Block } from "@notionhq/client/build/src/api-types";
 import { ChatPostMessageArguments, WebClient } from "@slack/web-api";
 import JSXSlack from "jsx-slack";
+import { Block } from "./@types/notion-api-types";
 import { MainBlocks } from "./blocks/MainBlocks";
 import { Config } from "./Config";
 import { Page } from "./model/entity/Page";

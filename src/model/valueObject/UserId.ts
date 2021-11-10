@@ -1,4 +1,4 @@
-import { PropertyValue } from "@notionhq/client/build/src/api-types";
+import { PropertyValue } from "../../@types/notion-api-types";
 import { User } from "../entity/User";
 import { PrimitiveValueObject } from "./PrimitiveValueObject";
 

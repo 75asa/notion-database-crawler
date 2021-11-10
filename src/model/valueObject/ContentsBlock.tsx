@@ -1,6 +1,6 @@
-import { Block } from "@notionhq/client/build/src/api-types";
 /** @jsxImportSource jsx-slack **/
 import JSXSlack, { Blocks, Divider, Header } from "jsx-slack";
+import { Block } from "../../@types/notion-api-types";
 import { Page } from "../entity/Page";
 import { User } from "../entity/User";
 import { BulletedListItem } from "./blocks/BulletedListItem";
