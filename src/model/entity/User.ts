@@ -9,7 +9,11 @@ import { isDetectiveType } from "../../utils";
 export class User extends Entity<UserProps> {
   static create(props: PropertyValue): User {
     if (!isDetectiveType<PropertyValueEditedBy>(props)) {
-      throw new Error("User.create: props must be a LastEditedByPropertyValue");
+      throw new Error(
+        `User.create: props must be a LastEditedByPropertyValue \n${JSON.stringify(
+          props
+        )}`
+      );
     }
     const notionUser = props.last_edited_by;
     if (!("type" in notionUser))
