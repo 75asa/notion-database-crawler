@@ -16,25 +16,31 @@ export class User extends Entity<UserProps> {
       );
     }
     const notionUser = props.last_edited_by;
-    if (!("type" in notionUser))
-      throw new Error(
+    if (!("type" in notionUser)) {
+      console.warn(
         `User.create: props.last_edited_by must have a type\n Actual: ${JSON.stringify(
           props.last_edited_by
         )}`
       );
+      return new User({
+        id: notionUser.id,
+        name: "",
+        avatarURL: "",
+        email: "",
+      });
+    }
     const { id, name, avatar_url, type } = notionUser;
     let email = null;
     if (type === "person") {
       const { person } = notionUser;
       if (person) email = person.email;
     }
-    const value = {
+    return new User({
       id,
       name: name || "",
       avatarURL: avatar_url || "",
       email,
-    };
-    return new User(value);
+    });
   }
 
   get id(): string {
