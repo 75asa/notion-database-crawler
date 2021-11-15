@@ -1,4 +1,3 @@
-import { tracer } from "dd-trace";
 import { PrismaClient } from "@prisma/client";
 import { Slack } from "./Slack";
 import { Scheduler } from "./Scheduler";
@@ -8,8 +7,6 @@ import {
   PrismaDatabaseRepository,
   PrismaPageRepository,
 } from "./repository";
-
-tracer.init();
 
 const prisma = new PrismaClient();
 

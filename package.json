@@ -37,7 +37,6 @@
     "@sentry/tracing": "^6.13.3",
     "@slack/web-api": "^6.4.0",
     "dayjs": "^1.10.6",
-    "dd-trace": "^1.4.1",
     "dotenv": "^10.0.0",
     "jsx-slack": "^4.3.0",
     "shallow-equal-object": "^1.1.1",
