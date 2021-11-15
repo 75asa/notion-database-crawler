@@ -19,7 +19,7 @@ export class User extends Entity<UserProps> {
     if (!("type" in notionUser)) {
       console.warn(
         `User.create: props.last_edited_by must have a type\n Actual: ${JSON.stringify(
-          props.last_edited_by
+          props
         )}`
       );
       return new User({
