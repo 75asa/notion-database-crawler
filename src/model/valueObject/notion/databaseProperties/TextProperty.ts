@@ -3,7 +3,10 @@ import {
   PropertyValue,
   PropertyValueRichText,
 } from "../../../../@types/notion-api-types";
-import { isDetectiveType } from "../../../../utils";
+import {
+  extractUserOrBotFromPeoples,
+  isDetectiveType,
+} from "../../../../utils";
 import { PrimitiveValueObject } from "../../PrimitiveValueObject";
 
 export class TextProperty extends PrimitiveValueObject<string> {
@@ -16,7 +19,7 @@ export class TextProperty extends PrimitiveValueObject<string> {
 
     const richText = propValue.rich_text;
     const reducedText = richText.reduce((acc, cur) => {
-      const { plain_text, annotations, equation, href, type } = cur;
+      const { plain_text, annotations, href, type } = cur;
       switch (type) {
         case "equation": {
           acc += plain_text;
@@ -31,8 +34,8 @@ export class TextProperty extends PrimitiveValueObject<string> {
             }
             case "user": {
               if (cur.mention.type === "user") {
-                const user = UserBlock.create(cur.mention.user);
-                user.props;
+                const peoples = extractUserOrBotFromPeoples([cur.mention.user]);
+                const user = UserBlock.create(peoples[0]);
               }
               break;
             }

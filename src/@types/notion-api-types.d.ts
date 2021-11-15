@@ -52,6 +52,11 @@ export type PropertyValueUserPerson = Extract<
 >;
 export type PropertyValueUserBot = Extract<PropertyValueUser, { type: "bot" }>;
 
+export type PropertyValueUserPersonOrBot =
+  | PropertyValueUserPerson
+  | PropertyValueUserBot;
+export type PeopleValue = PropertyValuePeople["people"];
+
 /** Block **/
 export type Block = ListBlockChildrenResponse["results"][number];
 

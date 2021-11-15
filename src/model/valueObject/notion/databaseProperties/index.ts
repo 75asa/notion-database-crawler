@@ -8,14 +8,14 @@ import {
   URLProperty,
 } from ".";
 
-export type VisibleProps =
-  | typeof PeopleProperty
-  | typeof DateProperty
-  | typeof TextProperty
-  | typeof TitleProperty
-  | typeof MultiSelectProperty
-  | typeof SelectProperty
-  | typeof URLProperty;
+export type VisiblePropsTypes =
+  | PeopleProperty
+  | URLProperty
+  | DateProperty
+  | TextProperty
+  | TitleProperty
+  | MultiSelectProperty
+  | SelectProperty;
 
 export * from "./DateProperty";
 export * from "./MultiSelectProperty";

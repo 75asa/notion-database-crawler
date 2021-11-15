@@ -1,8 +1,12 @@
 import {
   PropertyValue,
   PropertyValuePeople,
+  PropertyValueUserPersonOrBot,
 } from "../../../../@types/notion-api-types";
-import { isDetectiveType } from "../../../../utils";
+import {
+  extractUserOrBotFromPeoples,
+  isDetectiveType,
+} from "../../../../utils";
 import { ValueObject } from "../../ValueObject";
 import { UserBlock } from "../blocks/UserBlock";
 
@@ -13,19 +17,11 @@ export class PeopleProperty extends ValueObject<UserBlock[]> {
         `Invalid PeoplePropertyValue: ${JSON.stringify(propValue)}`
       );
     }
-    if (!("type" in propValue))
-      throw new Error(
-        `Invalid PeoplePropertyValue: ${JSON.stringify(propValue)}`
-      );
-    const { people } = propValue;
+    const peoples = extractUserOrBotFromPeoples(propValue.people);
 
-    const peopleList = people
-      .map((item) => {
-        return UserBlock.create(item);
-      })
-      .filter(
-        (item): item is Exclude<typeof item, undefined> => item !== undefined
-      );
+    const peopleList = peoples.map((people: PropertyValueUserPersonOrBot) => {
+      return UserBlock.create(people);
+    });
     return new PeopleProperty(peopleList);
   }
 }

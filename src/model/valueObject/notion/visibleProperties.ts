@@ -1,11 +1,11 @@
-import { DateProperty, SelectProperty, VisibleProps } from ".";
+import { DateProperty, SelectProperty, VisiblePropsTypes } from ".";
 import { PropertyValueMap } from "../../../@types/notion-api-types";
 import { Config } from "../../../Config";
 import { ValueObject } from "../ValueObject";
 
 const { VISIBLE_PROPS } = Config.Notion;
 
-export class VisibleProperties extends ValueObject<VisibleProps> {
+export class VisibleProperties extends ValueObject<VisiblePropsTypes[]> {
   static create(propValues: PropertyValueMap): VisibleProperties {
     const visibleProps = VISIBLE_PROPS.map((propName) => {
       const targetPropValue = propValues[propName];
