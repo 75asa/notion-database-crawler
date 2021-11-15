@@ -10,7 +10,10 @@ import { ContentBlock } from "./model/valueObject/ContentsBlock";
 export class Slack {
   private client;
   private contentsBlock;
+  private channels: string[];
   constructor(blocks: Block[]) {
+    if (!Config.Slack.CHANNEL_NAMES.length) throw new Error("no channel name");
+    this.channels = Config.Slack.CHANNEL_NAMES;
     this.client = this.init();
     this.contentsBlock = ContentBlock.create(blocks);
   }
@@ -26,19 +29,25 @@ export class Slack {
     const block = MainBlocks(databaseName, page, this.contentsBlock.elements);
     const translatedBlocks = JSXSlack(block);
 
-    const msgOption: ChatPostMessageArguments = {
-      channel: Config.Slack.CHANNEL_NAME,
-      text,
-      username: user.name,
-      icon_url: user.avatarURL,
-      unfurl_links: true,
-      blocks: translatedBlocks,
-    };
+    const msgOptions: ChatPostMessageArguments[] = this.channels.map(
+      (channel) => {
+        return {
+          channel,
+          text,
+          username: user.name,
+          icon_url: user.avatarURL,
+          unfurl_links: true,
+          blocks: translatedBlocks,
+        };
+      }
+    );
 
-    console.dir({ msgOption }, { depth: null });
+    console.dir({ msgOptions }, { depth: null });
 
     try {
-      await this.client.chat.postMessage(msgOption);
+      await Promise.all(
+        msgOptions.map(async (option) => this.client.chat.postMessage(option))
+      );
     } catch (e) {
       if (e instanceof Error) throw e;
     }
