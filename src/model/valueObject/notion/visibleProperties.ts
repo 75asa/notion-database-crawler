@@ -1,4 +1,9 @@
-import { DateProperty, SelectProperty, VisiblePropsTypes } from ".";
+import {
+  DateProperty,
+  MultiSelectProperty,
+  SelectProperty,
+  VisiblePropsTypes,
+} from ".";
 import { PropertyValueMap } from "../../../@types/notion-api-types";
 import { Config } from "../../../Config";
 import { ValueObject } from "../ValueObject";
@@ -12,6 +17,9 @@ export class VisibleProperties extends ValueObject<VisiblePropsTypes[]> {
       switch (targetPropValue.type) {
         case "select": {
           return SelectProperty.create(targetPropValue);
+        }
+        case "multi_select": {
+          return MultiSelectProperty.create(targetPropValue);
         }
         case "date": {
           return DateProperty.create(targetPropValue);

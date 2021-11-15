@@ -1,11 +1,16 @@
 import { Page as PageProps } from "@prisma/client";
-import { TitleProperty, DatabaseId, UserId } from "../../model/valueObject";
+import {
+  TitleProperty,
+  DatabaseId,
+  UserId,
+  VisibleProperties,
+} from "../../model/valueObject";
 import { Config } from "../../Config";
 import { parseDate } from "../../utils";
 import { Entity } from "./Entity";
 import { PostResult } from "../../@types/notion-api-types";
 
-const { Props, VISIBLE_PROPS } = Config.Notion;
+const { Props } = Config.Notion;
 const { NAME, LAST_EDITED_BY } = Props;
 export class Page extends Entity<PageProps> {
   static create(props: PostResult): Page {
@@ -19,15 +24,7 @@ export class Page extends Entity<PageProps> {
       name,
       createdAt: parseDate(created_time),
       url,
-      visibleProps: VISIBLE_PROPS.map((prop) => {
-        const value = properties[prop];
-        if (value === undefined) {
-          return {
-            name: prop,
-            value: null,
-          };
-        }
-      }),
+      visibleProps: VisibleProperties.create(properties),
       databaseId: DatabaseId.create(props).value,
       userId: UserId.create(properties[LAST_EDITED_BY]).value,
     };
