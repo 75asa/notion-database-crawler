@@ -11,7 +11,9 @@ if (config) {
 export namespace Config {
   export namespace Slack {
     export const BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
-    export const CHANNEL_NAME = process.env.SLACK_CHANNEL_NAME;
+    export const CHANNEL_NAMES = process.env.SLACK_CHANNEL_NAME
+      ? process.env.SLACK_CHANNEL_NAME.split(",")
+      : [];
   }
   export namespace Notion {
     export const KEY = process.env.NOTION_KEY;
