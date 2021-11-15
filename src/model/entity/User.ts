@@ -18,7 +18,9 @@ export class User extends Entity<UserProps> {
     const notionUser = props.last_edited_by;
     if (!("type" in notionUser))
       throw new Error(
-        `User.create: props.last_edited_by must have a type\n Actual: ${props.last_edited_by}`
+        `User.create: props.last_edited_by must have a type\n Actual: ${JSON.stringify(
+          props.last_edited_by
+        )}`
       );
     const { id, name, avatar_url, type } = notionUser;
     let email = null;
