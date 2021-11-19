@@ -1,3 +1,4 @@
 export * from "./blocks";
 export * from "./databaseProperties";
-export * from "./visibleProperties";
+export * from './VisibleProperties'
+export * from './RawProperties'
