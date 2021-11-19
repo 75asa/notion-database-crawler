@@ -29,14 +29,13 @@ const main = async () => {
 
       database.size = allContents.length ?? 0;
       // Database に Page [] があり、 DB に保存してない場合
+      // TODO: useCase で分ける
       if (isFirstTime) {
         // 初期登録
         await databaseRepo.create(database);
         if (!database.size) return;
         const pageRepo = new PrismaPageRepository(prisma);
-        for (const content of allContents) {
-          const user = content.user;
-          const page = content.page;
+        for (const { user, page } of allContents) {
           await pageRepo.create(page, user);
         }
       } else if (storedDatabase !== null && storedDatabase !== undefined) {
@@ -60,9 +59,7 @@ const main = async () => {
         database.size += unstoredPages.length;
         const pageRepo = new PrismaPageRepository(prisma);
 
-        for (const pageAndUser of unstoredPages) {
-          const user = pageAndUser.user;
-          const page = pageAndUser.page;
+        for (const { user, page } of unstoredPages) {
           await pageRepo.create(page, user);
           const blocks = await notionRepo.getAllBlocksFromPage(page.id);
           const slackClient = new Slack(blocks);

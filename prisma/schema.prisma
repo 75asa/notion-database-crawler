@@ -21,14 +21,15 @@ model Database {
 }
 
 model Page {
-  id           String   @unique
-  name         String
-  createdAt    DateTime
-  url          String
-  Database     Database @relation(fields: [databaseId], references: [id])
-  databaseId   String
-  LastEditedBy User     @relation(fields: [userId], references: [id])
-  userId       String
+  id            String   @unique
+  name          String
+  createdAt     DateTime
+  url           String
+  Database      Database @relation(fields: [databaseId], references: [id])
+  databaseId    String
+  rawProperties Json[]
+  LastEditedBy  User     @relation(fields: [userId], references: [id])
+  userId        String
 }
 
 model User {

@@ -31,7 +31,6 @@ export class VisibleProperties extends ValueObject<VisiblePropsTypes[]> {
     }).filter(
       (item): item is Exclude<typeof item, undefined> => item !== undefined
     );
-
     return new VisibleProperties(visibleProps);
   }
 }

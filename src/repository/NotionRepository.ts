@@ -90,6 +90,7 @@ export class NotionRepository {
         if (rawPage.archived) continue;
         const page = Page.create(rawPage);
         const user = User.create(rawPage.properties[Props.LAST_EDITED_BY]);
+        // NOTE: ignore archived or external user
         if (!user.name) continue;
         allPageAndUsers.push({ page, user });
       }
