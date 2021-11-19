@@ -8,7 +8,7 @@ import { Config } from "../../Config";
 import { parseDate } from "../../utils";
 import { Entity } from "./Entity";
 import { PostResult } from "../../@types/notion-api-types";
-import { RawProperties } from "../valueObject/notion/rawProperties";
+import { RawProperties } from "../valueObject/notion/RawProperties";
 
 const { Props } = Config.Notion;
 const { NAME, LAST_EDITED_BY } = Props;
