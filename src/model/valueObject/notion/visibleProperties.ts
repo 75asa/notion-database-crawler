@@ -1,3 +1,4 @@
+import { Prisma } from ".prisma/client";
 import {
   DateProperty,
   MultiSelectProperty,
@@ -11,7 +12,24 @@ import { ValueObject } from "../ValueObject";
 const { VISIBLE_PROPS } = Config.Notion;
 
 export class VisibleProperties extends ValueObject<VisiblePropsTypes[]> {
-  static create(propValues: PropertyValueMap): VisibleProperties {
+  #props: VisiblePropsTypes[];
+  static create(propValues: Prisma.JsonValue[]): VisibleProperties {
+    if (
+      !propValues ||
+      typeof propValues !== "object" ||
+      !Array.isArray(propValues)
+    ) {
+      throw new Error("propValues must be an object");
+    }
+    for (const propValue of propValues) {
+      if (
+        propValue === null ||
+        typeof propValue !== "object" ||
+        Array.isArray(propValue)
+      ) {
+        continue;
+      }
+    }
     const visibleProps = VISIBLE_PROPS.map((propName) => {
       const targetPropValue = propValues[propName];
       switch (targetPropValue.type) {

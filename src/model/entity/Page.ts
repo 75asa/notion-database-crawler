@@ -1,9 +1,5 @@
 import { Page as PageProps } from "@prisma/client";
-import {
-  TitleProperty,
-  DatabaseId,
-  UserId,
-} from "../../model/valueObject";
+import { TitleProperty, DatabaseId, UserId } from "../../model/valueObject";
 import { Config } from "../../Config";
 import { parseDate } from "../../utils";
 import { Entity } from "./Entity";
@@ -39,5 +35,9 @@ export class Page extends Entity<PageProps> {
 
   get url() {
     return this.props.url;
+  }
+
+  get rawProperties() {
+    return this.props.rawProperties;
   }
 }

@@ -22,9 +22,9 @@ export class Slack {
     return new WebClient(Config.Slack.BOT_TOKEN);
   }
 
-  async postMessage(arg: { page: Page; databaseName: string; user: User }) {
-    const { databaseName, page, user } = arg;
-    const { url, name } = page;
+  async postMessage(input: { page: Page; databaseName: string; user: User }) {
+    const { databaseName, page, user } = input;
+    const { url, name, rawProperties } = page;
     const text = `${databaseName} に新しいページ: <${url}|${name}> が投稿されました`;
     const block = MainBlocks(databaseName, page, this.contentsBlock.elements);
     const translatedBlocks = JSXSlack(block);
