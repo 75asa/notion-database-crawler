@@ -31,7 +31,7 @@
     "deploy": "tsc . && node dist/index.js"
   },
   "dependencies": {
-    "@notionhq/client": "^0.4.6",
+    "@notionhq/client": "^0.4.9",
     "@prisma/client": "3.0.2",
     "@sentry/node": "^6.13.3",
     "@sentry/tracing": "^6.13.3",
