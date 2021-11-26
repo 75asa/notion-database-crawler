@@ -1,19 +1,24 @@
 import { Page as PageProps } from "@prisma/client";
-import {
-  TitleProperty,
-  DatabaseId,
-  UserId,
-  // VisibleProperties,
-} from "../../model/valueObject";
-import { Config } from "../../Config";
-import { parseDate } from "../../utils";
-import { Entity } from "./Entity";
-import { PostResult } from "../../@types/notion-api-types";
+import * as notionApiTypes from "@types/notion-api-types";
+import { Config } from "Config";
+import { Entity } from "model/entity/Entity";
+import { DatabaseId, UserId } from "model/valueObject";
+import { TitleProperty } from "model/valueObject/notion/databaseProperties/TitleProperty";
+import { parseDate } from "utils";
+// import {
+//   DatabaseId,
+//   UserId,
+// } from "../../model/valueObject";
+// import { Config } from "../../Config";
+// import { parseDate } from "../../utils";
+// import { Entity } from "./Entity";
+// import { PostResult } from "../../@types/notion-api-types";
+// import { TitleProperty } from "../valueObject/notion/databaseProperties/TitleProperty";
 
 const { Props } = Config.Notion;
 const { NAME, LAST_EDITED_BY } = Props;
 export class Page extends Entity<PageProps> {
-  static create(props: PostResult): Page {
+  static create(props: notionApiTypes.PostResult): Page {
     const { properties, id, created_time, url } = props;
     const name = TitleProperty.create(properties[NAME]).value;
     // TODO: properties から Slack に表示したい項目を環境変数から取得する
@@ -24,7 +29,6 @@ export class Page extends Entity<PageProps> {
       name,
       createdAt: parseDate(created_time),
       url,
-      // visibleProps: VisibleProperties.create(properties),
       databaseId: DatabaseId.create(props).value,
       userId: UserId.create(properties[LAST_EDITED_BY]).value,
     };

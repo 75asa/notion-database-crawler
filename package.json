@@ -22,7 +22,7 @@
     "start": "node dist/index.js",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore .",
     "lint-fix": "yarn lint --fix && prettier --write \"./{__tests__,src}/**/*.{js,ts}\"",
-    "build": "tsc -p .",
+    "build": "tsc -p . --project tsconfig.json && tsc-alias -p tsconfig.json",
     "postinstall": "yarn build",
     "generate": "yarn prisma generate",
     "migrate": "yarn prisma migrate dev",
@@ -40,7 +40,8 @@
     "dotenv": "^10.0.0",
     "jsx-slack": "^4.3.0",
     "shallow-equal-object": "^1.1.1",
-    "toad-scheduler": "^1.5.0"
+    "toad-scheduler": "^1.5.0",
+    "tsc-alias": "^1.4.1"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
