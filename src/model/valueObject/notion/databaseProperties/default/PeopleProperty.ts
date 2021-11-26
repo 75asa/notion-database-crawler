@@ -1,14 +1,14 @@
+import { UserBlock } from "../..";
 import {
   PropertyValue,
   PropertyValuePeople,
   PropertyValueUserPersonOrBot,
-} from "../../../../@types/notion-api-types";
+} from "../../../../../@types/notion-api-types";
 import {
-  extractUserOrBotFromPeoples,
   isDetectiveType,
-} from "../../../../utils";
-import { ValueObject } from "../../ValueObject";
-import { UserBlock } from "../blocks/UserBlock";
+  extractUserOrBotFromPeoples,
+} from "../../../../../utils";
+import { ValueObject } from "../../../ValueObject";
 
 export class PeopleProperty extends ValueObject<UserBlock[]> {
   static create(propValue: PropertyValue): PeopleProperty {

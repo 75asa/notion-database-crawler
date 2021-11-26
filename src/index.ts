@@ -60,16 +60,14 @@ const main = async () => {
         database.size += unstoredPages.length;
         const pageRepo = new PrismaPageRepository(prisma);
 
-        for (const pageAndUser of unstoredPages) {
-          const user = pageAndUser.user;
-          const page = pageAndUser.page;
+        for (const { user, page } of unstoredPages) {
           await pageRepo.create(page, user);
-          const blocks = await notionRepo.getAllBlocksFromPage(page.id);
-          const slackClient = new Slack(blocks);
+          const notionBlocks = await notionRepo.getAllBlocksFromPage(page.id);
+          const slackClient = new Slack(Config.Slack);
           // slackClient.setBlocks(blocks);
           // Slack 通知
           await slackClient.postMessage({
-            databaseName: database.name,
+            database,
             page,
             user,
           });

@@ -1,5 +1,5 @@
-import { PropertyValueUser } from "../../../../@types/notion-api-types";
-import { ValueObject } from "../../ValueObject";
+import { PropertyValueUser } from "../../../../../@types/notion-api-types";
+import { ValueObject } from "../../../ValueObject";
 
 export interface UserBlockProps {
   name: string;

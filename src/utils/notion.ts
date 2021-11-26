@@ -31,3 +31,18 @@ export const extractUserOrBotFromPeoples = (peopleValues: PeopleValue) => {
       (item): item is Exclude<typeof item, undefined> => item !== undefined
     );
 };
+
+export const isPropertyValue = (input: unknown): input is PropertyValue => {
+  return (
+    input instanceof Object &&
+    Object.keys(input).length === 1 &&
+    "value" in input &&
+    "type" in input
+  );
+};
+
+export const isKeyValueObject = (
+  input: unknown
+): input is { [key: string]: unknown } => {
+  return input instanceof Object && Object.keys(input).length === 1;
+};

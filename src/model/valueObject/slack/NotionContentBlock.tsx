@@ -1,17 +1,17 @@
 /** @jsxImportSource jsx-slack **/
 import JSXSlack, { Blocks, Divider, Header } from "jsx-slack";
-import { Block } from "../../@types/notion-api-types";
-import { Page } from "../entity/Page";
-import { User } from "../entity/User";
-import { BulletedListItem } from "./blocks/BulletedListItem";
-import { ValueObject } from "./ValueObject";
+import { Block } from "../../../@types/notion-api-types";
+import { Page } from "../../entity/Page";
+import { User } from "../../entity/User";
+import { BulletedListItem } from "../notion/blocks/BulletedListItem";
+import { ValueObject } from "../ValueObject";
 
 interface ContentBlockProps {
   blocks: Block[];
   elements: JSXSlack.JSX.Element[];
 }
 
-export class ContentBlock extends ValueObject<ContentBlockProps> {
+export class NotionContentBlock extends ValueObject<ContentBlockProps> {
   static create(blocks: Block[]) {
     const jsxElements: JSXSlack.JSX.Element[] = [];
     for (const block of blocks) {
@@ -39,7 +39,7 @@ export class ContentBlock extends ValueObject<ContentBlockProps> {
           break;
       }
     }
-    return new ContentBlock({ blocks, elements: jsxElements });
+    return new NotionContentBlock({ blocks, elements: jsxElements });
   }
 
   get elements(): JSXSlack.JSX.Element[] {

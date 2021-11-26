@@ -3,7 +3,7 @@ import {
   TitleProperty,
   DatabaseId,
   UserId,
-  // VisibleProperties,
+  RawProperties,
 } from "../../model/valueObject";
 import { Config } from "../../Config";
 import { parseDate } from "../../utils";
@@ -24,7 +24,7 @@ export class Page extends Entity<PageProps> {
       name,
       createdAt: parseDate(created_time),
       url,
-      // visibleProps: VisibleProperties.create(properties),
+      rawProperties: RawProperties.create(properties).props,
       databaseId: DatabaseId.create(props).value,
       userId: UserId.create(properties[LAST_EDITED_BY]).value,
     };
@@ -41,5 +41,9 @@ export class Page extends Entity<PageProps> {
 
   get url() {
     return this.props.url;
+  }
+
+  get rawProperties() {
+    return this.props.rawProperties;
   }
 }

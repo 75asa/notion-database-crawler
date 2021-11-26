@@ -1,31 +1,40 @@
 import { ChatPostMessageArguments, WebClient } from "@slack/web-api";
 import JSXSlack from "jsx-slack";
 import { Block } from "./@types/notion-api-types";
-import { MainBlocks } from "./blocks/MainBlocks";
+import { MainBlocks } from "./model/valueObject/slack/MainBlocks";
 import { Config } from "./Config";
+import { Database } from "./model/entity/Database";
 import { Page } from "./model/entity/Page";
 import { User } from "./model/entity/User";
-import { ContentBlock } from "./model/valueObject/ContentsBlock";
+import { NotionContentBlock } from "./model/valueObject/slack/NotionContentBlock";
+
+interface SlackConstructorArgs {
+  BOT_TOKEN?: string;
+  CHANNEL_NAMES: string[];
+}
 
 export class Slack {
-  private client;
-  private contentsBlock;
-  private channels: string[];
-  constructor(blocks: Block[]) {
-    if (!Config.Slack.CHANNEL_NAMES.length) throw new Error("no channel name");
-    this.channels = Config.Slack.CHANNEL_NAMES;
-    this.client = this.init();
-    this.contentsBlock = ContentBlock.create(blocks);
+  #client;
+  #channels: string[];
+  constructor(args: SlackConstructorArgs) {
+    const { CHANNEL_NAMES, BOT_TOKEN } = args;
+    if (!CHANNEL_NAMES.length) throw new Error("no channel name");
+    if (!BOT_TOKEN) throw new Error("no bot token");
+    this.#channels = CHANNEL_NAMES;
+    this.#client = new WebClient(BOT_TOKEN);
   }
 
-  private init() {
-    return new WebClient(Config.Slack.BOT_TOKEN);
-  }
-
-  async postMessage(arg: { page: Page; databaseName: string; user: User }) {
-    const { databaseName, page, user } = arg;
+  #buildMessage(input: { page: Page; database: Database }) {
+    const { database, page } = input;
     const { url, name } = page;
-    const text = `${databaseName} に新しいページ: <${url}|${name}> が投稿されました`;
+    return `${database.name} に新しいページ: <${url}|${name}> が投稿されました`;
+  }
+
+  async postMessage(input: { page: Page; database: Database; user: User }) {
+    const { database, page, user } = input;
+    const { rawProperties } = page;
+    const text = this.#buildMessage({ page, database });
+    // Block kit
     const block = MainBlocks(databaseName, page, this.contentsBlock.elements);
     const translatedBlocks = JSXSlack(block);
 
