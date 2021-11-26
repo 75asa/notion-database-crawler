@@ -1,6 +1,7 @@
 import { PrimitiveValueObject } from "../../..";
 import { PropertyValueMultiSelect } from "../../../../../@types/notion-api-types";
-import { isDetectiveType } from "../../../../../utils"; import { BasePropertyProps, PropertyValueConstructor } from "./BaseProperty";
+import { isDetectiveType } from "../../../../../utils";
+import { BasePropertyProps, BasePropertyFactoryArgs } from "./BaseProperty";
 
 interface MultiSelectPropertyProps
   extends BasePropertyProps<PropertyValueMultiSelect> {
@@ -11,7 +12,7 @@ export class MultiSelectProperty extends PrimitiveValueObject<MultiSelectPropert
   static create({
     key,
     propValue,
-  }: PropertyValueConstructor): MultiSelectProperty {
+  }: BasePropertyFactoryArgs): MultiSelectProperty {
     if (!isDetectiveType<PropertyValueMultiSelect>(propValue)) {
       throw new Error(
         `Invalid URLProperty propValue: ${JSON.stringify(propValue)}`
