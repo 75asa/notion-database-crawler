@@ -1,10 +1,8 @@
-/** @jsxImportSource jsx-slack **/
 import JSXSlack, { Blocks, Divider, Header } from "jsx-slack";
-import { Block } from "../../../@types/notion-api-types";
-import { Page } from "../../entity/Page";
-import { User } from "../../entity/User";
-import { BulletedListItem } from "../notion/blocks/BulletedListItem";
-import { ValueObject } from "../ValueObject";
+import { Block } from "~/@types/notion-api-types";
+import { Page, User } from "~/model/entity";
+import { BulletedListItem } from "~/model/valueObject/notion/blocks/BulletedListItem";
+import { ValueObject } from "~/model/valueObject/ValueObject";
 
 interface ContentBlockProps {
   blocks: Block[];

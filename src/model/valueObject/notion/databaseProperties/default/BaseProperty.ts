@@ -1,8 +1,8 @@
-import { PropertyValue } from "../../../../../@types/notion-api-types";
+import { PropertyValue } from "~/@types/notion-api-types";
 
 export interface BasePropertyFactoryArgs {
   key: string;
-  propValue: PropertyValue;
+  value: PropertyValue;
 }
 
 export interface BasePropertyProps<T extends PropertyValue> {

@@ -1,7 +1,7 @@
 import {
   RichTextText,
   Annotations as AnnotationsType,
-} from "../../../../@types/notion-api-types";
+} from "~/@types/notion-api-types";
 
 interface AnnotationsProps {
   children: RichTextText;

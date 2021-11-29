@@ -1,4 +1,3 @@
-export * from "./DatabaseId";
-export * from "./notion";
-export * from "./PrimitiveValueObject";
-export * from "./UserId";
+export * from "~/model/valueObject/DatabaseId";
+export * from "~/model/valueObject/notion";
+export * from "~/model/valueObject/UserId";

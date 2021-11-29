@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { Page } from "model/entity/Page";
-import { User } from "model/entity/User";
+import { PrismaClient } from ".prisma/client";
+import { Page, User } from "~/model/entity";
 
 interface IPageRepository {
   create(page: Page, user: User): Promise<void>;

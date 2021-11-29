@@ -1,5 +1,5 @@
-import { PrimitiveValueObject } from "./PrimitiveValueObject";
-import { PostResult } from "../../@types/notion-api-types";
+import { PostResult } from "~/@types/notion-api-types";
+import { PrimitiveValueObject } from "~/model/valueObject/PrimitiveValueObject";
 
 export class DatabaseId extends PrimitiveValueObject<string> {
   static create(props: PostResult): DatabaseId {

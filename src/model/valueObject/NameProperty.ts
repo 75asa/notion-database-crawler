@@ -1,9 +1,6 @@
-import {
-  PropertyValue,
-  PropertyValueTitle,
-} from "../../@types/notion-api-types";
-import { getName } from "../../utils";
-import { PrimitiveValueObject } from "./PrimitiveValueObject";
+import { PropertyValue, PropertyValueTitle } from "~/@types/notion-api-types";
+import { PrimitiveValueObject } from "~/model/valueObject/PrimitiveValueObject";
+import { getName } from "~/utils";
 
 const isTitlePropertyValue = (
   propValue: PropertyValue

@@ -1,12 +1,12 @@
 import { PrismaClient } from "@prisma/client";
-import { Slack } from "./Slack";
-import { Scheduler } from "./Scheduler";
-import { Config } from "./Config";
+import { Config } from "~/Config";
 import {
   NotionRepository,
   PrismaDatabaseRepository,
   PrismaPageRepository,
-} from "./repository";
+} from "~/repository";
+import { Scheduler } from "~/Scheduler";
+import { Slack } from "~/Slack";
 
 const prisma = new PrismaClient();
 

@@ -1,6 +1,6 @@
-import { PrimitiveValueObject } from "../../..";
-import { PropertyValue, PropertyValueTitle } from "../../../../../@types/notion-api-types";
-import { isDetectiveType, getName } from "../../../../../utils";
+import { PropertyValue, PropertyValueTitle } from "~/@types/notion-api-types";
+import { PrimitiveValueObject } from "~/model/valueObject/PrimitiveValueObject";
+import { isDetectiveType, getName } from "~/utils";
 
 export class TitleProperty extends PrimitiveValueObject<string> {
   static create(propValue: PropertyValue): TitleProperty {

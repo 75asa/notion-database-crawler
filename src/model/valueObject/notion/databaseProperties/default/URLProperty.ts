@@ -1,9 +1,6 @@
-import {
-  PropertyValue,
-  PropertyValueUrl,
-} from "../../../../@types/notion-api-types";
-import { isDetectiveType } from "../../../../utils";
-import { PrimitiveValueObject } from "../../PrimitiveValueObject";
+import { PropertyValue, PropertyValueUrl } from "~/@types/notion-api-types";
+import { PrimitiveValueObject } from "~/model/valueObject/PrimitiveValueObject";
+import { isDetectiveType } from "~/utils";
 
 export class URLProperty extends PrimitiveValueObject<string> {
   static create(propValue: PropertyValue): URLProperty {

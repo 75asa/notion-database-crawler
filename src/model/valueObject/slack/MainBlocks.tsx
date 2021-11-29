@@ -1,12 +1,16 @@
-/** @jsxImportSource jsx-slack **/
-import JSXSlack, { Blocks, Mrkdwn, Section, Divider } from "jsx-slack";
-import { Database, Page } from "../../entity";
+import { Blocks, Mrkdwn, Section, Divider } from "jsx-slack";
+import { Database, Page } from "~/model/entity";
+import { Properties } from "~/model/valueObject/slack/notion/Properties";
 
-export const MainBlocks = (input: { database: Database; page: Page }) => {
-  const { database, page } = input;
-  const { rawProperties } = page;
+interface MainBlocksProps {
+  database: Database;
+  page: Page;
+}
+
+export const MainBlocks = ({ database, page }: MainBlocksProps) => {
   return (
     <Blocks>
+      <Properties properties={page.properties}></Properties>
       <Section>
         <Mrkdwn>
           <b>{database.name}</b> に新しいページ:{" "}

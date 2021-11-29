@@ -1,12 +1,7 @@
 import { ChatPostMessageArguments, WebClient } from "@slack/web-api";
 import JSXSlack from "jsx-slack";
-import { Block } from "./@types/notion-api-types";
-import { MainBlocks } from "./model/valueObject/slack/MainBlocks";
-import { Config } from "./Config";
-import { Database } from "./model/entity/Database";
-import { Page } from "./model/entity/Page";
-import { User } from "./model/entity/User";
-import { NotionContentBlock } from "./model/valueObject/slack/NotionContentBlock";
+import { Page, Database, User } from "~/model/entity";
+import { MainBlocks } from "~/model/valueObject/slack/MainBlocks";
 
 interface SlackConstructorArgs {
   BOT_TOKEN?: string;
@@ -32,13 +27,13 @@ export class Slack {
 
   async postMessage(input: { page: Page; database: Database; user: User }) {
     const { database, page, user } = input;
-    const { rawProperties } = page;
+    const { properties } = page;
     const text = this.#buildMessage({ page, database });
     // Block kit
-    const block = MainBlocks(databaseName, page, this.contentsBlock.elements);
+    const block = MainBlocks({ database, page });
     const translatedBlocks = JSXSlack(block);
 
-    const msgOptions: ChatPostMessageArguments[] = this.channels.map(
+    const msgOptions: ChatPostMessageArguments[] = this.#channels.map(
       (channel) => {
         return {
           channel,
@@ -55,7 +50,7 @@ export class Slack {
 
     try {
       await Promise.all(
-        msgOptions.map(async (option) => this.client.chat.postMessage(option))
+        msgOptions.map(async (option) => this.#client.chat.postMessage(option))
       );
     } catch (e) {
       if (e instanceof Error) throw e;

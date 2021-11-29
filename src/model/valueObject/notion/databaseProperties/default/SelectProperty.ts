@@ -1,20 +1,23 @@
-import { PropertyValueSelect } from "../../../../../@types/notion-api-types";
-import { isDetectiveType } from "../../../../../utils";
-import { ValueObject } from "../../../ValueObject";
-import { BasePropertyFactoryArgs, BasePropertyProps } from "./BaseProperty";
+import { PropertyValueSelect } from "~/@types/notion-api-types";
+import {
+  BasePropertyProps,
+  BasePropertyFactoryArgs,
+} from "~/model/valueObject/notion/databaseProperties/default/BaseProperty";
+import { ValueObject } from "~/model/valueObject/ValueObject";
+import { isDetectiveType } from "~/utils";
 
 interface SelectPropertyProps extends BasePropertyProps<PropertyValueSelect> {
   option: string | undefined;
 }
 
 export class SelectProperty extends ValueObject<SelectPropertyProps> {
-  static create({ key, propValue }: BasePropertyFactoryArgs): SelectProperty {
-    if (!isDetectiveType<PropertyValueSelect>(propValue)) {
+  static create({ key, value }: BasePropertyFactoryArgs): SelectProperty {
+    if (!isDetectiveType<PropertyValueSelect>(value)) {
       throw new Error(
-        `Invalid SelectProperty propValue: ${JSON.stringify(propValue)}`
+        `Invalid SelectProperty propValue: ${JSON.stringify(value)}`
       );
     }
-    const optionName = propValue.select?.name;
-    return new SelectProperty({ key, value: propValue, option: optionName });
+    const optionName = value.select?.name;
+    return new SelectProperty({ key, value: value, option: optionName });
   }
 }

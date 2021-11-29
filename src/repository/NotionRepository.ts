@@ -4,12 +4,10 @@ import {
   QueryDatabaseResponse,
 } from "@notionhq/client/build/src/api-endpoints";
 import { RequestParameters } from "@notionhq/client/build/src/Client";
-import { Block, PostResult } from "../@types/notion-api-types";
-import { Config } from "../Config";
-import { NotionError } from "../errors";
-import { Database } from "../model/entity/Database";
-import { Page } from "../model/entity/Page";
-import { User } from "../model/entity/User";
+import { PostResult, Block } from "~/@types/notion-api-types";
+import { Config } from "~/Config";
+import { NotionError } from "~/errors";
+import { Database, Page, User } from "~/model/entity";
 
 const { Props, IGNORE_PREFIX, MUST_EXIST_PROPS } = Config.Notion;
 export class NotionRepository {

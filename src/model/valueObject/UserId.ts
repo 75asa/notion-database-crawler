@@ -1,6 +1,6 @@
-import { PropertyValue } from "../../@types/notion-api-types";
-import { User } from "../entity/User";
-import { PrimitiveValueObject } from "./PrimitiveValueObject";
+import { PropertyValue } from "~/@types/notion-api-types";
+import { User } from "~/model/entity";
+import { PrimitiveValueObject } from "~/model/valueObject/PrimitiveValueObject";
 
 export class UserId extends PrimitiveValueObject<string> {
   static create(props: PropertyValue) {

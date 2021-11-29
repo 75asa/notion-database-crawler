@@ -1,7 +1,10 @@
-import { PrimitiveValueObject } from "../../..";
-import { PropertyValueMultiSelect } from "../../../../../@types/notion-api-types";
-import { isDetectiveType } from "../../../../../utils";
-import { BasePropertyProps, BasePropertyFactoryArgs } from "./BaseProperty";
+import { PropertyValueMultiSelect } from "~/@types/notion-api-types";
+import {
+  BasePropertyProps,
+  BasePropertyFactoryArgs,
+} from "~/model/valueObject/notion/databaseProperties/default/BaseProperty";
+import { PrimitiveValueObject } from "~/model/valueObject/PrimitiveValueObject";
+import { isDetectiveType } from "~/utils";
 
 interface MultiSelectPropertyProps
   extends BasePropertyProps<PropertyValueMultiSelect> {
@@ -9,16 +12,13 @@ interface MultiSelectPropertyProps
 }
 
 export class MultiSelectProperty extends PrimitiveValueObject<MultiSelectPropertyProps> {
-  static create({
-    key,
-    propValue,
-  }: BasePropertyFactoryArgs): MultiSelectProperty {
-    if (!isDetectiveType<PropertyValueMultiSelect>(propValue)) {
+  static create({ key, value }: BasePropertyFactoryArgs): MultiSelectProperty {
+    if (!isDetectiveType<PropertyValueMultiSelect>(value)) {
       throw new Error(
-        `Invalid URLProperty propValue: ${JSON.stringify(propValue)}`
+        `Invalid URLProperty propValue: ${JSON.stringify(value)}`
       );
     }
-    const optionNames = propValue.multi_select
+    const optionNames = value.multi_select
       .map((item) => {
         if (item.name) return item.name as string;
       })
@@ -27,7 +27,7 @@ export class MultiSelectProperty extends PrimitiveValueObject<MultiSelectPropert
       );
     return new MultiSelectProperty({
       key,
-      value: propValue,
+      value: value,
       optionNames,
     });
   }

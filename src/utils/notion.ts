@@ -1,10 +1,10 @@
 import {
-  PeopleValue,
-  PropertyValue,
-  PropertyValueUserBot,
-  PropertyValueUserPerson,
   RichText,
-} from "../@types/notion-api-types";
+  PropertyValue,
+  PeopleValue,
+  PropertyValueUserPerson,
+  PropertyValueUserBot,
+} from "~/@types/notion-api-types";
 
 export const getName = (titleList: RichText[]) => {
   return titleList.reduce((acc, cur) => {

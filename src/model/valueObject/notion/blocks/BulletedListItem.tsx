@@ -1,6 +1,6 @@
 import JSXSlack, { Section } from "jsx-slack";
-import { BulletedListItemBlock } from "../../../../@types/notion-api-types";
-import { RichTextText } from "./RichText";
+import { BulletedListItemBlock } from "~/@types/notion-api-types";
+import { RichTextText } from "~/model/valueObject/notion/blocks/RichText";
 
 interface BulletedListItemProps {
   children: BulletedListItemBlock;

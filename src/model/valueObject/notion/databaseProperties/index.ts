@@ -1,3 +1,2 @@
-export * from "./default";
-export * from "./RawProperties";
-export * from "./VisibleProperties";
+export * from "~/model/valueObject/notion/databaseProperties/default";
+export * from "~/model/valueObject/notion/databaseProperties/Properties";

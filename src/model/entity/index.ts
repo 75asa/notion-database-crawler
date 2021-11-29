@@ -1,3 +1,3 @@
-export * from "./Database";
-export * from "./Page";
-export * from "./User";
+export * from "~/model/entity/Page";
+export * from "~/model/entity/User";
+export * from "~/model/entity/Database";
