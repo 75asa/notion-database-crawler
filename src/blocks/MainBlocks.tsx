@@ -1,6 +1,6 @@
 /** @jsxImportSource jsx-slack **/
 import JSXSlack, { Blocks, Mrkdwn, Section, Divider } from "jsx-slack";
-import { Page } from "model/entity/Page";
+import { Page } from "~/model/entity/Page";
 
 export const MainBlocks = (
   databaseName: string,

@@ -7,7 +7,7 @@
     "moduleResolution": "node",
     "lib": ["es2018", "dom"],
     "esModuleInterop": true,
-    "rootDir": "./src",
+    // "rootDir": "./src",
     "outDir": "./dist",
     "sourceMap": true,
     "declaration": true,
@@ -15,11 +15,11 @@
     "strict": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": "./src",
-    // "paths": {
-    //   "~/*": ["./src/*"],
-    //   "@/*": ["./src/*"]
-    // },
+    "baseUrl": "./",
+    "typeRoots": ["notion-api-types"],
+    "paths": {
+      "~/*": ["src/*"]
+    },
     "types": ["@types/node"]
   },
   "exclude": ["node_modules", "dist", "**/*.spec.ts"],
