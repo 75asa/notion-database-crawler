@@ -27,10 +27,10 @@ export class Slack {
 
   async postMessage(input: { page: Page; database: Database; user: User }) {
     const { database, page, user } = input;
-    const { properties } = page;
     const text = this.#buildMessage({ page, database });
     // Block kit
     const block = MainBlocks({ database, page });
+    console.dir({ block }, { depth: null });
     const translatedBlocks = JSXSlack(block);
 
     const msgOptions: ChatPostMessageArguments[] = this.#channels.map(

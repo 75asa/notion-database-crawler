@@ -11,9 +11,8 @@ export const DateProperty = ({ key, property }: DatePropertyProps) => {
     <>
       <Context>
         <p>
-          <b>{key}</b>
+          <b>{key}</b>: {property.date?.start ?? ""}
         </p>
-        : {property.date?.start ?? ""}
       </Context>
     </>
   );

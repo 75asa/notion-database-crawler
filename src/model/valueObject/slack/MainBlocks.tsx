@@ -8,13 +8,14 @@ interface MainBlocksProps {
 }
 
 export const MainBlocks = ({ database, page }: MainBlocksProps) => {
+  const { url, name, properties } = page;
+  // console.dir({ properties }, { depth: null });
   return (
     <Blocks>
-      <Properties properties={page.properties}></Properties>
+      <Properties properties={properties}></Properties>
       <Section>
         <Mrkdwn>
-          <b>{database.name}</b> に新しいページ:{" "}
-          <a href={page.url}>{page.name}</a>
+          <b>{database.name}</b> に新しいページ: <a href={url}>{name}</a>
           が投稿されました
         </Mrkdwn>
       </Section>

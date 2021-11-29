@@ -1,5 +1,5 @@
 import { Prisma } from ".prisma/client";
-import { isKeyValueObject, isPropertyValue } from "~/utils";
+import { isPrismaJsonObject, isPropertyValue } from "~/utils";
 import { Config } from "~/config";
 import JSXSlack from "jsx-slack";
 import { MultiSelectProperty } from "~/model/valueObject/slack/notion/properties/MultiSelectProperty";
@@ -21,11 +21,11 @@ const parse = (propValues: Prisma.JsonValue) => {
     throw new Error("propValues must be an object");
   }
   const result = [];
-  for (const key in Object.keys(propValues)) {
+  for (const key in propValues) {
     if (!key) continue;
     const value = propValues[key];
-    if (!isKeyValueObject(value)) continue;
-    value as { [key: string]: unknown };
+    if (!value) continue;
+    if (!isPrismaJsonObject(value)) continue;
     result.push({ key, value });
   }
   return result;
@@ -33,10 +33,10 @@ const parse = (propValues: Prisma.JsonValue) => {
 
 export const Properties = ({ properties }: PropertiesProps) => {
   const parsed = parse(properties);
+  console.dir({ parsed, VISIBLE_PROPS }, { depth: null });
   const element: JSXSlack.JSX.Element[] = [];
 
   for (const { key, value } of parsed) {
-    console.dir({ key, value }, { depth: null });
     if (!VISIBLE_PROPS.includes(key)) continue;
     if (!isPropertyValue(value)) continue;
     switch (value.type) {

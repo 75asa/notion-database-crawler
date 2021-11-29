@@ -14,9 +14,8 @@ export const MultiSelectProperty = ({
     <>
       <Context>
         <p>
-          <b>{key}</b>
+          <b>{key}</b>: {property.multi_select.map((v) => v.name).join(", ")}
         </p>
-        : {property.multi_select.map((v) => v.name).join(", ")}
       </Context>
     </>
   );

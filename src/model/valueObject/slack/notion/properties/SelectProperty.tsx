@@ -11,9 +11,8 @@ export const SelectProperty = ({ key, property }: SelectPropertyProps) => {
     <>
       <Context>
         <p>
-          <b>{key}</b>
+          <b>{key}</b>: {property.select?.name ?? ""}
         </p>
-        : {property.select?.name ?? ""}
       </Context>
     </>
   );

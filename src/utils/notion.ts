@@ -33,12 +33,7 @@ export const extractUserOrBotFromPeoples = (peopleValues: PeopleValue) => {
 };
 
 export const isPropertyValue = (input: unknown): input is PropertyValue => {
-  return (
-    input instanceof Object &&
-    Object.keys(input).length === 1 &&
-    "value" in input &&
-    "type" in input
-  );
+  return input instanceof Object && "type" in input && "id" in input;
 };
 
 export const isKeyValueObject = (

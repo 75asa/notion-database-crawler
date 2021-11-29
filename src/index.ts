@@ -34,9 +34,7 @@ const main = async () => {
         await databaseRepo.create(database);
         if (!database.size) return;
         const pageRepo = new PrismaPageRepository(prisma);
-        for (const content of allContents) {
-          const user = content.user;
-          const page = content.page;
+        for (const { page, user } of allContents) {
           await pageRepo.create(page, user);
         }
       } else if (storedDatabase !== null && storedDatabase !== undefined) {
