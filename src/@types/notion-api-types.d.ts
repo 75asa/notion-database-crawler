@@ -144,6 +144,7 @@ export type FileWithCaption = Omit<ExtractedFile<"file">, "caption"> & {
 /** Callout */
 export type CalloutIcon = CalloutBlock["callout"]["icon"];
 
+// FIXME: "type" is not a valid property name
 // export type CalloutIconType = CalloutIcon["type"];
 
 // export type ExtractedCalloutIcon<TType extends CalloutIconType> = Extract<

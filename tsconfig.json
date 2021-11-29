@@ -7,7 +7,7 @@
     "moduleResolution": "node",
     "lib": ["es2018", "dom"],
     "esModuleInterop": true,
-    "rootDir": "./src",
+    // "rootDir": "./src",
     "outDir": "./dist",
     "sourceMap": true,
     "declaration": true,
@@ -15,9 +15,10 @@
     "strict": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": "./src",
+    "baseUrl": "./",
+    "typeRoots": ["notion-api-types"],
     "paths": {
-      "~/*": ["./src/*"],
+      "~/*": ["src/*"]
     },
     "types": ["@types/node"]
   },
