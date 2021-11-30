@@ -19,13 +19,13 @@ export namespace Config {
     export const KEY = process.env.NOTION_KEY;
     export const IGNORE_PREFIX = process.env.NOTION_IGNORE_PREFIX || "Copy of";
     export namespace Props {
+      export const NAME = process.env.NOTION_NAME_PROP || "Name";
       export const CREATED_AT =
         process.env.NOTION_CREATED_AT_PROP || "CreatedAt";
       export const LAST_EDITED_BY =
         process.env.NOTION_LAST_EDITED_BY_PROP || "LastEditedBy";
       export const IS_PUBLISHED =
         process.env.NOTION_IS_PUBLISHED_PROP || "IsPublished";
-      export const NAME = process.env.NOTION_NAME_PROP || "Name";
     }
     export const VISIBLE_PROPS = process.env.NOTION_VISIBLE_PROPS
       ? process.env.NOTION_VISIBLE_PROPS.split(",")

@@ -1,6 +1,6 @@
 {
   "name": "notion-database-crawler",
-  "description": "slack x notion",
+  "description": "Slack x Notion",
   "repository": "https://github.com/75asa/notion-database-crawler",
   "keywords": [
     "Slack",
@@ -19,13 +19,28 @@
       "description": "Slack App Bot Token - https://api.slack.com/apps",
       "value": "xoxb-************-************-************************"
     },
-    "SLACK_CHANNEL_NAME": {
-      "description": "the channel daily reports are posted",
+    "SLACK_CHANNEL_NAMES": {
+      "description": "the channel daily reports are posted, if you wanna use multiple channels, separate them with a comma e.g `general,notifications`",
       "value": "t_nippo"
     },
     "JOB_INTERVAL_SECONDS": {
       "description": "job's default interval",
       "value": "30"
+    },
+    "NOTION_IGNORE_PREFIX": {
+      "description": "This prefix will be ignored when crawling Notion",
+      "value": "Copy of",
+      "required": false
+    },
+    "NOTION_VISIBLE_PROPS": {
+      "description": "If you wanna display multiple properties on a Slack, separate them with a comma e.g `title,description,Date`",
+      "value": "",
+      "required": false
+    },
+    "NOTION_NAME_PROP": {
+      "description": "`title` type prop name. default Name",
+      "value": "Name",
+      "required": false
     },
     "NOTION_CREATED_AT_PROP": {
       "description": "`created_at` type prop name at Notion. default CreatedAt",
@@ -42,18 +57,17 @@
       "value": "IsPublished",
       "required": false
     },
-    "NOTION_NAME_PROP": {
-      "description": "`text` type prop name. default Name",
-      "value": "Name",
-      "required": false
-    },
     "YARN_PRODUCTION": {
       "description": "for TypeScript build",
       "value": "false"
     }
   },
   "image": "heroku/nodejs",
-  "addons": ["heroku-postgresql"],
+  "addons": [
+    "papertrail",
+    "heroku-postgresql",
+    "sentry"
+  ],
   "scripts": {
     "postdeploy": "yarn migrate:deploy"
   }

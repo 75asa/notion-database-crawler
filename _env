@@ -1,17 +1,24 @@
-# NOTION_DATABASE_ID=b5fda7f3f4a14414902cccb27c17a7cc
+# Notion
 NOTION_KEY=secret_XXXXX
 NOTION_IGNORE_PREFIX=
+NOTION_VISIBLE_PROPS=Tags,Contributors
+# Notion musti exist Props
 NOTION_NAME_PROP=
 NOTION_CREATED_AT_PROP=
 NOTION_LAST_EDITED_BY_PROP=
 NOTION_IS_PUBLISHED_PROP=
-NOTION_VISIBLE_PROPS=Tags,Contributors
 
+# Slack
 SLACK_BOT_TOKEN=
 SLACK_CHANNEL_NAMES=t_nipppo,nippo_sand_1
 
+# Sentry
 SENTRY_DSN=
 
+# Job
+JOB_INTERVAL_SECONDS=30
+
+# Prisma DB
 # This text is inserted by `prisma init`:
 # Environment variables declared in this file are automatically made available to Prisma.
 # See the documentation for more detail: https://pris.ly/d/prisma-schema#using-environment-variables
@@ -20,4 +27,3 @@ SENTRY_DSN=
 # See the documentation for all the connection string options: https://pris.ly/d/connection-strings
 DATABASE_URL="postgresql://USER:PASS@HOST:PORT/DB_NAME"
 
-JOB_INTERVAL_SECONDS=30
