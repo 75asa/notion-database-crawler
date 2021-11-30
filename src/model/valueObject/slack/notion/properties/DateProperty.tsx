@@ -1,4 +1,3 @@
-import { Context } from "jsx-slack";
 import { PropertyValueDate } from "~/@types/notion-api-types";
 
 interface DatePropertyProps {

@@ -1,4 +1,3 @@
-import { Context } from "jsx-slack";
 import { PropertyValueMultiSelect } from "~/@types/notion-api-types";
 
 interface MultiSelectPropertyProps {
