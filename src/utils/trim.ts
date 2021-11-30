@@ -1,3 +1,3 @@
-export const trimUndefined = <T extends undefined>(
-  item: T
-): item is Exclude<typeof item, undefined> => item !== undefined;
+// export const trimUndefined = <T extends unknown>(
+//   item: unknown
+// ): item is Exclude<typeof item, T> => item !== typeof T;

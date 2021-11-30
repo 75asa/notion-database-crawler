@@ -1,10 +1,10 @@
 import {
-  PeopleValue,
-  PropertyValue,
-  PropertyValueUserBot,
-  PropertyValueUserPerson,
   RichText,
-} from "../@types/notion-api-types";
+  PropertyValue,
+  PeopleValue,
+  PropertyValueUserPerson,
+  PropertyValueUserBot,
+} from "~/@types/notion-api-types";
 
 export const getName = (titleList: RichText[]) => {
   return titleList.reduce((acc, cur) => {
@@ -30,4 +30,14 @@ export const extractUserOrBotFromPeoples = (peopleValues: PeopleValue) => {
     .filter(
       (item): item is Exclude<typeof item, undefined> => item !== undefined
     );
+};
+
+export const isPropertyValue = (input: unknown): input is PropertyValue => {
+  return input instanceof Object && "type" in input && "id" in input;
+};
+
+export const isKeyValueObject = (
+  input: unknown
+): input is { [key: string]: unknown } => {
+  return input instanceof Object && Object.keys(input).length === 1;
 };

@@ -1,6 +1,5 @@
-/** @jsxImportSource jsx-slack **/
-import { Annotations } from "./Annotations";
-import { RichTextText as RichTextTextType } from "../../../@types/notion-api-types";
+import { RichTextText as RichTextTextType } from "~/@types/notion-api-types";
+import { Annotations } from "~/model/valueObject/notion/blocks/Annotations";
 
 interface RichTextTextProps {
   children: RichTextTextType;

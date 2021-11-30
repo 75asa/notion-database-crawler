@@ -1,10 +1,6 @@
-import {
-  PropertyValue,
-  PropertyValueNumber,
-} from "../../../../@types/notion-api-types";
-import { isDetectiveType } from "../../../../utils";
-import { PrimitiveValueObject } from "../../PrimitiveValueObject";
-
+import { PropertyValue, PropertyValueNumber } from "~/@types/notion-api-types";
+import { PrimitiveValueObject } from "~/model/valueObject/PrimitiveValueObject";
+import { isDetectiveType } from "~/utils";
 export class NumberProperty extends PrimitiveValueObject<number> {
   static create(propValue: PropertyValue): NumberProperty {
     if (!isDetectiveType<PropertyValueNumber>(propValue)) {

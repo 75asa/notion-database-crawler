@@ -1,12 +1,21 @@
-import { Page as PageProps } from "@prisma/client";
+import { Page as PageProps, Prisma } from ".prisma/client";
 import { PostResult } from "~/@types/notion-api-types";
 import { Config } from "~/Config";
 import { Entity } from "~/model/entity/Entity";
-import { TitleProperty, DatabaseId, UserId } from "~/model/valueObject";
+import {
+  DatabaseId,
+  UserId,
+  Properties,
+  TitleProperty,
+} from "~/model/valueObject";
 import { parseDate } from "~/utils";
 
 const { NAME, LAST_EDITED_BY } = Config.Notion.Props;
-export class Page extends Entity<PageProps> {
+
+interface CustomPageProps extends PageProps {
+  properties: Prisma.JsonObject;
+}
+export class Page extends Entity<CustomPageProps> {
   static create(props: PostResult): Page {
     const { properties, id, created_time, url } = props;
     const name = TitleProperty.create(properties[NAME]).value;
@@ -15,6 +24,7 @@ export class Page extends Entity<PageProps> {
       name,
       createdAt: parseDate(created_time),
       url,
+      properties: Properties.create(properties).props,
       databaseId: DatabaseId.create(props).value,
       userId: UserId.create(properties[LAST_EDITED_BY]).value,
     };
@@ -31,5 +41,9 @@ export class Page extends Entity<PageProps> {
 
   get url() {
     return this.props.url;
+  }
+
+  get properties() {
+    return this.props.properties;
   }
 }

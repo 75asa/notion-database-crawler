@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/node";
 
-import { Config } from "../Config";
+import { Config } from "~/Config";
 
 const { DSN } = Config.Sentry;
 

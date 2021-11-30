@@ -7,6 +7,12 @@
       "name": "Launch TypeScript",
       "program": "${workspaceFolder}/dist/index.js",
       "preLaunchTask": "Transpile TypeScript",
+      "runtimeArgs": ["-r",
+        "${workspaceFolder}/node_modules/ts-node/register",
+        "-r",
+        "${workspaceFolder}/node_modules/tsconfig-paths/register"
+      ],
+      "args": ["${workspaceFolder}/src/index.ts"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]

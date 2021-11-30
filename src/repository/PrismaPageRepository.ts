@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from ".prisma/client";
 import { Page, User } from "~/model/entity";
 
 interface IPageRepository {

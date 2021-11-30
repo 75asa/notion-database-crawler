@@ -1,2 +1,2 @@
-export * from "./NotionError";
-export * from "./SentryError";
+export * from "~/errors/NotionError";
+export * from "~/errors/SentryError";

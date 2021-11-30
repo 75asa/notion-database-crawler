@@ -1,7 +1,7 @@
-import { Entity } from "./Entity";
-import { Database as DatabaseProps } from "@prisma/client";
-import { getName, parseDate } from "../../utils";
-import { SearchResult } from "../../@types/notion-api-types";
+import { Database as DatabaseProps } from ".prisma/client";
+import { SearchResult } from "~/@types/notion-api-types";
+import { Entity } from "~/model/entity/Entity";
+import { getName, parseDate } from "~/utils";
 
 export class Database extends Entity<DatabaseProps> {
   static create(props: SearchResult): Database {
@@ -33,5 +33,9 @@ export class Database extends Entity<DatabaseProps> {
 
   set size(size: number) {
     this.props.size = size;
+  }
+
+  get url() {
+    return this.props.url;
   }
 }

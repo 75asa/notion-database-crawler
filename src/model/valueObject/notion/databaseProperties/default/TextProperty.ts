@@ -1,13 +1,10 @@
-import { UserBlock } from "..";
 import {
   PropertyValue,
   PropertyValueRichText,
-} from "../../../../@types/notion-api-types";
-import {
-  extractUserOrBotFromPeoples,
-  isDetectiveType,
-} from "../../../../utils";
-import { PrimitiveValueObject } from "../../PrimitiveValueObject";
+} from "~/@types/notion-api-types";
+import { UserBlock } from "~/model/valueObject/notion/databaseProperties/subset";
+import { PrimitiveValueObject } from "~/model/valueObject/PrimitiveValueObject";
+import { isDetectiveType, extractUserOrBotFromPeoples } from "~/utils";
 
 export class TextProperty extends PrimitiveValueObject<string> {
   static create(propValue: PropertyValue): TextProperty {

@@ -1,12 +1,12 @@
 import { PrismaClient } from "@prisma/client";
-import { Slack } from "./Slack";
-import { Scheduler } from "./Scheduler";
-import { Config } from "./Config";
+import { Config } from "~/Config";
 import {
   NotionRepository,
   PrismaDatabaseRepository,
   PrismaPageRepository,
-} from "./repository";
+} from "~/repository";
+import { Scheduler } from "~/Scheduler";
+import { Slack } from "~/Slack";
 
 const prisma = new PrismaClient();
 
@@ -34,9 +34,7 @@ const main = async () => {
         await databaseRepo.create(database);
         if (!database.size) return;
         const pageRepo = new PrismaPageRepository(prisma);
-        for (const content of allContents) {
-          const user = content.user;
-          const page = content.page;
+        for (const { page, user } of allContents) {
           await pageRepo.create(page, user);
         }
       } else if (storedDatabase !== null && storedDatabase !== undefined) {
@@ -60,16 +58,14 @@ const main = async () => {
         database.size += unstoredPages.length;
         const pageRepo = new PrismaPageRepository(prisma);
 
-        for (const pageAndUser of unstoredPages) {
-          const user = pageAndUser.user;
-          const page = pageAndUser.page;
+        for (const { user, page } of unstoredPages) {
           await pageRepo.create(page, user);
-          const blocks = await notionRepo.getAllBlocksFromPage(page.id);
-          const slackClient = new Slack(blocks);
+          const notionBlocks = await notionRepo.getAllBlocksFromPage(page.id);
+          const slackClient = new Slack(Config.Slack);
           // slackClient.setBlocks(blocks);
           // Slack 通知
           await slackClient.postMessage({
-            databaseName: database.name,
+            database,
             page,
             user,
           });

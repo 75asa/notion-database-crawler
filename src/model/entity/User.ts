@@ -1,10 +1,10 @@
-import { User as UserProps } from "@prisma/client";
+import { User as UserProps } from ".prisma/client";
 import {
   PropertyValue,
   PropertyValueEditedBy,
-} from "../../@types/notion-api-types";
-import { Entity } from "./Entity";
-import { isDetectiveType } from "../../utils";
+} from "~/@types/notion-api-types";
+import { Entity } from "~/model/entity/Entity";
+import { isDetectiveType } from "~/utils";
 
 export class User extends Entity<UserProps> {
   static create(props: PropertyValue): User {

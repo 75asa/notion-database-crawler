@@ -25,6 +25,7 @@ model Page {
   name         String
   createdAt    DateTime
   url          String
+  properties   Json?
   Database     Database @relation(fields: [databaseId], references: [id])
   databaseId   String
   LastEditedBy User     @relation(fields: [userId], references: [id])

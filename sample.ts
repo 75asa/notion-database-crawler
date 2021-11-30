@@ -7,6 +7,7 @@ import * as Tracing from "@sentry/tracing";
 // import * as Tracing from '@sentry/tracing';
 
 import { Config } from "./src/Config";
+// import { Config } from "~/Config";
 
 const { DSN } = Config.Sentry;
 
