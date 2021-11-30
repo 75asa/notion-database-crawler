@@ -2,7 +2,7 @@ import {
   PropertyValue,
   PropertyValueRichText,
 } from "~/@types/notion-api-types";
-import { UserBlock } from "~/model/valueObject";
+import { UserBlock } from "~/model/valueObject/notion/databaseProperties/subset";
 import { PrimitiveValueObject } from "~/model/valueObject/PrimitiveValueObject";
 import { isDetectiveType, extractUserOrBotFromPeoples } from "~/utils";
 

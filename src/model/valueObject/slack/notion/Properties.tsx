@@ -1,6 +1,6 @@
 import { Prisma } from ".prisma/client";
 import { isPropertyValue, parsePrismaJsonObject } from "~/utils";
-import { Config } from "~/config";
+import { Config } from "~/Config";
 import JSXSlack, { Field, Section } from "jsx-slack";
 import { MultiSelectProperty } from "~/model/valueObject/slack/notion/properties/MultiSelectProperty";
 import { DateProperty } from "~/model/valueObject/slack/notion/properties/DateProperty";

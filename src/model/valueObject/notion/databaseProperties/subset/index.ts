@@ -1,1 +1,1 @@
-export * from "~/model/valueObject/notion/databaseProperties/subSet/UserBlock";
+export * from "~/model/valueObject/notion/databaseProperties/subset/UserBlock";
