@@ -16,8 +16,10 @@ export const Properties = ({ properties }: PropertiesProps) => {
   const parsed = parsePrismaJsonObject(properties);
   const element: JSXSlack.JSX.Element[] = [];
 
-  for (const { key, value } of parsed) {
-    if (!VISIBLE_PROPS.includes(key)) continue;
+  for (const VISIBLE_PROP of VISIBLE_PROPS) {
+    const parsedProp = parsed.find((p) => p.key === VISIBLE_PROP);
+    if (!parsedProp) continue;
+    const { key, value } = parsedProp;
     if (!isPropertyValue(value)) continue;
     switch (value.type) {
       case "multi_select": {
@@ -36,6 +38,8 @@ export const Properties = ({ properties }: PropertiesProps) => {
         break;
     }
   }
+
+  if (!element.length) return <></>;
 
   return (
     <>
