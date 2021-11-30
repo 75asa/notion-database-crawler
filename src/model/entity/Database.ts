@@ -34,4 +34,8 @@ export class Database extends Entity<DatabaseProps> {
   set size(size: number) {
     this.props.size = size;
   }
+
+  get url() {
+    return this.props.url;
+  }
 }

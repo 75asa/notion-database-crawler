@@ -9,11 +9,9 @@ interface DatePropertyProps {
 export const DateProperty = ({ key, property }: DatePropertyProps) => {
   return (
     <>
-      <Context>
-        <p>
-          <b>{key}</b>: {property.date?.start ?? ""}
-        </p>
-      </Context>
+      <p>
+        <b>{key}</b>: {property.date?.start ?? ""}
+      </p>
     </>
   );
 };

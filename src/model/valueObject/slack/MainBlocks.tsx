@@ -1,5 +1,6 @@
 import { Blocks, Mrkdwn, Section, Divider } from "jsx-slack";
 import { Database, Page } from "~/model/entity";
+import { HeaderBlock } from "~/model/valueObject/slack/Header";
 import { Properties } from "~/model/valueObject/slack/notion/Properties";
 
 interface MainBlocksProps {
@@ -8,19 +9,18 @@ interface MainBlocksProps {
 }
 
 export const MainBlocks = ({ database, page }: MainBlocksProps) => {
-  const { url, name, properties } = page;
-  // console.dir({ properties }, { depth: null });
   return (
     <Blocks>
-      <Properties properties={properties}></Properties>
-      <Section>
+      <HeaderBlock database={database} page={page} />
+      <Properties properties={page.properties} />
+      {/* NOTE: 2つのリンクを載せると unfurler が機能しない */}
+      {/* <Section>
         <Mrkdwn>
-          <b>{database.name}</b> に新しいページ: <a href={url}>{name}</a>
-          が投稿されました
+          posted at <a href={database.url}>{database.name}</a>
         </Mrkdwn>
-      </Section>
+      </Section> */}
       <Divider />
-      {/* {...contents} */}
+      {/* TODO: content block */}
     </Blocks>
   );
 };

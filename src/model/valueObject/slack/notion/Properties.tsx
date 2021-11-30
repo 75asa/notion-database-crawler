@@ -1,10 +1,7 @@
 import { Prisma } from ".prisma/client";
-import {
-  isPropertyValue,
-  parsePrismaJsonObject,
-} from "~/utils";
+import { chunk, isPropertyValue, parsePrismaJsonObject } from "~/utils";
 import { Config } from "~/config";
-import JSXSlack from "jsx-slack";
+import JSXSlack, { Field, Section } from "jsx-slack";
 import { MultiSelectProperty } from "~/model/valueObject/slack/notion/properties/MultiSelectProperty";
 import { DateProperty } from "~/model/valueObject/slack/notion/properties/DateProperty";
 import { SelectProperty } from "~/model/valueObject/slack/notion/properties/SelectProperty";
@@ -24,24 +21,32 @@ export const Properties = ({ properties }: PropertiesProps) => {
     if (!isPropertyValue(value)) continue;
     switch (value.type) {
       case "multi_select": {
-        element.push(
-          <MultiSelectProperty key={key} property={value}></MultiSelectProperty>
-        );
+        element.push(<MultiSelectProperty key={key} property={value} />);
         break;
       }
       case "date": {
-        element.push(<DateProperty key={key} property={value}></DateProperty>);
+        element.push(<DateProperty key={key} property={value} />);
         break;
       }
       case "select": {
-        element.push(
-          <SelectProperty key={key} property={value}></SelectProperty>
-        );
+        element.push(<SelectProperty key={key} property={value} />);
         break;
       }
       default:
         break;
     }
   }
-  return <>{element.map((item) => item)}</>;
+
+  return (
+    <>
+      <Section>
+        <p>
+          <i>Properties</i>
+        </p>
+        {element.map((item) => (
+          <Field>{item}</Field>
+        ))}
+      </Section>
+    </>
+  );
 };

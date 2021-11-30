@@ -9,11 +9,9 @@ interface SelectPropertyProps {
 export const SelectProperty = ({ key, property }: SelectPropertyProps) => {
   return (
     <>
-      <Context>
-        <p>
-          <b>{key}</b>: {property.select?.name ?? ""}
-        </p>
-      </Context>
+      <p>
+        <b>{key}</b>: {property.select?.name ?? ""}
+      </p>
     </>
   );
 };

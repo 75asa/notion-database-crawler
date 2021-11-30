@@ -12,11 +12,9 @@ export const MultiSelectProperty = ({
 }: MultiSelectPropertyProps) => {
   return (
     <>
-      <Context>
-        <p>
-          <b>{key}</b>: {property.multi_select.map((v) => v.name).join(", ")}
-        </p>
-      </Context>
+      <p>
+        <b>{key}</b>: {property.multi_select.map((v) => v.name).join(", ")}
+      </p>
     </>
   );
 };
