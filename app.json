@@ -47,9 +47,9 @@
       "value": "CreatedAt",
       "required": false
     },
-    "NOTION_LAST_EDITED_BY_PROP": {
-      "description": "`last_edited_by` type prop name at Notion. default LastEditedBy",
-      "value": "LastEditedBy",
+    "NOTION_CREATED_BY_PROP": {
+      "description": "`created_by` type prop name at Notion. default CreatedBy",
+      "value": "CreatedBy",
       "required": false
     },
     "NOTION_IS_PUBLISHED_PROP": {

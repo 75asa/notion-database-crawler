@@ -10,7 +10,7 @@ import {
 } from "~/model/valueObject";
 import { parseDate } from "~/utils";
 
-const { NAME, LAST_EDITED_BY } = Config.Notion.Props;
+const { NAME, CREATED_BY } = Config.Notion.Props;
 
 interface CustomPageProps extends PageProps {
   properties: Prisma.JsonObject;
@@ -26,7 +26,7 @@ export class Page extends Entity<CustomPageProps> {
       url,
       properties: Properties.create(properties).props,
       databaseId: DatabaseId.create(props).value,
-      userId: UserId.create(properties[LAST_EDITED_BY]).value,
+      userId: UserId.create(properties[CREATED_BY]).value,
     };
     return new Page(value);
   }
