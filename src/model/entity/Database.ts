@@ -12,10 +12,11 @@ export class Database extends Entity<DatabaseProps> {
     return new Database({
       id,
       name,
-      createdAt: parseDate(created_time),
-      lastEditedAt: parseDate(last_edited_time),
+      database_created_at: parseDate(created_time),
+      last_edited_at: parseDate(last_edited_time),
       url,
       size: 0,
+      created_at: null,
     });
   }
 

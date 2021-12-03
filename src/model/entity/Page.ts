@@ -22,11 +22,12 @@ export class Page extends Entity<CustomPageProps> {
     const value = {
       id,
       name,
-      createdAt: parseDate(created_time),
+      page_created_at: parseDate(created_time),
       url,
       properties: Properties.create(properties).props,
-      databaseId: DatabaseId.create(props).value,
-      userId: UserId.create(properties[CREATED_BY]).value,
+      database_id: DatabaseId.create(props).value,
+      user_id: UserId.create(properties[CREATED_BY]).value,
+      created_at: null,
     };
     return new Page(value);
   }

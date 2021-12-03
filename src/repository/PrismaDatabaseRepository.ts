@@ -9,8 +9,8 @@ import { Database } from "~/model/entity/Database";
 interface IDatabaseRepository {
   find(databaseId: string): Promise<
     | (PrismaDatabase & {
-        pages: (PrismaPage & {
-          LastEditedBy: PrismaUser;
+        Pages: (PrismaPage & {
+          CreatedBy: PrismaUser;
         })[];
       })
     | null
@@ -30,9 +30,9 @@ export class PrismaDatabaseRepository implements IDatabaseRepository {
           id: databaseId,
         },
         include: {
-          pages: {
+          Pages: {
             include: {
-              LastEditedBy: true,
+              CreatedBy: true,
             },
           },
         },

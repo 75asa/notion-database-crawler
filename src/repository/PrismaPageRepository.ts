@@ -9,20 +9,20 @@ export class PrismaPageRepository implements IPageRepository {
   constructor(private prisma: PrismaClient) {}
 
   async create(page: Page, user: User) {
-    const { userId, databaseId, ...refinedPage } = page.allProps();
+    const { user_id, database_id, ...refinedPage } = page.allProps();
     try {
       await this.prisma.page.create({
         data: {
           ...refinedPage,
           Database: {
             connect: {
-              id: databaseId,
+              id: database_id,
             },
           },
-          LastEditedBy: {
+          CreatedBy: {
             connectOrCreate: {
               where: {
-                id: userId,
+                id: user_id,
               },
               create: user.allProps(),
             },
@@ -30,7 +30,7 @@ export class PrismaPageRepository implements IPageRepository {
         },
         include: {
           Database: true,
-          LastEditedBy: true,
+          CreatedBy: true,
         },
       });
     } catch (e) {

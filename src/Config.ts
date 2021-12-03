@@ -30,9 +30,6 @@ export namespace Config {
     export const VISIBLE_PROPS = process.env.NOTION_VISIBLE_PROPS
       ? process.env.NOTION_VISIBLE_PROPS.split(",")
       : [];
-    export const MUST_EXIST_PROPS = Object.keys(Props).map(
-      (key) => Props[key as keyof typeof Props] as keyof typeof Props
-    );
   }
   export namespace Sentry {
     export const DSN = process.env.SENTRY_DSN;

@@ -39,7 +39,7 @@ const main = async () => {
         }
       } else if (storedDatabase !== null && storedDatabase !== undefined) {
         // database に紐づいたページを取得
-        const storedPages = storedDatabase.pages;
+        const storedPages = storedDatabase["Pages"];
 
         // 2回目以降なので差分を比較
         const unstoredPages = allContents.filter((content) => {
