@@ -9,7 +9,7 @@ import { Config } from "~/Config";
 import { NotionError } from "~/errors";
 import { Database, Page, User } from "~/model/entity";
 
-const { Props, IGNORE_PREFIX, MUST_EXIST_PROPS } = Config.Notion;
+const { Props, IGNORE_KEYWORDS, MUST_EXIST_PROPS } = Config.Notion;
 export class NotionRepository {
   #notion;
   constructor(authKey: string) {
@@ -56,7 +56,7 @@ export class NotionRepository {
               {
                 property: Props.NAME,
                 text: {
-                  does_not_contain: IGNORE_PREFIX,
+                  does_not_contain: IGNORE_KEYWORDS,
                 },
               },
               {
