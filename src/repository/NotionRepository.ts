@@ -10,6 +10,26 @@ import { NotionError } from "~/errors";
 import { Database, Page, User } from "~/model/entity";
 
 const { Props, IGNORE_KEYWORDS, MUST_EXIST_PROPS } = Config.Notion;
+
+interface CustomRequestParameters extends RequestParameters {
+  body: {
+    filter?: {
+      and?: [
+        {
+          property: string;
+          [key: string]: unknown;
+        }
+      ];
+      or?: [
+        {
+          property: string;
+          [key: string]: unknown;
+        }
+      ];
+    };
+    start_cursor?: string;
+  };
+}
 export class NotionRepository {
   #notion;
   constructor(authKey: string) {
@@ -47,18 +67,12 @@ export class NotionRepository {
     const allPageAndUsers: { page: Page; user: User }[] = [];
 
     const getPages = async (cursor?: string) => {
-      const requestPayload: RequestParameters = {
+      const requestPayload: CustomRequestParameters = {
         path: `databases/${databaseId}/query`,
         method: "post",
         body: {
           filter: {
             and: [
-              {
-                property: Props.NAME,
-                text: {
-                  does_not_contain: IGNORE_KEYWORDS,
-                },
-              },
               {
                 property: Props.IS_PUBLISHED,
                 checkbox: {
@@ -69,6 +83,16 @@ export class NotionRepository {
           },
         },
       };
+      if (IGNORE_KEYWORDS.length) {
+        IGNORE_KEYWORDS.forEach((IGNORE_KEYWORD) => {
+          requestPayload.body.filter?.and?.push({
+            property: Props.NAME,
+            text: {
+              does_not_contain: IGNORE_KEYWORD,
+            },
+          });
+        });
+      }
       if (cursor) requestPayload.body = { start_cursor: cursor };
       let pages = null;
       try {
@@ -87,7 +111,7 @@ export class NotionRepository {
       for (const rawPage of pages.results) {
         if (rawPage.archived) continue;
         const page = Page.create(rawPage);
-        const user = User.create(rawPage.properties[Props.LAST_EDITED_BY]);
+        const user = User.create(rawPage.properties[Props.CREATED_BY]);
         if (!user.name) continue;
         allPageAndUsers.push({ page, user });
       }

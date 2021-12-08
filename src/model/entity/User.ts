@@ -1,21 +1,21 @@
 import { User as UserProps } from ".prisma/client";
 import {
   PropertyValue,
-  PropertyValueEditedBy,
+  PropertyValueCreatedBy,
 } from "~/@types/notion-api-types";
 import { Entity } from "~/model/entity/Entity";
 import { isDetectiveType } from "~/utils";
 
 export class User extends Entity<UserProps> {
   static create(props: PropertyValue): User {
-    if (!isDetectiveType<PropertyValueEditedBy>(props)) {
+    if (!isDetectiveType<PropertyValueCreatedBy>(props)) {
       throw new Error(
         `User.create: props must be a LastEditedByPropertyValue \n${JSON.stringify(
           props
         )}`
       );
     }
-    const notionUser = props.last_edited_by;
+    const notionUser = props.created_by;
     if (!("type" in notionUser)) {
       console.warn(
         `User.create: props.last_edited_by must have a type\n Actual: ${JSON.stringify(
@@ -25,8 +25,9 @@ export class User extends Entity<UserProps> {
       return new User({
         id: notionUser.id,
         name: "",
-        avatarURL: "",
+        avatarUrl: "",
         email: "",
+        updatedAt: new Date(),
       });
     }
     const { id, name, avatar_url, type } = notionUser;
@@ -38,8 +39,9 @@ export class User extends Entity<UserProps> {
     return new User({
       id,
       name: name || "",
-      avatarURL: avatar_url || "",
+      avatarUrl: avatar_url || "",
       email,
+      updatedAt: new Date(),
     });
   }
 
@@ -52,6 +54,6 @@ export class User extends Entity<UserProps> {
   }
 
   get avatarURL(): string {
-    return this.props.avatarURL;
+    return this.props.avatarUrl;
   }
 }
