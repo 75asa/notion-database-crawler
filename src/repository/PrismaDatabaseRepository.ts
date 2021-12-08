@@ -10,7 +10,7 @@ interface IDatabaseRepository {
   find(databaseId: string): Promise<
     | (PrismaDatabase & {
         pages: (PrismaPage & {
-          LastEditedBy: PrismaUser;
+          CreatedBy: PrismaUser;
         })[];
       })
     | null
@@ -32,7 +32,7 @@ export class PrismaDatabaseRepository implements IDatabaseRepository {
         include: {
           pages: {
             include: {
-              LastEditedBy: true,
+              CreatedBy: true,
             },
           },
         },

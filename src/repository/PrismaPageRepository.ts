@@ -19,7 +19,7 @@ export class PrismaPageRepository implements IPageRepository {
               id: databaseId,
             },
           },
-          LastEditedBy: {
+          CreatedBy: {
             connectOrCreate: {
               where: {
                 id: userId,
@@ -30,7 +30,7 @@ export class PrismaPageRepository implements IPageRepository {
         },
         include: {
           Database: true,
-          LastEditedBy: true,
+          CreatedBy: true,
         },
       });
     } catch (e) {

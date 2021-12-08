@@ -17,13 +17,15 @@ export namespace Config {
   }
   export namespace Notion {
     export const KEY = process.env.NOTION_KEY;
-    export const IGNORE_PREFIX = process.env.NOTION_IGNORE_PREFIX || "Copy of";
+    export const IGNORE_KEYWORDS = process.env.NOTION_IGNORE_KEYWORDS
+      ? process.env.NOTION_IGNORE_KEYWORDS.split(",")
+      : ["Copy of", "のコピー"];
     export namespace Props {
       export const NAME = process.env.NOTION_NAME_PROP || "Name";
       export const CREATED_AT =
         process.env.NOTION_CREATED_AT_PROP || "CreatedAt";
-      export const LAST_EDITED_BY =
-        process.env.NOTION_LAST_EDITED_BY_PROP || "LastEditedBy";
+      export const CREATED_BY =
+        process.env.NOTION_CREATED_BY_PROP || "CreatedBy";
       export const IS_PUBLISHED =
         process.env.NOTION_IS_PUBLISHED_PROP || "IsPublished";
     }
