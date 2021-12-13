@@ -1,5 +1,6 @@
 import { PropertyValueTitle } from "~/@types/notion-api-types";
-import { Annotations } from "~/model/valueObject/notion/blocks/Annotations";
+import { Annotations } from "~/model/valueObject/slack/notion/properties/component/Annotations";
+import { Text } from "~/model/valueObject/slack/notion/properties/component/Text";
 
 interface TitlePropertyProps {
   key: string;
@@ -13,23 +14,23 @@ export const TitleProperty = ({ key, property }: TitlePropertyProps) => {
       case "text": {
         const { content, link } = cur.text;
         const result = (
-          <Annotations>
+          <Annotations annotations={annotations}>
             <Text text={content} link={link} />
           </Annotations>
         );
-        return acc + plain_text;
+        // return acc + result;
       }
-      case "equation": {
-        return acc + `<span class="equation">${plain_text}</span>`;
-      }
-      case "mention": {
-        return acc + `<a href="${annotations[0].target}">${plain_text}</a>`;
-      }
-      default:
-        break;
+      // case "equation": {
+      //   return acc + <span class="equation">${plain_text}</span>;
+      // }
+      // case "mention": {
+      //   return acc + `<a href="${annotations[0].target}">${plain_text}</a>`;
+      // }
+      // default:
+      //   break;
     }
     return acc;
-  }, "");
+  }, <></>);
 
   return (
     <>

@@ -2,12 +2,14 @@ import JSXSlack from "jsx-slack";
 import { Annotations as AnnotationsType } from "~/@types/notion-api-types";
 
 interface AnnotationsProps {
-  text: JSXSlack.JSX.Element;
+  children: JSXSlack.JSX.Element;
   annotations: AnnotationsType;
 }
 
-export const Annotations = (props: AnnotationsProps) => {
-  const { text, annotations } = props;
+export const Annotations = ({
+  children: text,
+  annotations,
+}: AnnotationsProps) => {
   let annotated = text;
   for (const annotation in annotations) {
     if (!annotations[annotation as keyof AnnotationsType]) continue;
