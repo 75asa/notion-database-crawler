@@ -39,7 +39,6 @@ export type PropertyValueCreatedBy = ExtractedPropertyValue<"created_by">;
 export type PropertyValueEditedTime =
   ExtractedPropertyValue<"last_edited_time">;
 export type PropertyValueEditedBy = ExtractedPropertyValue<"last_edited_by">;
-export type PropertyValueCheckbox = ExtractedPropertyValue<"checkbox">;
 
 /** People **/
 export type PropertyValueUser = Extract<
