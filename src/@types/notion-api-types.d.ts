@@ -20,6 +20,7 @@ export type ExtractedPropertyValue<TType extends PropertyValueType> = Extract<
 >;
 
 export type PropertyValueTitle = ExtractedPropertyValue<"title">;
+export type PropertyValueCheckbox = ExtractedPropertyValue<"checkbox">;
 export type PropertyValueRichText = ExtractedPropertyValue<"rich_text">;
 export type PropertyValueNumber = ExtractedPropertyValue<"number">;
 export type PropertyValueUrl = ExtractedPropertyValue<"url">;

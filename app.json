@@ -27,11 +27,6 @@
       "description": "job's default interval",
       "value": "30"
     },
-    "NOTION_IGNORE_KEYWORDS": {
-      "description": "This prefix will be ignored when crawling Notion. default `Copy of,のコピー`",
-      "value": "Copy of,のコピー",
-      "required": false
-    },
     "NOTION_VISIBLE_PROPS": {
       "description": "If you wanna display multiple properties on a Slack, separate them with a comma e.g `title,description,Date`",
       "value": "",
