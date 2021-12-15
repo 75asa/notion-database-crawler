@@ -6,6 +6,7 @@ import { SelectProperty } from "~/model/valueObject/notion/databaseProperties/de
 import { TextProperty } from "~/model/valueObject/notion/databaseProperties/default/TextProperty";
 import { TitleProperty } from "~/model/valueObject/notion/databaseProperties/default/TitleProperty";
 import { URLProperty } from "~/model/valueObject/notion/databaseProperties/default/URLProperty";
+import { CheckboxProperty } from "~/model/valueObject/notion/databaseProperties/default/CheckboxProperty";
 
 export type VisiblePropsTypes =
   | DateProperty
@@ -15,6 +16,7 @@ export type VisiblePropsTypes =
   | PeopleProperty
   | SelectProperty
   | TextProperty
+  | CheckboxProperty
   | URLProperty;
 
 export * from "~/model/valueObject/notion/databaseProperties/default/DateProperty";
@@ -25,3 +27,4 @@ export * from "~/model/valueObject/notion/databaseProperties/default/SelectPrope
 export * from "~/model/valueObject/notion/databaseProperties/default/TextProperty";
 export * from "~/model/valueObject/notion/databaseProperties/default/TitleProperty";
 export * from "~/model/valueObject/notion/databaseProperties/default/URLProperty";
+export * from "~/model/valueObject/notion/databaseProperties/default/CheckboxProperty";

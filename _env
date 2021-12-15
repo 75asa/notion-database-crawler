@@ -1,6 +1,5 @@
 # Notion
 NOTION_KEY=secret_XXXXX
-NOTION_IGNORE_KEYWORDS=
 NOTION_VISIBLE_PROPS=Tags,Contributors
 # Notion multi exist Props
 NOTION_NAME_PROP=
