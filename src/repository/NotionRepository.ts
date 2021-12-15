@@ -9,7 +9,7 @@ import { Config } from "~/Config";
 import { NotionError } from "~/errors";
 import { Database, Page, User } from "~/model/entity";
 
-const { Props, IGNORE_KEYWORDS, MUST_EXIST_PROPS } = Config.Notion;
+const { Props, MUST_EXIST_PROPS } = Config.Notion;
 
 export class NotionRepository {
   #notion;
@@ -80,13 +80,16 @@ export class NotionRepository {
         if (!pages) throw new Error(`pages is null: ${error}`);
       }
 
-      for (const rawPage of pages.results) {
-        if (rawPage.archived) continue;
-        const page = Page.create(rawPage);
-        const user = User.create(rawPage.properties[Props.CREATED_BY]);
-        if (!user.name) continue;
-        allPageAndUsers.push({ page, user });
-      }
+      await Promise.all(
+        pages.results.map(async (rawPage) => {
+          if (rawPage.archived) return;
+          const page = Page.create(rawPage);
+          const user = User.create(rawPage.properties[Props.CREATED_BY]);
+          if (!page.name || !user.name) return;
+          allPageAndUsers.push({ page, user });
+        })
+      );
+
       if (pages.has_more) {
         await getPages(pages.next_cursor ?? undefined);
       }

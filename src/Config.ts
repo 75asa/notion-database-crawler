@@ -17,7 +17,7 @@ export namespace Config {
   }
   export namespace Notion {
     export const KEY = process.env.NOTION_KEY;
-    export const IGNORE_KEYWORDS = [/^Copy of.*/, /.*のコピー$/, /.*[1-9]$/];
+    export const IGNORE_KEYWORDS = [/^Copy of.*/, /.*のコピー$/, /.+\s[1-9]$/];
     export namespace Props {
       export const NAME = process.env.NOTION_NAME_PROP || "Name";
       export const CREATED_AT =
