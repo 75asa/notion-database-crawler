@@ -7,10 +7,12 @@ import {
   UserId,
   Properties,
   TitleProperty,
+  CheckboxProperty,
 } from "~/model/valueObject";
 import { parseDate } from "~/utils";
 
-const { NAME, CREATED_BY } = Config.Notion.Props;
+const { Props, IGNORE_KEYWORDS } = Config.Notion;
+const { NAME, CREATED_BY, IS_PUBLISHED } = Props;
 
 interface CustomPageProps extends PageProps {
   properties: Prisma.JsonObject;
@@ -19,9 +21,11 @@ export class Page extends Entity<CustomPageProps> {
   static create(props: PostResult): Page {
     const { properties, id, created_time, url } = props;
     const name = TitleProperty.create(properties[NAME]).value;
+    const ignoreTitle = IGNORE_KEYWORDS.some((keyword) => name.match(keyword));
+    const isPublished = CheckboxProperty.create(properties[IS_PUBLISHED]).value;
     const value = {
       id,
-      name,
+      name: ignoreTitle || !isPublished ? "" : name,
       pageCreatedAt: parseDate(created_time),
       url,
       properties: Properties.create(properties).props,

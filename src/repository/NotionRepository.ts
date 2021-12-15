@@ -11,25 +11,6 @@ import { Database, Page, User } from "~/model/entity";
 
 const { Props, IGNORE_KEYWORDS, MUST_EXIST_PROPS } = Config.Notion;
 
-interface CustomRequestParameters extends RequestParameters {
-  body: {
-    filter?: {
-      and?: [
-        {
-          property: string;
-          [key: string]: unknown;
-        }
-      ];
-      or?: [
-        {
-          property: string;
-          [key: string]: unknown;
-        }
-      ];
-    };
-    start_cursor?: string;
-  };
-}
 export class NotionRepository {
   #notion;
   constructor(authKey: string) {
@@ -67,7 +48,7 @@ export class NotionRepository {
     const allPageAndUsers: { page: Page; user: User }[] = [];
 
     const getPages = async (cursor?: string) => {
-      const requestPayload: CustomRequestParameters = {
+      const requestPayload: RequestParameters = {
         path: `databases/${databaseId}/query`,
         method: "post",
         body: {
@@ -83,16 +64,7 @@ export class NotionRepository {
           },
         },
       };
-      if (IGNORE_KEYWORDS.length) {
-        IGNORE_KEYWORDS.forEach((IGNORE_KEYWORD) => {
-          requestPayload.body.filter?.and?.push({
-            property: Props.NAME,
-            text: {
-              does_not_contain: IGNORE_KEYWORD,
-            },
-          });
-        });
-      }
+
       if (cursor) requestPayload.body = { start_cursor: cursor };
       let pages = null;
       try {
