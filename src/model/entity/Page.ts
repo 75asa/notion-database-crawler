@@ -24,7 +24,6 @@ export class Page extends Entity<CustomPageProps> {
       name,
       pageCreatedAt: parseDate(created_time),
       url,
-      properties: Properties.create(properties).props,
       databaseId: DatabaseId.create(props).value,
       userId: UserId.create(properties[CREATED_BY]).value,
       createdAt: new Date(),

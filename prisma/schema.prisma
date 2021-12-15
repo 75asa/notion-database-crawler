@@ -26,11 +26,12 @@ model Page {
   name          String
   pageCreatedAt DateTime
   url           String
-  properties    Json?
   Database      Database @relation(fields: [databaseId], references: [id])
   databaseId    String
   CreatedBy     User     @relation(fields: [userId], references: [id])
   userId        String
+  propertyId    Int
+  propetyId     Property @relation(fields: [propertyId], references: [id])
   createdAt     DateTime @default(now())
 }
 
@@ -41,4 +42,11 @@ model User {
   email     String?
   Page      Page[]
   updatedAt DateTime @default(now())
+}
+
+model Property {
+  id        Int      @unique @default(autoincrement())
+  content   Json
+  createdAt DateTime @default(now())
+  Page      Page[]
 }
