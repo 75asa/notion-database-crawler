@@ -1,5 +1,8 @@
+import JSXSlack from "jsx-slack";
 import { PropertyValueTitle } from "~/@types/notion-api-types";
 import { Annotations } from "~/model/valueObject/slack/notion/properties/component/Annotations";
+import { Equation } from "~/model/valueObject/slack/notion/properties/component/Equation";
+import { Mention } from "~/model/valueObject/slack/notion/properties/component/Mention";
 import { Text } from "~/model/valueObject/slack/notion/properties/component/Text";
 
 interface TitlePropertyProps {
@@ -18,24 +21,38 @@ export const TitleProperty = ({ key, property }: TitlePropertyProps) => {
             <Text text={content} link={link} />
           </Annotations>
         );
-        // return acc + result;
+        acc.push(result);
+        return acc;
       }
-      // case "equation": {
-      //   return acc + <span class="equation">${plain_text}</span>;
-      // }
-      // case "mention": {
-      //   return acc + `<a href="${annotations[0].target}">${plain_text}</a>`;
-      // }
-      // default:
-      //   break;
+      case "equation": {
+        const result = (
+          <Annotations annotations={annotations}>
+            <Equation equation={cur.equation.expression} href={href} />
+          </Annotations>
+        );
+        acc.push(result);
+        return acc;
+      }
+      case "mention": {
+        cur.mention.type;
+        const result = (
+          <Annotations annotations={annotations}>
+            <Mention />
+          </Annotations>
+        );
+        acc.push(result);
+        return acc;
+      }
+      default:
+        break;
     }
     return acc;
-  }, <></>);
+  }, [] as JSXSlack.JSX.Element[]);
 
   return (
     <>
       <p>
-        <b>{key}</b>: {property.title}
+        <b>{key}</b>: {reduced}
       </p>
     </>
   );
