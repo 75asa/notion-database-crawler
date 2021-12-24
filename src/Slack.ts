@@ -30,7 +30,7 @@ export class Slack {
     const text = this.#buildMessage({ page, database });
     // Block kit
     const block = MainBlocks({ database, page });
-    console.dir({ block }, { depth: null });
+    // console.dir({ block }, { depth: null });
     const translatedBlocks = JSXSlack(block);
 
     const msgOptions: ChatPostMessageArguments[] = this.#channels.map(
@@ -40,6 +40,7 @@ export class Slack {
           text,
           username: user.name,
           icon_url: user.avatarURL,
+          // icon_url: user.avatarURL, TODO: user.resizedURL ?? user.avatarURL のようにしたい
           unfurl_links: true,
           blocks: translatedBlocks,
         };
