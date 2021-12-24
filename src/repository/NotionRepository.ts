@@ -9,19 +9,23 @@ import { Config } from "~/Config";
 import { NotionError } from "~/errors";
 import { Database, Page, User } from "~/model/entity";
 
-const { Props, MUST_EXIST_PROPS } = Config.Notion;
+const { Props } = Config.Notion;
+
+const MUST_EXIST_PROPS = Object.keys(Props).map(
+  (key) => Props[key as keyof typeof Props] as keyof typeof Props
+);
 
 export class NotionRepository {
-  #notion;
+  #client;
   constructor(authKey: string) {
-    this.#notion = new Client({ auth: authKey });
+    this.#client = new Client({ auth: authKey });
   }
 
   // integration が取得可能な database を取得
   async getAllDatabase() {
     let searched;
     try {
-      searched = await this.#notion.search({
+      searched = await this.#client.search({
         filter: { value: "database", property: "object" },
       });
     } catch (e) {
@@ -68,7 +72,7 @@ export class NotionRepository {
       if (cursor) requestPayload.body = { start_cursor: cursor };
       let pages = null;
       try {
-        pages = (await this.#notion.request(
+        pages = (await this.#client.request(
           requestPayload
         )) as QueryDatabaseResponse;
       } catch (error) {
@@ -108,7 +112,7 @@ export class NotionRepository {
       };
       if (cursor) blocksChildrenListParameters.start_cursor = cursor;
       try {
-        blocks = await this.#notion.blocks.children.list(
+        blocks = await this.#client.blocks.children.list(
           blocksChildrenListParameters
         );
       } catch (e) {
