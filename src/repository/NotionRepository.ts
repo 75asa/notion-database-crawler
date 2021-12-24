@@ -17,8 +17,10 @@ const MUST_EXIST_PROPS = Object.keys(Props).map(
 
 export class NotionRepository {
   #client;
+  #pagesAndUsers: { page: Page; user: User }[] = [];
   constructor(authKey: string) {
     this.#client = new Client({ auth: authKey });
+    this.#pagesAndUsers = [];
   }
 
   // integration が取得可能な database を取得
@@ -48,58 +50,57 @@ export class NotionRepository {
       });
   }
 
-  async getAllContentsFromDatabase(databaseId: string) {
-    const allPageAndUsers: { page: Page; user: User }[] = [];
-
-    const getPages = async (cursor?: string) => {
-      const requestPayload: RequestParameters = {
-        path: `databases/${databaseId}/query`,
-        method: "post",
-        body: {
-          filter: {
-            and: [
-              {
-                property: Props.IS_PUBLISHED,
-                checkbox: {
-                  equals: true,
-                },
+  async #getPages(databaseId: string, cursor?: string) {
+    const requestPayload: RequestParameters = {
+      path: `databases/${databaseId}/query`,
+      method: "post",
+      body: {
+        filter: {
+          and: [
+            {
+              property: Props.IS_PUBLISHED,
+              checkbox: {
+                equals: true,
               },
-            ],
-          },
+            },
+          ],
         },
-      };
-
-      if (cursor) requestPayload.body = { start_cursor: cursor };
-      let pages = null;
-      try {
-        pages = (await this.#client.request(
-          requestPayload
-        )) as QueryDatabaseResponse;
-      } catch (error) {
-        console.dir({ error }, { depth: null });
-        if (error instanceof NotionError) {
-          if (error.is502Error()) return;
-        }
-        if (error instanceof Error) throw error;
-        if (!pages) throw new Error(`pages is null: ${error}`);
-      }
-
-      await Promise.all(
-        pages.results.map(async (rawPage) => {
-          if (rawPage.archived) return;
-          const page = Page.create(rawPage);
-          const user = User.create(rawPage.properties[Props.CREATED_BY]);
-          if (!page.name || !user.name) return;
-          allPageAndUsers.push({ page, user });
-        })
-      );
-
-      if (pages.has_more) {
-        await getPages(pages.next_cursor ?? undefined);
-      }
+      },
     };
-    await getPages();
-    return allPageAndUsers;
+
+    if (cursor) requestPayload.body = { start_cursor: cursor };
+    let pages = null;
+    try {
+      pages = (await this.#client.request(
+        requestPayload
+      )) as QueryDatabaseResponse;
+    } catch (error) {
+      console.dir({ error }, { depth: null });
+      if (error instanceof NotionError) {
+        if (error.is502Error()) return;
+      }
+      if (error instanceof Error) throw error;
+      if (!pages) throw new Error(`pages is null: ${error}`);
+    }
+
+    await Promise.all(
+      pages.results.map(async (rawPage) => {
+        if (rawPage.archived) return;
+        const page = Page.create(rawPage);
+        const user = User.create(rawPage.properties[Props.CREATED_BY]);
+        if (!page.name || !user.name) return;
+        this.#pagesAndUsers.push({ page, user });
+      })
+    );
+
+    if (!pages.has_more) return;
+
+    await this.#getPages(databaseId, pages.next_cursor ?? undefined);
+  }
+
+  async getAllContentsFromDatabase(databaseId: string) {
+    await this.#getPages(databaseId);
+    return this.#pagesAndUsers;
   }
 
   async getAllBlocksFromPage(pageId: string) {
