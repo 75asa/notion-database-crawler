@@ -11,7 +11,7 @@ import { Slack } from "~/Slack";
 const prisma = new PrismaClient();
 
 const main = async () => {
-  console.log("main: start");
+  console.time("main");
   await prisma.$connect();
   const notionRepo = new NotionRepository(Config.Notion.KEY);
   // integration が取得可能な prisma database
@@ -26,7 +26,7 @@ const main = async () => {
         database.id
       );
 
-      database.size = allContents.length;
+      // database.size = allContents.length;
       // Database に Page [] があり、 DB に保存してない場合
       if (isFirstTime) {
         // 初期登録
@@ -56,7 +56,6 @@ const main = async () => {
         return;
       }
 
-      database.size += unstoredPages.length;
       const pageRepo = new PrismaPageRepository(prisma);
 
       for (const { user, page } of unstoredPages) {
@@ -73,11 +72,12 @@ const main = async () => {
         });
       }
       // Database 更新
+      database.size += unstoredPages.length;
       await databaseRepo.update(database);
       return;
     })
   );
-  console.log("main: end");
+  console.timeEnd("main");
 };
 
 const job = new Scheduler(main);

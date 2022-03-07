@@ -25,7 +25,8 @@ export class PrismaDatabaseRepository implements IDatabaseRepository {
 
   async find(databaseId: string) {
     try {
-      return await this.prisma.database.findUnique({
+      const res = await this.prisma.database.findUnique({
+        // return await this.prisma.database.findFirst({
         where: {
           id: databaseId,
         },
@@ -37,6 +38,19 @@ export class PrismaDatabaseRepository implements IDatabaseRepository {
           },
         },
       });
+      if (!res) return res;
+      const { pages, ...db } = res;
+      const filteredPages = await Promise.all(
+        pages
+          .filter(async (page) => {
+            return page.databaseId === databaseId;
+          })
+          .map(async (page) => {
+            return page;
+          })
+      );
+      const result = { ...db, pages: filteredPages };
+      return result;
     } catch (e) {
       if (e instanceof Error) throw e;
     }
