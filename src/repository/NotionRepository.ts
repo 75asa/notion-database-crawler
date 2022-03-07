@@ -86,6 +86,13 @@ export class NotionRepository {
     await Promise.all(
       pages.results.map(async (rawPage) => {
         if (rawPage.archived) return;
+        if (
+          rawPage.parent.type === "database_id" &&
+          rawPage["parent"].database_id !== databaseId
+        ) {
+          console.warn(`${rawPage.id} is not in ${databaseId}`);
+          return;
+        }
         const page = Page.create(rawPage);
         const user = User.create(rawPage.properties[Props.CREATED_BY]);
         if (!page.name || !user.name) return;
