@@ -11,7 +11,7 @@ import { Slack } from "~/Slack";
 const prisma = new PrismaClient();
 
 const main = async () => {
-  console.log("main: start");
+  console.time("main");
   await prisma.$connect();
   const notionRepo = new NotionRepository(Config.Notion.KEY);
   // integration が取得可能な prisma database
@@ -77,7 +77,7 @@ const main = async () => {
       return;
     })
   );
-  console.log("main: end");
+  console.timeEnd("main");
 };
 
 const job = new Scheduler(main);
