@@ -27,6 +27,20 @@ if found new page, notify slack channel !
 
 [![Image from Gyazo](https://i.gyazo.com/fddf34585969655be8827347c3e796a8.gif)](https://gyazo.com/fddf34585969655be8827347c3e796a8)
 
+# How to use Docker
+
+## commands
+
+- `$ docker compose up -d`
+- `$ docker compose down -v`
+- `$ docker compose ps`
+
+# How to backup on Postgres
+
+- `$ heroku pg:backups:capture --remote heroku-prd`
+- `$ curl -o latest.dump (shell heroku pg:backups public-url --remote heroku-prd)`
+- `$ docker exec -i postgres-notion-database-crawler pg_restore --verbose --clean -U notion --no-acl --no-owner -d notion < latest.dump`
+
 
 # ⚠️ Caution
 
