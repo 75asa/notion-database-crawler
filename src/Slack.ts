@@ -30,7 +30,7 @@ export class Slack {
     const text = this.#buildMessage({ page, database });
     // Block kit
     const block = MainBlocks({ database, page });
-    console.dir({ block }, { depth: null });
+    // console.dir({ block }, { depth: null });
     const translatedBlocks = JSXSlack(block);
 
     const msgOptions: ChatPostMessageArguments[] = this.#channels.map(
@@ -46,7 +46,7 @@ export class Slack {
       }
     );
 
-    console.dir({ msgOptions }, { depth: null });
+    // console.dir({ msgOptions }, { depth: null });
 
     try {
       await Promise.all(

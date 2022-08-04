@@ -72,7 +72,7 @@ export class NotionRepository {
           requestPayload
         )) as QueryDatabaseResponse;
       } catch (error) {
-        console.dir({ error }, { depth: null });
+        // console.dir({ error }, { depth: null });
         if (error instanceof NotionError) {
           if (error.is502Error()) return;
         }
