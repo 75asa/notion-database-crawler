@@ -40,6 +40,7 @@ export class Slack {
           text,
           username: user.name,
           icon_url: user.avatarURL,
+          // icon_url: user.avatarURL, TODO: user.resizedURL ?? user.avatarURL のようにしたい
           unfurl_links: true,
           blocks: translatedBlocks,
         };

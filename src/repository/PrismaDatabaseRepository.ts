@@ -25,7 +25,7 @@ export class PrismaDatabaseRepository implements IDatabaseRepository {
 
   async find(databaseId: string) {
     try {
-      return await this.prisma.database.findFirst({
+      return await this.prisma.database.findUnique({
         where: {
           id: databaseId,
         },
