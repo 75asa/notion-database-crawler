@@ -68,16 +68,19 @@ export class NotionRepository {
       },
     };
 
-    if (cursor) requestPayload.body = { start_cursor: cursor };
-    let pages = null;
-    try {
-      pages = (await this.#client.request(
-        requestPayload
-      )) as QueryDatabaseResponse;
-    } catch (error) {
-      console.dir({ error }, { depth: null });
-      if (error instanceof NotionError) {
-        if (error.is502Error()) return;
+      if (cursor) requestPayload.body = { start_cursor: cursor };
+      let pages = null;
+      try {
+        pages = (await this.#notion.request(
+          requestPayload
+        )) as QueryDatabaseResponse;
+      } catch (error) {
+        // console.dir({ error }, { depth: null });
+        if (error instanceof NotionError) {
+          if (error.is502Error()) return;
+        }
+        if (error instanceof Error) throw error;
+        if (!pages) throw new Error(`pages is null: ${error}`);
       }
       if (error instanceof Error) throw error;
       if (!pages) throw new Error(`pages is null: ${error}`);

@@ -12,9 +12,9 @@ const isTitlePropertyValue = (
 export class NameProperty extends PrimitiveValueObject<string> {
   static create(propValue: PropertyValue): NameProperty {
     if (!isTitlePropertyValue(propValue)) {
-      throw new Error(
-        `Invalid NameProperty propValue: ${console.dir(propValue)}`
-      );
+      // throw new Error(
+      //   `Invalid NameProperty propValue: ${console.dir(propValue)}`
+      // );
     }
     return new NameProperty(getName(propValue.title) || "Untitled");
   }

@@ -47,7 +47,7 @@ export class Slack {
       }
     );
 
-    console.dir({ msgOptions }, { depth: null });
+    // console.dir({ msgOptions }, { depth: null });
 
     try {
       await Promise.all(
